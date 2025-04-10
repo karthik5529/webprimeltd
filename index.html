@@ -328,6 +328,21 @@
         .float-animation {
             animation: float 6s ease-in-out infinite;
         }
+        * {
+  box-sizing: border-box;
+}
+
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+}
+@media all {
+  html, body {
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+}
+
     </style>
 </head>
 <body>
