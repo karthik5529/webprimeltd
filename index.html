@@ -7,6 +7,43 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>WebPrime - The Smarter Web Experience</title>
+      
+        <!-- SEO Meta Tags -->
+        <meta name="description" content="WebPrime is a smart and modern web tool for all your online needs. Fast, responsive, and beautifully designed." />
+        <meta name="keywords" content="WebPrime, webprime.top, smart web, responsive design, modern web tool, online platform" />
+        <meta name="author" content="WebPrime" />
+      
+        <!-- Open Graph (Facebook, LinkedIn, etc.) -->
+        <meta property="og:title" content="WebPrime - The Smarter Web Experience" />
+        <meta property="og:description" content="Explore WebPrime, a powerful and elegant online experience." />
+        <meta property="og:image" content="https://www.webprime.top/logo.png" />
+        <meta property="og:url" content="https://www.webprime.top/" />
+        <meta property="og:type" content="website" />
+      
+        <!-- Twitter Card (Optional) -->
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="WebPrime - The Smarter Web Experience" />
+        <meta name="twitter:description" content="Explore WebPrime, a powerful and elegant online experience." />
+        <meta name="twitter:image" content="https://www.webprime.top/logo.png" />
+      
+        <!-- Canonical URL -->
+        <link rel="canonical" href="https://www.webprime.top/" />
+      
+        <!-- Favicon -->
+        <link rel="icon" href="logo.png" type="image/png" />
+      
+        <!-- Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-QVEN3KFEVL"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-QVEN3KFEVL');
+        </script>
+        <link rel="icon" href="logo-modified.png" type="image/png">
     <style>
         :root {
             --primary-gradient: linear-gradient(90deg, #4776E6 0%, #8E54E9 100%);
@@ -791,6 +828,20 @@
                 });
             }
         });
+        document.addEventListener("DOMContentLoaded", function () {
+    if ("Notification" in window && Notification.permission !== "granted") {
+      Notification.requestPermission().then(permission => {
+        if (permission === "granted") {
+          console.log("User allowed notifications");
+          // You can show a test notification if needed:
+          new Notification("Thanks for allowing notifications from WebPrime!");
+        } else {
+          console.log("User denied or dismissed notification permission");
+        }
+      });
+    }
+  });
+
     </script>
 </body>
 </html>
