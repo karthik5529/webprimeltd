@@ -1,0 +1,1764 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pocket Empire Builder</title>
+  <style>
+    /* Reset and Base Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Arial', sans-serif;
+    }
+    
+    :root {
+      --primary: #9b87f5;
+      --secondary: #7E69AB;
+      --dark: #1A1F2C;
+      --light: #F1F0FB;
+      --success: #4CAF50;
+      --warning: #FFC107;
+      --danger: #F44336;
+      --info: #2196F3;
+    }
+    
+    body {
+      background-color: var(--light);
+      color: var(--dark);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+    
+    /* Layout Containers */
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1rem;
+    }
+    
+    .game-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    
+    /* Header Styles */
+    header {
+      background-color: var(--primary);
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    /* Resource Bar */
+    .resource-bar {
+      display: flex;
+      justify-content: space-around;
+      background-color: white;
+      padding: 0.75rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      flex-wrap: wrap;
+    }
+    
+    .resource {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0.5rem;
+      min-width: 80px;
+    }
+    
+    .resource-icon {
+      font-size: 1.5rem;
+      margin-bottom: 0.25rem;
+    }
+    
+    .resource-label {
+      font-size: 0.75rem;
+      color: #666;
+    }
+    
+    .resource-value {
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+    
+    /* Grid System */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+    
+    /* Card Component */
+    .card {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    
+    .card-header {
+      background-color: var(--primary);
+      color: white;
+      padding: 0.75rem;
+      font-weight: bold;
+    }
+    
+    .card-body {
+      padding: 1rem;
+    }
+    
+    /* Button Styles */
+    .btn {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background-color 0.2s, transform 0.1s;
+      text-align: center;
+    }
+    
+    .btn:hover {
+      background-color: var(--secondary);
+    }
+    
+    .btn:active {
+      transform: scale(0.98);
+    }
+    
+    .btn-block {
+      display: block;
+      width: 100%;
+    }
+    
+    .btn-disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+    
+    .btn-disabled:hover {
+      background-color: #cccccc;
+    }
+    
+    /* Progress Bars */
+    .progress-container {
+      background-color: #eee;
+      border-radius: 4px;
+      height: 10px;
+      overflow: hidden;
+      margin: 0.5rem 0;
+    }
+    
+    .progress-bar {
+      height: 100%;
+      background-color: var(--primary);
+      width: 0%;
+      transition: width 0.5s ease;
+    }
+    
+    /* Building Items */
+    .building-item {
+      margin-bottom: 1rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .building-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+    
+    .building-title {
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+    
+    .building-level {
+      background-color: var(--secondary);
+      color: white;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+    }
+    
+    .building-description {
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+      color: #666;
+    }
+    
+    .building-production {
+      font-size: 0.8rem;
+      color: var(--success);
+      margin-bottom: 0.5rem;
+    }
+    
+    .building-cost {
+      display: flex;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+      color: #666;
+      margin-bottom: 0.5rem;
+    }
+    
+    .cost-item {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+    
+    /* Tabs */
+    .tabs {
+      display: flex;
+      background-color: white;
+      border-radius: 8px 8px 0 0;
+      overflow: hidden;
+    }
+    
+    .tab {
+      flex: 1;
+      padding: 0.75rem;
+      text-align: center;
+      cursor: pointer;
+      background-color: #f5f5f5;
+      transition: background-color 0.2s;
+    }
+    
+    .tab.active {
+      background-color: var(--primary);
+      color: white;
+    }
+    
+    .tab-content {
+      display: none;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    /* Notifications */
+    #notification-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1000;
+    }
+    
+    .notification {
+      background-color: white;
+      border-left: 4px solid var(--primary);
+      padding: 1rem;
+      margin-top: 0.5rem;
+      border-radius: 4px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      transform: translateX(120%);
+      transition: transform 0.3s ease-out;
+      display: flex;
+      justify-content: space-between;
+      min-width: 250px;
+    }
+    
+    .notification.show {
+      transform: translateX(0);
+    }
+    
+    .notification.success {
+      border-left-color: var(--success);
+    }
+    
+    .notification.warning {
+      border-left-color: var(--warning);
+    }
+    
+    /* Achievements */
+    .achievement {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.75rem;
+      border-radius: 4px;
+      background-color: rgba(155, 135, 245, 0.1);
+      margin-bottom: 0.5rem;
+    }
+    
+    .achievement-icon {
+      font-size: 1.5rem;
+      color: var(--primary);
+    }
+    
+    .achievement-info {
+      flex: 1;
+    }
+    
+    .achievement-title {
+      font-weight: bold;
+    }
+    
+    .achievement-desc {
+      font-size: 0.8rem;
+      color: #666;
+    }
+    
+    .achievement-progress {
+      text-align: right;
+    }
+    
+    .achievement.completed {
+      background-color: rgba(76, 175, 80, 0.1);
+    }
+    
+    .achievement.completed .achievement-icon {
+      color: var(--success);
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .resource-bar {
+        flex-wrap: wrap;
+        justify-content: space-between;
+      }
+      
+      .resource {
+        min-width: 60px;
+        padding: 0.25rem;
+      }
+      
+      .building-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .building-level {
+        margin-top: 0.25rem;
+      }
+    }
+    
+    /* Animations */
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    @keyframes slideIn {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    
+    .pulse {
+      animation: pulse 0.5s;
+    }
+    
+    .fade-in {
+      animation: fadeIn 0.3s;
+    }
+    
+    .slide-in {
+      animation: slideIn 0.3s;
+    }
+    
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0,0,0,0.5);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .modal {
+      background-color: white;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+    
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .modal-title {
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+    
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+    
+    .modal-body {
+      padding: 1rem;
+    }
+    
+    .modal-footer {
+      padding: 1rem;
+      border-top: 1px solid #eee;
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.5rem;
+    }
+    
+    /* Game specific elements */
+    .plot-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+    }
+    
+    .plot {
+      aspect-ratio: 1/1;
+      background-color: #8E5E3F;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: white;
+      position: relative;
+      overflow: hidden;
+      transition: background-color 0.3s;
+    }
+    
+    .plot.empty {
+      background-color: #8E5E3F;
+    }
+    
+    .plot.planted {
+      background-color: #4CAF50;
+    }
+    
+    .plot.ready {
+      background-color: #CDDC39;
+    }
+    
+    .plot-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: rgba(0,0,0,0.5);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    
+    .plot:hover .plot-overlay {
+      opacity: 1;
+    }
+    
+    /* Tooltip */
+    .tooltip {
+      position: relative;
+      display: inline-block;
+    }
+    
+    .tooltip-text {
+      visibility: hidden;
+      background-color: #333;
+      color: white;
+      text-align: center;
+      padding: 5px 10px;
+      border-radius: 6px;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      font-size: 0.8rem;
+      white-space: nowrap;
+    }
+    
+    .tooltip:hover .tooltip-text {
+      visibility: visible;
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Pocket Empire Builder</h1>
+    <p>Build your own farming empire!</p>
+  </header>
+
+  <main class="container game-container">
+    <section class="resource-bar">
+      <div class="resource">
+        <div class="resource-icon">💰</div>
+        <div class="resource-label">Gold</div>
+        <div class="resource-value" id="gold-value">0</div>
+      </div>
+      <div class="resource">
+        <div class="resource-icon">🌾</div>
+        <div class="resource-label">Crops</div>
+        <div class="resource-value" id="crops-value">0</div>
+      </div>
+      <div class="resource">
+        <div class="resource-icon">⚡</div>
+        <div class="resource-label">Energy</div>
+        <div class="resource-value" id="energy-value">10/10</div>
+      </div>
+      <div class="resource">
+        <div class="resource-icon">📈</div>
+        <div class="resource-label">Level</div>
+        <div class="resource-value" id="level-value">1</div>
+      </div>
+    </section>
+
+    <section class="tabs-container">
+      <div class="tabs">
+        <div class="tab active" data-tab="farm">Farm</div>
+        <div class="tab" data-tab="buildings">Buildings</div>
+        <div class="tab" data-tab="market">Market</div>
+        <div class="tab" data-tab="achievements">Achievements</div>
+      </div>
+      
+      <div id="farm" class="tab-content active">
+        <div class="card">
+          <div class="card-header">Your Farm</div>
+          <div class="card-body">
+            <p>Plant crops, wait for them to grow, and harvest them for profit!</p>
+            <div class="plot-grid" id="farm-plots">
+              <!-- Farm plots will be generated here -->
+            </div>
+          </div>
+        </div>
+        
+        <div class="card" style="margin-top: 1rem;">
+          <div class="card-header">Seeds</div>
+          <div class="card-body" id="seeds-container">
+            <!-- Seeds will be generated here -->
+          </div>
+        </div>
+      </div>
+      
+      <div id="buildings" class="tab-content">
+        <div class="card">
+          <div class="card-header">Buildings</div>
+          <div class="card-body">
+            <p>Upgrade buildings to increase production and unlock new features.</p>
+            <div id="buildings-container">
+              <!-- Buildings will be generated here -->
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div id="market" class="tab-content">
+        <div class="card">
+          <div class="card-header">Market</div>
+          <div class="card-body">
+            <p>Sell your crops for gold!</p>
+            <div id="market-container">
+              <!-- Market items will be generated here -->
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div id="achievements" class="tab-content">
+        <div class="card">
+          <div class="card-header">Achievements</div>
+          <div class="card-body">
+            <p>Complete achievements to earn rewards!</p>
+            <div id="achievements-container">
+              <!-- Achievements will be generated here -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="notification-container"></div>
+
+  <div class="modal-overlay" id="modal">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title" id="modal-title">Modal Title</div>
+        <button class="modal-close" id="modal-close">&times;</button>
+      </div>
+      <div class="modal-body" id="modal-body">
+        <!-- Modal content will be inserted here -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn" id="modal-cancel">Cancel</button>
+        <button class="btn" id="modal-confirm">Confirm</button>
+      </div>
+    </div>
+  </div>
+  <center>
+<div class="enf"> <h5>MADE BY <a href="http://webprime.top" >Webprime</a></h5>
+</center>
+</div>
+  <script>
+    // Game State and Constants
+    const SAVE_KEY = 'pocket-empire-game';
+    const AUTO_SAVE_INTERVAL = 60000; // Save every minute
+    const ENERGY_REGEN_TIME = 300000; // 5 minutes per energy
+    
+    const SEED_TYPES = {
+      corn: {
+        name: 'Corn',
+        icon: '🌽',
+        cost: 10,
+        growthTime: 60000, // 1 minute for testing (normally longer)
+        yield: 3,
+        xp: 5,
+        unlockLevel: 1
+      },
+      carrot: {
+        name: 'Carrot',
+        icon: '🥕',
+        cost: 20,
+        growthTime: 120000, // 2 minutes
+        yield: 7,
+        xp: 10,
+        unlockLevel: 2
+      },
+      wheat: {
+        name: 'Wheat',
+        icon: '🌾',
+        cost: 50,
+        growthTime: 180000, // 3 minutes
+        yield: 15,
+        xp: 20,
+        unlockLevel: 3
+      },
+      tomato: {
+        name: 'Tomato',
+        icon: '🍅',
+        cost: 100,
+        growthTime: 240000, // 4 minutes
+        yield: 30,
+        xp: 40,
+        unlockLevel: 5
+      },
+      strawberry: {
+        name: 'Strawberry',
+        icon: '🍓',
+        cost: 200,
+        growthTime: 300000, // 5 minutes
+        yield: 60,
+        xp: 80,
+        unlockLevel: 8
+      }
+    };
+    
+    const BUILDINGS = {
+      silo: {
+        name: 'Silo',
+        description: 'Increases crop storage capacity',
+        icon: '🏢',
+        maxLevel: 5,
+        baseCost: 100,
+        unlockLevel: 1,
+        effect: (level) => `Storage: +${level * 50} crops`
+      },
+      barn: {
+        name: 'Barn',
+        description: 'Generates crops over time',
+        icon: '🏚️',
+        maxLevel: 5,
+        baseCost: 200,
+        unlockLevel: 3,
+        effect: (level) => `Production: +${level} crop/min`
+      },
+      well: {
+        name: 'Well',
+        description: 'Increases maximum energy',
+        icon: '⛲',
+        maxLevel: 5,
+        baseCost: 150,
+        unlockLevel: 2,
+        effect: (level) => `Energy: +${level * 2} max`
+      },
+      windmill: {
+        name: 'Windmill',
+        description: 'Increases crop selling prices',
+        icon: '🏭',
+        maxLevel: 5,
+        baseCost: 500,
+        unlockLevel: 5,
+        effect: (level) => `Sell price: +${level * 10}%`
+      }
+    };
+    
+    const ACHIEVEMENTS = {
+      harvester: {
+        name: 'Harvester',
+        description: 'Harvest crops',
+        icon: '🧑‍🌾',
+        levels: [10, 50, 100, 500, 1000],
+        rewards: [20, 50, 100, 500, 1000]
+      },
+      richFarmer: {
+        name: 'Rich Farmer',
+        description: 'Earn gold',
+        icon: '💰',
+        levels: [100, 500, 1000, 5000, 10000],
+        rewards: [20, 50, 100, 500, 1000]
+      },
+      builder: {
+        name: 'Builder',
+        description: 'Upgrade buildings',
+        icon: '👷',
+        levels: [1, 5, 10, 15, 20],
+        rewards: [20, 50, 100, 500, 1000]
+      },
+      farmer: {
+        name: 'Farmer',
+        description: 'Plant crops',
+        icon: '🚜',
+        levels: [10, 50, 100, 500, 1000],
+        rewards: [20, 50, 100, 500, 1000]
+      }
+    };
+    
+    // Game State
+    let gameState = {
+      gold: 100,
+      crops: 0,
+      energy: 10,
+      maxEnergy: 10,
+      lastEnergyRegen: Date.now(),
+      level: 1,
+      xp: 0,
+      xpToNextLevel: 100,
+      plots: [],
+      buildings: {},
+      achievements: {},
+      stats: {
+        cropsSold: 0,
+        cropsHarvested: 0,
+        goldEarned: 0,
+        cropsPlanted: 0,
+        buildingsUpgraded: 0
+      },
+      lastSaved: Date.now(),
+      initialized: false
+    };
+    
+    // DOM Elements
+    const goldValueElement = document.getElementById('gold-value');
+    const cropsValueElement = document.getElementById('crops-value');
+    const energyValueElement = document.getElementById('energy-value');
+    const levelValueElement = document.getElementById('level-value');
+    const farmPlotsElement = document.getElementById('farm-plots');
+    const seedsContainerElement = document.getElementById('seeds-container');
+    const buildingsContainerElement = document.getElementById('buildings-container');
+    const marketContainerElement = document.getElementById('market-container');
+    const achievementsContainerElement = document.getElementById('achievements-container');
+    const notificationContainerElement = document.getElementById('notification-container');
+    const modalOverlay = document.getElementById('modal');
+    const modalTitle = document.getElementById('modal-title');
+    const modalBody = document.getElementById('modal-body');
+    const modalCloseButton = document.getElementById('modal-close');
+    const modalCancelButton = document.getElementById('modal-cancel');
+    const modalConfirmButton = document.getElementById('modal-confirm');
+    
+    // Game Functions
+    
+    // Initialize the game
+    function initGame() {
+      loadGame();
+      
+      if (!gameState.initialized) {
+        // First time setup
+        for (let i = 0; i < 9; i++) {
+          gameState.plots.push({
+            index: i,
+            status: 'empty',
+            plantedTime: null,
+            seedType: null
+          });
+        }
+        
+        // Initialize buildings
+        Object.keys(BUILDINGS).forEach(buildingId => {
+          gameState.buildings[buildingId] = {
+            level: 0,
+            unlocked: gameState.level >= BUILDINGS[buildingId].unlockLevel
+          };
+        });
+        
+        // Initialize achievements
+        Object.keys(ACHIEVEMENTS).forEach(achievementId => {
+          gameState.achievements[achievementId] = {
+            progress: 0,
+            level: 0,
+            claimed: []
+          };
+        });
+        
+        gameState.initialized = true;
+        saveGame();
+      }
+      
+      renderUI();
+      setupEventListeners();
+      startGameLoop();
+      
+      // Show welcome notification on first load
+      if (gameState.lastSaved === Date.now()) {
+        showNotification('Welcome to Pocket Empire Builder!', 'Start by planting some crops in your farm.', 'info');
+      }
+    }
+    
+    // Save game state to localStorage
+    function saveGame() {
+      gameState.lastSaved = Date.now();
+      try {
+        localStorage.setItem(SAVE_KEY, JSON.stringify(gameState));
+        console.log('Game saved successfully');
+      } catch (error) {
+        console.error('Error saving game:', error);
+        showNotification('Save Error', 'Could not save your game progress.', 'error');
+      }
+    }
+    
+    // Load game state from localStorage
+    function loadGame() {
+      try {
+        const savedGame = localStorage.getItem(SAVE_KEY);
+        if (savedGame) {
+          const loadedState = JSON.parse(savedGame);
+          // Merge saved state with default state to ensure we have all properties
+          gameState = { ...gameState, ...loadedState };
+          console.log('Game loaded successfully');
+          
+          // Calculate offline progress
+          if (gameState.lastSaved) {
+            calculateOfflineProgress(Date.now() - gameState.lastSaved);
+          }
+        }
+      } catch (error) {
+        console.error('Error loading game:', error);
+        showNotification('Load Error', 'Could not load your saved game.', 'error');
+      }
+    }
+    
+    // Calculate progress while player was away
+    function calculateOfflineProgress(timePassed) {
+      if (timePassed < 5000) return; // Less than 5 seconds, ignore
+      
+      let notification = 'While you were away:';
+      let changes = false;
+      
+      // Energy regeneration
+      const energyGained = Math.min(
+        gameState.maxEnergy - gameState.energy,
+        Math.floor(timePassed / ENERGY_REGEN_TIME)
+      );
+      if (energyGained > 0) {
+        gameState.energy += energyGained;
+        notification += `\n+${energyGained} energy regenerated`;
+        changes = true;
+      }
+      
+      // Update last energy regen time
+      gameState.lastEnergyRegen = Date.now() - (timePassed % ENERGY_REGEN_TIME);
+      
+      // Crop growth and harvesting
+      gameState.plots.forEach(plot => {
+        if (plot.status === 'planted' && plot.plantedTime) {
+          const growthTime = SEED_TYPES[plot.seedType].growthTime;
+          const timeElapsed = timePassed + (Date.now() - plot.plantedTime);
+          
+          if (timeElapsed >= growthTime) {
+            plot.status = 'ready';
+            changes = true;
+          }
+        }
+      });
+      
+      // Building production
+      if (gameState.buildings.barn && gameState.buildings.barn.level > 0) {
+        const productionRate = gameState.buildings.barn.level; // crops per minute
+        const cropsProduced = Math.floor(productionRate * timePassed / 60000);
+        
+        if (cropsProduced > 0) {
+          addCrops(cropsProduced);
+          notification += `\n+${cropsProduced} crops from barn production`;
+          changes = true;
+        }
+      }
+      
+      if (changes) {
+        showNotification('Welcome Back!', notification, 'info');
+      }
+    }
+    
+    // Main game loop
+    function startGameLoop() {
+      // Update timers every second
+      setInterval(() => {
+        updateTimers();
+        renderResources();
+      }, 1000);
+      
+      // Auto-save game
+      setInterval(() => {
+        saveGame();
+      }, AUTO_SAVE_INTERVAL);
+      
+      // Regenerate energy
+      setInterval(() => {
+        regenerateEnergy();
+      }, 10000); // Check every 10 seconds
+    }
+    
+    // Update all timers (plots, energy, etc.)
+    function updateTimers() {
+      // Update plot growth timers
+      gameState.plots.forEach((plot, index) => {
+        if (plot.status === 'planted' && plot.plantedTime) {
+          const seed = SEED_TYPES[plot.seedType];
+          const growthTime = seed.growthTime;
+          const timeElapsed = Date.now() - plot.plantedTime;
+          
+          if (timeElapsed >= growthTime) {
+            plot.status = 'ready';
+            renderPlot(index);
+            showNotification('Crops Ready!', `Your ${seed.name} is ready to harvest!`, 'success');
+          }
+        }
+      });
+      
+      // Passive income from buildings
+      if (gameState.buildings.barn && gameState.buildings.barn.level > 0) {
+        // Every full minute
+        if (Math.floor(Date.now() / 60000) > Math.floor(gameState.lastSaved / 60000)) {
+          const production = gameState.buildings.barn.level;
+          addCrops(production);
+        }
+      }
+    }
+    
+    // Regenerate energy over time
+    function regenerateEnergy() {
+      if (gameState.energy < gameState.maxEnergy) {
+        const now = Date.now();
+        const timeSinceLastRegen = now - gameState.lastEnergyRegen;
+        
+        if (timeSinceLastRegen >= ENERGY_REGEN_TIME) {
+          const energyToAdd = Math.min(
+            Math.floor(timeSinceLastRegen / ENERGY_REGEN_TIME),
+            gameState.maxEnergy - gameState.energy
+          );
+          
+          gameState.energy += energyToAdd;
+          gameState.lastEnergyRegen = now - (timeSinceLastRegen % ENERGY_REGEN_TIME);
+          
+          renderResources();
+        }
+      }
+    }
+    
+    // Resource Management
+    function addGold(amount) {
+      gameState.gold += amount;
+      gameState.stats.goldEarned += amount;
+      checkAchievements('richFarmer', gameState.stats.goldEarned);
+      renderResources();
+    }
+    
+    function spendGold(amount) {
+      if (gameState.gold >= amount) {
+        gameState.gold -= amount;
+        renderResources();
+        return true;
+      }
+      return false;
+    }
+    
+    function addCrops(amount) {
+      gameState.crops += amount;
+      renderResources();
+    }
+    
+    function spendCrops(amount) {
+      if (gameState.crops >= amount) {
+        gameState.crops -= amount;
+        renderResources();
+        return true;
+      }
+      return false;
+    }
+    
+    function useEnergy(amount) {
+      if (gameState.energy >= amount) {
+        gameState.energy -= amount;
+        renderResources();
+        return true;
+      }
+      return false;
+    }
+    
+    function addXP(amount) {
+      gameState.xp += amount;
+      
+      while (gameState.xp >= gameState.xpToNextLevel) {
+        gameState.xp -= gameState.xpToNextLevel;
+        gameState.level++;
+        gameState.xpToNextLevel = Math.floor(gameState.xpToNextLevel * 1.5);
+        
+        showNotification('Level Up!', `Congratulations! You reached level ${gameState.level}!`, 'success');
+        
+        // Unlock new features based on level
+        checkUnlocks();
+      }
+      
+      renderResources();
+    }
+    
+    // Check for new unlocks based on level
+    function checkUnlocks() {
+      // Check for building unlocks
+      Object.keys(BUILDINGS).forEach(buildingId => {
+        const building = BUILDINGS[buildingId];
+        if (gameState.level >= building.unlockLevel && (!gameState.buildings[buildingId] || !gameState.buildings[buildingId].unlocked)) {
+          if (!gameState.buildings[buildingId]) {
+            gameState.buildings[buildingId] = { level: 0, unlocked: true };
+          } else {
+            gameState.buildings[buildingId].unlocked = true;
+          }
+          showNotification('New Building Unlocked!', `You've unlocked the ${building.name}!`, 'info');
+        }
+      });
+      
+      // Render buildings to show new unlocks
+      renderBuildings();
+      
+      // Render seeds to show new unlocks
+      renderSeeds();
+    }
+    
+    // Achievement System
+    function checkAchievements(type, value) {
+      if (!gameState.achievements[type]) return;
+      
+      const achievement = gameState.achievements[type];
+      achievement.progress = value;
+      
+      const levels = ACHIEVEMENTS[type].levels;
+      const currentLevel = achievement.level;
+      
+      // Check if we've reached a new level
+      let newLevel = currentLevel;
+      while (newLevel < levels.length && value >= levels[newLevel]) {
+        newLevel++;
+      }
+      
+      if (newLevel > currentLevel) {
+        achievement.level = newLevel;
+        
+        // Show notification for each level gained
+        for (let i = currentLevel + 1; i <= newLevel; i++) {
+          if (!achievement.claimed.includes(i - 1)) {
+            showNotification(
+              'Achievement Unlocked!',
+              `${ACHIEVEMENTS[type].name} Level ${i}! Claim your reward!`,
+              'success'
+            );
+          }
+        }
+        
+        renderAchievements();
+      }
+    }
+    
+    function claimAchievementReward(type, level) {
+      const achievement = gameState.achievements[type];
+      if (achievement.level >= level + 1 && !achievement.claimed.includes(level)) {
+        const reward = ACHIEVEMENTS[type].rewards[level];
+        addGold(reward);
+        achievement.claimed.push(level);
+        showNotification('Reward Claimed!', `You received ${reward} gold!`, 'success');
+        renderAchievements();
+        return true;
+      }
+      return false;
+    }
+    
+    // UI Rendering Functions
+    function renderUI() {
+      renderResources();
+      renderPlots();
+      renderSeeds();
+      renderBuildings();
+      renderMarket();
+      renderAchievements();
+    }
+    
+    function renderResources() {
+      goldValueElement.textContent = gameState.gold;
+      cropsValueElement.textContent = gameState.crops;
+      energyValueElement.textContent = `${gameState.energy}/${gameState.maxEnergy}`;
+      levelValueElement.textContent = gameState.level;
+    }
+    
+    function renderPlots() {
+      farmPlotsElement.innerHTML = '';
+      
+      gameState.plots.forEach((plot, index) => {
+        const plotElement = document.createElement('div');
+        plotElement.className = `plot ${plot.status}`;
+        plotElement.dataset.index = index;
+        
+        let content = '';
+        let overlayContent = '';
+        
+        switch (plot.status) {
+          case 'empty':
+            content = '🏞️';
+            overlayContent = 'Plant';
+            break;
+          case 'planted':
+            const seed = SEED_TYPES[plot.seedType];
+            const timeElapsed = Date.now() - plot.plantedTime;
+            const progress = Math.min(100, (timeElapsed / seed.growthTime) * 100);
+            
+            content = seed.icon;
+            // Add progress bar
+            content += `<div class="progress-container" style="position: absolute; bottom: 5px; left: 5px; right: 5px;">
+                          <div class="progress-bar" style="width: ${progress}%"></div>
+                        </div>`;
+            break;
+          case 'ready':
+            content = SEED_TYPES[plot.seedType].icon;
+            overlayContent = 'Harvest';
+            plotElement.classList.add('pulse');
+            break;
+        }
+        
+        plotElement.innerHTML = `
+          ${content}
+          <div class="plot-overlay">
+            <span>${overlayContent}</span>
+          </div>
+        `;
+        
+        plotElement.addEventListener('click', () => handlePlotClick(index));
+        farmPlotsElement.appendChild(plotElement);
+      });
+    }
+    
+    function renderPlot(index) {
+      const plotElements = document.querySelectorAll('.plot');
+      if (index < plotElements.length) {
+        const plot = gameState.plots[index];
+        const plotElement = plotElements[index];
+        
+        // Update class
+        plotElement.className = `plot ${plot.status}`;
+        
+        let content = '';
+        let overlayContent = '';
+        
+        switch (plot.status) {
+          case 'empty':
+            content = '🏞️';
+            overlayContent = 'Plant';
+            break;
+          case 'planted':
+            const seed = SEED_TYPES[plot.seedType];
+            const timeElapsed = Date.now() - plot.plantedTime;
+            const progress = Math.min(100, (timeElapsed / seed.growthTime) * 100);
+            
+            content = seed.icon;
+            // Add progress bar
+            content += `<div class="progress-container" style="position: absolute; bottom: 5px; left: 5px; right: 5px;">
+                          <div class="progress-bar" style="width: ${progress}%"></div>
+                        </div>`;
+            break;
+          case 'ready':
+            content = SEED_TYPES[plot.seedType].icon;
+            overlayContent = 'Harvest';
+            plotElement.classList.add('pulse');
+            break;
+        }
+        
+        plotElement.innerHTML = `
+          ${content}
+          <div class="plot-overlay">
+            <span>${overlayContent}</span>
+          </div>
+        `;
+      }
+    }
+    
+    function renderSeeds() {
+      seedsContainerElement.innerHTML = '';
+      
+      Object.keys(SEED_TYPES).forEach(seedId => {
+        const seed = SEED_TYPES[seedId];
+        
+        // Only show seeds that the player has unlocked
+        if (gameState.level >= seed.unlockLevel) {
+          const seedElement = document.createElement('div');
+          seedElement.className = 'building-item';
+          
+          seedElement.innerHTML = `
+            <div class="building-header">
+              <span class="building-title">${seed.icon} ${seed.name}</span>
+            </div>
+            <div class="building-description">Grows in ${formatTime(seed.growthTime)}</div>
+            <div class="building-production">Yield: ${seed.yield} crops</div>
+            <div class="building-cost">
+              <span class="cost-item">
+                <span>💰</span> ${seed.cost}
+              </span>
+            </div>
+            <button class="btn btn-block" data-seed="${seedId}">Plant (${seed.cost} gold)</button>
+          `;
+          
+          const plantButton = seedElement.querySelector('button');
+          plantButton.addEventListener('click', () => handleSeedSelect(seedId));
+          
+          if (gameState.gold < seed.cost) {
+            plantButton.classList.add('btn-disabled');
+          }
+          
+          seedsContainerElement.appendChild(seedElement);
+        }
+      });
+    }
+    
+    function renderBuildings() {
+      buildingsContainerElement.innerHTML = '';
+      
+      Object.keys(BUILDINGS).forEach(buildingId => {
+        const building = BUILDINGS[buildingId];
+        const userBuilding = gameState.buildings[buildingId] || { level: 0, unlocked: false };
+        
+        // Only show buildings that the player has unlocked
+        if (userBuilding.unlocked) {
+          const buildingElement = document.createElement('div');
+          buildingElement.className = 'building-item';
+          
+          const nextLevel = userBuilding.level + 1;
+          const isMaxLevel = userBuilding.level >= building.maxLevel;
+          const upgradeCost = Math.floor(building.baseCost * Math.pow(1.5, userBuilding.level));
+          
+          buildingElement.innerHTML = `
+            <div class="building-header">
+              <span class="building-title">${building.icon} ${building.name}</span>
+              <span class="building-level">Level ${userBuilding.level}</span>
+            </div>
+            <div class="building-description">${building.description}</div>
+            <div class="building-production">${building.effect(userBuilding.level)}</div>
+            ${!isMaxLevel ? `
+              <div class="building-cost">
+                <span class="cost-item">
+                  <span>💰</span> ${upgradeCost}
+                </span>
+              </div>
+              <div class="building-production">Next level: ${building.effect(nextLevel)}</div>
+              <button class="btn btn-block" data-building="${buildingId}">Upgrade (${upgradeCost} gold)</button>
+            ` : `
+              <div class="building-cost">
+                <span class="cost-item">Maximum level reached</span>
+              </div>
+              <button class="btn btn-block btn-disabled">Maxed Out</button>
+            `}
+          `;
+          
+          if (!isMaxLevel) {
+            const upgradeButton = buildingElement.querySelector('button');
+            upgradeButton.addEventListener('click', () => handleBuildingUpgrade(buildingId));
+            
+            if (gameState.gold < upgradeCost) {
+              upgradeButton.classList.add('btn-disabled');
+            }
+          }
+          
+          buildingsContainerElement.appendChild(buildingElement);
+        }
+      });
+    }
+    
+    function renderMarket() {
+      marketContainerElement.innerHTML = '';
+      
+      const sellElement = document.createElement('div');
+      sellElement.className = 'building-item';
+      
+      // Calculate sell price with windmill bonus
+      const windmillLevel = gameState.buildings.windmill ? gameState.buildings.windmill.level : 0;
+      const sellBonus = 1 + (windmillLevel * 0.1); // 10% per level
+      const sellPrice = Math.floor(2 * sellBonus); // Base price is 2 gold per crop
+      
+      sellElement.innerHTML = `
+        <div class="building-header">
+          <span class="building-title">🌾 Sell Crops</span>
+        </div>
+        <div class="building-description">Sell your crops for gold</div>
+        <div class="building-production">Current price: ${sellPrice} gold per crop</div>
+        <div class="tooltip">
+          <span class="cost-item">
+            <span>🏭</span> Windmill bonus: +${windmillLevel * 10}%
+          </span>
+          <span class="tooltip-text">Upgrade your windmill to increase selling prices</span>
+        </div>
+        <div style="margin-top: 10px;">
+          <label for="sell-amount">Amount to sell:</label>
+          <input type="range" id="sell-amount" min="1" max="${gameState.crops}" value="${Math.min(10, gameState.crops)}" style="width: 100%;">
+          <div style="display: flex; justify-content: space-between;">
+            <span>1</span>
+            <span id="sell-amount-value">${Math.min(10, gameState.crops)}</span>
+            <span>${gameState.crops}</span>
+          </div>
+          <button class="btn btn-block" id="sell-button">Sell Crops</button>
+        </div>
+      `;
+      
+      marketContainerElement.appendChild(sellElement);
+      
+      // Set up sell slider
+      const sellAmountInput = document.getElementById('sell-amount');
+      const sellAmountValue = document.getElementById('sell-amount-value');
+      const sellButton = document.getElementById('sell-button');
+      
+      sellAmountInput.addEventListener('input', () => {
+        sellAmountValue.textContent = sellAmountInput.value;
+      });
+      
+      sellButton.addEventListener('click', () => {
+        const amount = parseInt(sellAmountInput.value);
+        if (amount > 0 && amount <= gameState.crops) {
+          spendCrops(amount);
+          const goldEarned = amount * sellPrice;
+          addGold(goldEarned);
+          gameState.stats.cropsSold += amount;
+          showNotification('Crops Sold!', `You sold ${amount} crops for ${goldEarned} gold!`, 'success');
+        }
+      });
+      
+      // Disable button if no crops
+      if (gameState.crops === 0) {
+        sellButton.classList.add('btn-disabled');
+        sellAmountInput.disabled = true;
+      }
+    }
+    
+    function renderAchievements() {
+      achievementsContainerElement.innerHTML = '';
+      
+      Object.keys(ACHIEVEMENTS).forEach(achievementId => {
+        const achievement = ACHIEVEMENTS[achievementId];
+        const userProgress = gameState.achievements[achievementId] || { progress: 0, level: 0, claimed: [] };
+        
+        for (let i = 0; i < achievement.levels.length; i++) {
+          const level = i;
+          const target = achievement.levels[level];
+          const completed = userProgress.progress >= target;
+          const claimed = userProgress.claimed.includes(level);
+          const canClaim = completed && !claimed;
+          
+          const achievementElement = document.createElement('div');
+          achievementElement.className = `achievement ${completed ? 'completed' : ''}`;
+          
+          const progressPercent = Math.min(100, (userProgress.progress / target) * 100);
+          
+          achievementElement.innerHTML = `
+            <div class="achievement-icon">${achievement.icon}</div>
+            <div class="achievement-info">
+              <div class="achievement-title">${achievement.name} ${level + 1}</div>
+              <div class="achievement-desc">${achievement.description} (${userProgress.progress}/${target})</div>
+              <div class="progress-container">
+                <div class="progress-bar" style="width: ${progressPercent}%"></div>
+              </div>
+            </div>
+            <div class="achievement-progress">
+              ${canClaim ? `
+                <button class="btn claim-reward" data-type="${achievementId}" data-level="${level}">
+                  Claim ${achievement.rewards[level]} 💰
+                </button>
+              ` : claimed ? `
+                <span style="color: var(--success)">Claimed</span>
+              ` : `
+                <span>${Math.floor(progressPercent)}%</span>
+              `}
+            </div>
+          `;
+          
+          if (canClaim) {
+            const claimButton = achievementElement.querySelector('.claim-reward');
+            claimButton.addEventListener('click', () => {
+              claimAchievementReward(achievementId, level);
+            });
+          }
+          
+          achievementsContainerElement.appendChild(achievementElement);
+        }
+      });
+    }
+    
+    // Event Handlers
+    function setupEventListeners() {
+      // Tab switching
+      const tabs = document.querySelectorAll('.tab');
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          tabs.forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          
+          const tabContents = document.querySelectorAll('.tab-content');
+          tabContents.forEach(content => content.classList.remove('active'));
+          
+          const tabName = tab.dataset.tab;
+          document.getElementById(tabName).classList.add('active');
+        });
+      });
+      
+      // Modal close button
+      modalCloseButton.addEventListener('click', () => {
+        modalOverlay.style.display = 'none';
+      });
+      
+      // Modal cancel button
+      modalCancelButton.addEventListener('click', () => {
+        modalOverlay.style.display = 'none';
+      });
+      
+      // Save game when page is closed
+      window.addEventListener('beforeunload', () => {
+        saveGame();
+      });
+      
+      // Button to manually save game
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 's' && (e.ctrlKey || e.metaKey)) {
+          e.preventDefault();
+          saveGame();
+          showNotification('Game Saved', 'Your progress has been saved.', 'info');
+        }
+      });
+    }
+    
+    function handlePlotClick(index) {
+      const plot = gameState.plots[index];
+      
+      switch (plot.status) {
+        case 'empty':
+          showSeedSelectionModal(index);
+          break;
+        case 'ready':
+          harvestPlot(index);
+          break;
+        case 'planted':
+          showPlotInfoModal(index);
+          break;
+      }
+    }
+    
+    function showSeedSelectionModal(plotIndex) {
+      modalTitle.textContent = 'Select Seed';
+      modalBody.innerHTML = '';
+      
+      Object.keys(SEED_TYPES).forEach(seedId => {
+        const seed = SEED_TYPES[seedId];
+        
+        // Only show seeds that the player has unlocked
+        if (gameState.level >= seed.unlockLevel) {
+          const seedElement = document.createElement('div');
+          seedElement.className = 'building-item';
+          
+          seedElement.innerHTML = `
+            <div class="building-header">
+              <span class="building-title">${seed.icon} ${seed.name}</span>
+            </div>
+            <div class="building-description">Grows in ${formatTime(seed.growthTime)}</div>
+            <div class="building-production">Yield: ${seed.yield} crops</div>
+            <div class="building-cost">
+              <span class="cost-item">
+                <span>💰</span> ${seed.cost}
+              </span>
+              <span class="cost-item">
+                <span>⚡</span> 1
+              </span>
+            </div>
+            <button class="btn btn-block seed-select" data-seed="${seedId}">Plant (${seed.cost} gold)</button>
+          `;
+          
+          const plantButton = seedElement.querySelector('.seed-select');
+          
+          if (gameState.gold < seed.cost || gameState.energy < 1) {
+            plantButton.classList.add('btn-disabled');
+          } else {
+            plantButton.addEventListener('click', () => {
+              plantSeed(plotIndex, seedId);
+              modalOverlay.style.display = 'none';
+            });
+          }
+          
+          modalBody.appendChild(seedElement);
+        }
+      });
+      
+      modalConfirmButton.style.display = 'none';
+      modalCancelButton.textContent = 'Close';
+      modalOverlay.style.display = 'flex';
+    }
+    
+    function showPlotInfoModal(plotIndex) {
+      const plot = gameState.plots[plotIndex];
+      const seed = SEED_TYPES[plot.seedType];
+      
+      if (plot.status === 'planted') {
+        const timeElapsed = Date.now() - plot.plantedTime;
+        const timeRemaining = Math.max(0, seed.growthTime - timeElapsed);
+        const progress = Math.min(100, (timeElapsed / seed.growthTime) * 100);
+        
+        modalTitle.textContent = `${seed.name} Growth`;
+        modalBody.innerHTML = `
+          <div style="text-align: center; margin-bottom: 1rem;">
+            <div style="font-size: 2rem;">${seed.icon}</div>
+            <h3>${seed.name}</h3>
+          </div>
+          <div class="progress-container" style="height: 20px; margin: 1rem 0;">
+            <div class="progress-bar" style="width: ${progress}%"></div>
+          </div>
+          <p>Growth: ${Math.floor(progress)}% complete</p>
+          <p>Time remaining: ${formatTime(timeRemaining)}</p>
+        `;
+        
+        modalConfirmButton.style.display = 'none';
+        modalCancelButton.textContent = 'Close';
+        modalOverlay.style.display = 'flex';
+      }
+    }
+    
+    function handleSeedSelect(seedId) {
+      if (gameState.energy < 1) {
+        showNotification('Not Enough Energy', 'You need 1 energy to plant.', 'warning');
+        return;
+      }
+      
+      showSeedSelectionModal(-1);
+    }
+    
+    function plantSeed(plotIndex, seedId) {
+      const seed = SEED_TYPES[seedId];
+      
+      if (gameState.gold >= seed.cost && gameState.energy >= 1) {
+        spendGold(seed.cost);
+        useEnergy(1);
+        
+        gameState.plots[plotIndex] = {
+          index: plotIndex,
+          status: 'planted',
+          plantedTime: Date.now(),
+          seedType: seedId
+        };
+        
+        gameState.stats.cropsPlanted++;
+        checkAchievements('farmer', gameState.stats.cropsPlanted);
+        
+        renderPlot(plotIndex);
+        showNotification('Seed Planted!', `You planted ${seed.name}.`, 'success');
+        
+        // Save game after planting
+        saveGame();
+      } else {
+        if (gameState.gold < seed.cost) {
+          showNotification('Not Enough Gold', `You need ${seed.cost} gold to plant this seed.`, 'warning');
+        } else if (gameState.energy < 1) {
+          showNotification('Not Enough Energy', 'You need 1 energy to plant.', 'warning');
+        }
+      }
+    }
+    
+    function harvestPlot(index) {
+      if (gameState.energy >= 1) {
+        const plot = gameState.plots[index];
+        const seed = SEED_TYPES[plot.seedType];
+        
+        useEnergy(1);
+        addCrops(seed.yield);
+        addXP(seed.xp);
+        
+        // Reset plot
+        plot.status = 'empty';
+        plot.plantedTime = null;
+        plot.seedType = null;
+        
+        gameState.stats.cropsHarvested += seed.yield;
+        checkAchievements('harvester', gameState.stats.cropsHarvested);
+        
+        renderPlot(index);
+        showNotification('Harvest Complete!', `You harvested ${seed.yield} ${seed.name}.`, 'success');
+        
+        // Save game after harvesting
+        saveGame();
+      } else {
+        showNotification('Not Enough Energy', 'You need 1 energy to harvest.', 'warning');
+      }
+    }
+    
+    function handleBuildingUpgrade(buildingId) {
+      const building = BUILDINGS[buildingId];
+      const userBuilding = gameState.buildings[buildingId];
+      
+      if (userBuilding.level >= building.maxLevel) {
+        showNotification('Max Level Reached', `${building.name} is already at maximum level.`, 'info');
+        return;
+      }
+      
+      const upgradeCost = Math.floor(building.baseCost * Math.pow(1.5, userBuilding.level));
+      
+      if (gameState.gold >= upgradeCost) {
+        spendGold(upgradeCost);
+        userBuilding.level++;
+        
+        // Apply building effects
+        applyBuildingEffects(buildingId);
+        
+        gameState.stats.buildingsUpgraded++;
+        checkAchievements('builder', gameState.stats.buildingsUpgraded);
+        
+        renderBuildings();
+        renderResources();
+        
+        showNotification('Building Upgraded!', `${building.name} upgraded to level ${userBuilding.level}!`, 'success');
+        
+        // Save game after upgrading
+        saveGame();
+      } else {
+        showNotification('Not Enough Gold', `You need ${upgradeCost} gold to upgrade this building.`, 'warning');
+      }
+    }
+    
+    function applyBuildingEffects(buildingId) {
+      const userBuilding = gameState.buildings[buildingId];
+      
+      switch (buildingId) {
+        case 'silo':
+          // No direct effect, increases storage capacity in the future
+          break;
+        case 'well':
+          // Increases max energy
+          gameState.maxEnergy = 10 + (userBuilding.level * 2);
+          break;
+        case 'barn':
+          // Passive crop generation (handled in updateTimers)
+          break;
+        case 'windmill':
+          // Increases selling price (handled in market)
+          renderMarket();
+          break;
+      }
+    }
+    
+    // Helper Functions
+    function formatTime(ms) {
+      if (ms < 60000) {
+        return `${Math.ceil(ms / 1000)} seconds`;
+      } else {
+        const minutes = Math.floor(ms / 60000);
+        const seconds = Math.ceil((ms % 60000) / 1000);
+        return `${minutes}m ${seconds}s`;
+      }
+    }
+    
+    function showNotification(title, message, type = 'info') {
+      const notification = document.createElement('div');
+      notification.className = `notification ${type}`;
+      notification.innerHTML = `
+        <div>
+          <strong>${title}</strong>
+          <p>${message}</p>
+        </div>
+        <button class="notification-close">&times;</button>
+      `;
+      
+      notificationContainerElement.appendChild(notification);
+      
+      // Show notification with animation
+      setTimeout(() => {
+        notification.classList.add('show');
+      }, 10);
+      
+      // Auto-hide after 5 seconds
+      setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => {
+          if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+          }
+        }, 300);
+      }, 5000);
+      
+      // Close button
+      const closeButton = notification.querySelector('.notification-close');
+      closeButton.addEventListener('click', () => {
+        notification.classList.remove('show');
+        setTimeout(() => {
+          if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+          }
+        }, 300);
+      });
+    }
+    
+    // Start the game
+    document.addEventListener('DOMContentLoaded', initGame);
+  </script>
+</body>
+</html>
