@@ -1,0 +1,2763 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Tic Tac Toe Arena</title>
+    <style>
+        :root {
+            --primary: #9b87f5;
+            --primary-dark: #7E69AB;
+            --primary-light: #D6BCFA;
+            --accent: #F97316;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --border-radius: 12px;
+            --animation-speed: 0.3s;
+        }
+
+        .dark-mode {
+            --primary: #9b87f5;
+            --primary-dark: #6E59A5;
+            --primary-light: #8B5CF6;
+            --accent: #F97316;
+            --text-primary: #f1f1f1;
+            --text-secondary: #cccccc;
+            --bg-primary: #1A1F2C;
+            --bg-secondary: #2D3748;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            transition: background-color 0.3s;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background-color: var(--bg-secondary);
+            box-shadow: var(--shadow);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-icon {
+            display: inline-block;
+            margin-right: 0.5rem;
+            animation: spin 4s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .coin-display {
+            display: flex;
+            align-items: center;
+            background-color: var(--bg-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+        }
+
+        .coin-icon {
+            color: gold;
+            margin-right: 0.5rem;
+        }
+
+        .container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .screen {
+            display: none;
+            width: 100%;
+            animation: fadeIn 0.5s;
+        }
+
+        .screen.active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            margin-bottom: 2rem;
+            text-align: center;
+            color: var(--primary);
+        }
+
+        .animated-title {
+            position: relative;
+            display: inline-block;
+        }
+
+        .animated-title::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 3px;
+            bottom: -5px;
+            left: 0;
+            background-color: var(--primary);
+            transform: scaleX(0);
+            transform-origin: bottom right;
+            transition: transform 0.5s;
+            animation: titleUnderline 2s ease-in-out infinite;
+        }
+
+        @keyframes titleUnderline {
+            0% { transform: scaleX(0); transform-origin: bottom left; }
+            50% { transform: scaleX(1); transform-origin: bottom left; }
+            50.1% { transform: scaleX(1); transform-origin: bottom right; }
+            100% { transform: scaleX(0); transform-origin: bottom right; }
+        }
+
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: transform var(--animation-speed), background-color var(--animation-speed);
+            box-shadow: var(--shadow);
+        }
+
+        .btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--bg-primary);
+        }
+
+        .options-group {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            width: 100%;
+            max-width: 300px;
+            margin-top: 1.5rem;
+        }
+
+        .option-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        select, .toggle-wrapper {
+            padding: 0.5rem;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--primary-light);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            width: 150px;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .toggle-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+
+        .toggle {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--bg-secondary);
+            transition: .4s;
+            border-radius: 30px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        .toggle:checked + .toggle-slider {
+            background-color: var(--primary);
+        }
+
+        .toggle:checked + .toggle-slider:before {
+            transform: translateX(30px);
+        }
+
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 2rem 0;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .game-board.size-4 {
+            grid-template-columns: repeat(4, 1fr);
+            max-width: 400px;
+        }
+
+        .cell {
+            aspect-ratio: 1/1;
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+            box-shadow: var(--shadow);
+        }
+
+        .cell:hover {
+            background-color: var(--primary-light);
+            transform: scale(1.05);
+        }
+
+        .cell.x {
+            color: var(--primary);
+        }
+
+        .cell.o {
+            color: var(--accent);
+        }
+
+        .status-message {
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+            text-align: center;
+            min-height: 2rem;
+        }
+
+        .blinking {
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .searching-animation {
+            width: 100%;
+            height: 5px;
+            background-color: var(--bg-secondary);
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .searching-bar {
+            height: 100%;
+            width: 30%;
+            background-color: var(--primary);
+            border-radius: 5px;
+            animation: searchingAnimation 2s infinite;
+        }
+
+        @keyframes searchingAnimation {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(300%); }
+        }
+
+        .win-line {
+            position: absolute;
+            background-color: rgba(155, 135, 245, 0.5);
+            z-index: 1;
+            transform-origin: center;
+            animation: winLineAppear 0.5s;
+        }
+
+        @keyframes winLineAppear {
+            from { transform: scaleX(0) scaleY(0); }
+            to { transform: scaleX(1) scaleY(1); }
+        }
+
+        .streak-display {
+            margin-top: 1rem;
+            font-size: 1rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .multiplier {
+            color: var(--accent);
+        }
+
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: auto;
+            background-color: var(--bg-secondary);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            background-color: var(--primary);
+            color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            transform: translateX(120%);
+            transition: transform 0.3s;
+            z-index: 1000;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* New styles for countdown and thinking animation */
+        .countdown {
+            font-size: 5rem;
+            font-weight: bold;
+            color: var(--primary);
+            text-align: center;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .thinking {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        .thinking-dot {
+            width: 10px;
+            height: 10px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            margin: 0 5px;
+            animation: thinkingDot 1.4s infinite ease-in-out;
+        }
+
+        .thinking-dot:nth-child(1) { animation-delay: 0s; }
+        .thinking-dot:nth-child(2) { animation-delay: 0.2s; }
+        .thinking-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes thinkingDot {
+            0%, 100% { transform: scale(0.2); opacity: 0.5; }
+            50% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Shop and color customization modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .modal.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background-color: var(--bg-primary);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+
+        .shop-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .shop-item {
+            border: 1px solid var(--primary-light);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .shop-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .shop-item.owned {
+            border-color: gold;
+        }
+
+        .shop-item.active {
+            background-color: var(--primary-light);
+        }
+
+        .color-preview {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-bottom: 0.5rem;
+        }
+
+        .item-name {
+            font-size: 0.9rem;
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .item-price {
+            display: flex;
+            align-items: center;
+            font-size: 0.8rem;
+        }
+
+        .difficulty-modal {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        .difficulty-options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .difficulty-option {
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            background-color: var(--bg-secondary);
+            cursor: pointer;
+            transition: transform 0.2s;
+            text-align: center;
+        }
+
+        .difficulty-option:hover {
+            transform: translateY(-5px);
+            background-color: var(--primary-light);
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .game-board {
+                max-width: 280px;
+            }
+            
+            .game-board.size-4 {
+                max-width: 280px;
+            }
+            
+            .cell {
+                font-size: 1.5rem;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .countdown {
+                font-size: 3rem;
+            }
+            .header-actions {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .user-profile, .leaderboard-button {
+                font-size: 0.9rem;
+                padding: 0.3rem 0.8rem;
+            }
+
+            .shop-items {
+                grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            }
+        }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            background-color: var(--bg-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            margin-right: 1rem;
+            max-width: 150px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .user-icon {
+            margin-right: 0.5rem;
+        }
+
+        .leaderboard-button {
+            display: flex;
+            align-items: center;
+            background-color: var(--primary);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .leaderboard-button:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .trophy-icon {
+            margin-right: 0.5rem;
+        }
+        .username-input {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--primary-light);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        /* New styles for leaderboard */
+        .leaderboard-tabs {
+            display: flex;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--primary-light);
+        }
+
+        .leaderboard-tab {
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .leaderboard-tab.active {
+            border-bottom: 2px solid var(--primary);
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .leaderboard-table th,
+        .leaderboard-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--bg-secondary);
+        }
+
+        .leaderboard-table th {
+            font-weight: bold;
+            color: var(--text-secondary);
+        }
+
+        .leaderboard-table tr.highlight {
+            background-color: var(--primary-light);
+        }
+
+        .rank-number {
+            font-weight: bold;
+            width: 40px;
+        }
+
+        .rank-1, .rank-2, .rank-3 {
+            font-weight: bold;
+        }
+
+        .rank-1 {
+            color: gold;
+        }
+
+        .rank-2 {
+            color: silver;
+        }
+
+        .rank-3 {
+            color: #cd7f32; /* Bronze */
+        }
+
+        .user-rank-indicator {
+            text-align: center;
+            padding: 0.5rem;
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            margin-top: 1rem;
+            font-weight: bold;
+        }
+
+        /* Countdown for leaderboard */
+        .leaderboard-countdown {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* Font options */
+        .font-options {
+            margin-top: 2rem;
+        }
+
+        .font-preview {
+            width: 100%;
+            padding: 0.5rem;
+            text-align: center;
+            border-radius: var(--border-radius);
+            background-color: var(--bg-secondary);
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <span class="logo-icon">🎮</span>
+            TicTacToe Arena
+        </div>
+        <div class="header-actions">
+            <div class="user-profile" id="user-profile">
+                <span class="user-icon">👤</span>
+                <span id="username-display">Guest</span>
+            </div>
+            <div class="leaderboard-button" id="leaderboard-button">
+                <span class="trophy-icon">🏆</span>
+                <span>Leaderboard</span>
+            </div>
+            <div class="mode-toggle">
+                <label class="toggle-wrapper">
+                    <input type="checkbox" class="toggle" id="dark-mode-toggle">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+            <div class="coin-display" id="shop-button">
+                <span class="coin-icon">🪙</span>
+                <span id="coin-count">0</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Home Screen -->
+        <div class="screen active" id="home-screen">
+            <h1 class="animated-title">Digital Tic Tac Toe Arena</h1>
+            <div class="btn-group">
+                <button class="btn" id="single-player-btn">Single Player</button>
+                <button class="btn" id="multiplayer-btn">Multiplayer</button>
+            </div>
+            <div class="options-group">
+                <div class="option-row">
+                    <label for="board-type">Board Type:</label>
+                    <select id="board-type">
+                        <option value="3">3x3 (Classic)</option>
+                        <option value="4">4x4 (Connect 4)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div class="screen" id="game-screen">
+            <div class="status-message" id="status-message">Your turn (X)</div>
+            <div id="thinking-indicator" class="thinking" style="display: none;">
+                <div class="thinking-dot"></div>
+                <div class="thinking-dot"></div>
+                <div class="thinking-dot"></div>
+            </div>
+            <div class="game-board" id="game-board"></div>
+            <div class="streak-display" id="streak-display"></div>
+            <div class="btn-group">
+                <button class="btn" id="restart-btn">Restart</button>
+                <button class="btn btn-secondary" id="home-btn">Back to Home</button>
+            </div>
+        </div>
+
+        <!-- Multiplayer Search Screen -->
+        <div class="screen" id="search-screen">
+            <h1>Searching for an opponent...</h1>
+            <div class="searching-animation">
+                <div class="searching-bar"></div>
+            </div>
+            <button class="btn btn-secondary" id="cancel-search-btn">Cancel</button>
+        </div>
+
+        <!-- Countdown Screen -->
+        <div class="screen" id="countdown-screen">
+            <h1>Match starting in</h1>
+            <div class="countdown" id="countdown">5</div>
+        </div>
+    </div>
+
+    <!-- Difficulty Modal -->
+    <div class="modal difficulty-modal" id="difficulty-modal">
+        <div class="modal-content">
+            <button class="modal-close" id="difficulty-modal-close">×</button>
+            <h2>Select Difficulty</h2>
+            <div class="difficulty-options">
+                <div class="difficulty-option" data-difficulty="easy">
+                    <h3>Easy</h3>
+                    <p>For casual players. The AI makes slow, sometimes random moves.</p>
+                </div>
+                <div class="difficulty-option" data-difficulty="medium">
+                    <h3>Medium</h3>
+                    <p>Balanced challenge. The AI thinks more carefully.</p>
+                </div>
+                <div class="difficulty-option" data-difficulty="hard">
+                    <h3>Hard</h3>
+                    <p>For experts. The AI uses optimal strategy.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shop Modal -->
+    <div class="modal" id="shop-modal">
+        <div class="modal-content">
+            <button class="modal-close" id="shop-modal-close">×</button>
+            <h2>Customize Your Experience</h2>
+            <p>Use your coins to unlock new colors and fonts for the game!</p>
+            
+            <div class="leaderboard-tabs">
+                <div class="leaderboard-tab active" data-tab="colors">Colors</div>
+                <div class="leaderboard-tab" data-tab="fonts">Fonts</div>
+            </div>
+            
+            <div class="shop-tab active" id="colors-tab">
+                <h3>Background Colors</h3>
+                <div class="shop-items" id="bg-colors-container">
+                    <!-- Background colors will be populated here -->
+                </div>
+                
+                <h3>Text Colors</h3>
+                <div class="shop-items" id="text-colors-container">
+                    <!-- Text colors will be populated here -->
+                </div>
+            </div>
+            
+            <div class="shop-tab" id="fonts-tab" style="display: none;">
+                <h3>Game Fonts</h3>
+                <div class="shop-items" id="fonts-container">
+                    <!-- Fonts will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Username Modal -->
+    <div class="modal" id="username-modal">
+        <div class="modal-content">
+            <h2>Welcome to TicTacToe Arena!</h2>
+            <p>May I know your good name, please?</p>
+            <input type="text" class="username-input" id="username-input" placeholder="Enter your name">
+            <button class="btn" id="username-submit">Let's Play!</button>
+        </div>
+    </div>
+
+    <!-- Leaderboard Modal -->
+    <div class="modal" id="leaderboard-modal">
+        <div class="modal-content">
+            <button class="modal-close" id="leaderboard-modal-close">×</button>
+            <h2>Leaderboard</h2>
+            
+            <div class="leaderboard-tabs">
+                <div class="leaderboard-tab active" data-tab="daily">Daily</div>
+                <div class="leaderboard-tab" data-tab="weekly">Weekly</div>
+                <div class="leaderboard-tab" data-tab="monthly">Monthly</div>
+            </div>
+            
+            <div class="leaderboard-tab-content active" id="daily-leaderboard">
+                <table class="leaderboard-table" id="daily-table">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Player</th>
+                            <th>Coins</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Daily leaderboard will be populated here -->
+                    </tbody>
+                </table>
+                <div class="user-rank-indicator" id="daily-rank"></div>
+                <div class="leaderboard-countdown" id="daily-countdown"></div>
+            </div>
+            
+            <div class="leaderboard-tab-content" id="weekly-leaderboard" style="display: none;">
+                <table class="leaderboard-table" id="weekly-table">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Player</th>
+                            <th>Coins</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Weekly leaderboard will be populated here -->
+                    </tbody>
+                </table>
+                <div class="user-rank-indicator" id="weekly-rank"></div>
+                <div class="leaderboard-countdown" id="weekly-countdown"></div>
+            </div>
+            
+            <div class="leaderboard-tab-content" id="monthly-leaderboard" style="display: none;">
+                <table class="leaderboard-table" id="monthly-table">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Player</th>
+                            <th>Coins</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Monthly leaderboard will be populated here -->
+                    </tbody>
+                </table>
+                <div class="user-rank-indicator" id="monthly-rank"></div>
+                <div class="leaderboard-countdown" id="monthly-countdown"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="notification" id="notification"></div>
+
+    <footer>
+        Made with <a href="https://webprime.top" target="_blank">WebPrime</a>
+    </footer>
+
+    <script>
+        
+        // Game state and variables
+        const state = {
+            currentScreen: 'home-screen',
+            gameBoard: [],
+            currentPlayer: 'x',
+            gameMode: null,
+            boardSize: 3,
+            difficulty: 'medium',
+            gameActive: false,
+            coins: 0,
+            winStreak: 0,
+            playerSymbol: 'x',
+            opponentSymbol: 'o',
+            botName: '',
+            colorTheme: {
+                bg: '#ffffff',
+                text: '#333333',
+                bgSecondary: '#f8f9fa',
+                textSecondary: '#666666',
+                primary: '#9b87f5',
+                primaryDark: '#7E69AB',
+                primaryLight: '#D6BCFA',
+                accent: '#F97316'
+            },
+            unlockedColors: {
+                bg: ['#ffffff', '#1A1F2C'],
+                text: ['#333333', '#f1f1f1']
+            },
+            activeColors: {
+                bg: '#ffffff',
+                text: '#333333'
+            },
+            activeFont: 'Roboto',
+            unlockedFonts: ['Roboto', 'Open Sans'],
+            leaderboard: {
+                daily: [],
+                weekly: [],
+                monthly: []
+            },
+            userRanks: {
+                daily: 0,
+                weekly: 0,
+                monthly: 0
+            },
+            leaderboardEndTimes: {
+                daily: null,
+                weekly: null,
+                monthly: null
+            }
+        };
+
+
+        // Bot names for multiplayer
+        const botNames = [
+            "AlexBot", "BinaryBrain", "CodeMaster", "DigitalSage", "ElectronWiz",
+            "FusionMind", "GigaThink", "HyperLogic", "IntelliCore", "JavaJedi",
+            "KnowledgeNode", "LogicLeap", "MegaMind", "NeuralNinja", "OmegaBot",
+            "PixelPro", "QuantumQue", "RoboReason", "SiliconSage", "TechTitan",
+            "UltraBot", "VirtualVision", "WebWizard", "XenonX", "YottaYoda",
+            "ZenithZero", "ArchonAI", "ByteBuddy", "CyberChamp", "DataDriven",
+            "EtherExpert", "FloatFlex", "GridGuru", "HashHandler", "IconicAI",
+            "JoltJuggler", "KilobitKing", "LaserLogic", "MatrixMaster", "NetNinja",
+            "OrbitOracle", "PolygonPro", "QueryQuest", "RasterRanger", "ScriptSage",
+            "TensorTech", "UnityUser", "VectorVision", "WireWizard", "XmlXpert"
+        ];
+
+        // Available colors in the shop
+        const shopColors = {
+            bg: [
+                { name: "Light", color: "#ffffff", price: 0, default: true },
+                { name: "Dark", color: "#1A1F2C", price: 0, default: true },
+                { name: "Navy", color: "#1e3a8a", price: 500 },
+                { name: "Forest", color: "#064e3b", price: 500 },
+                { name: "Crimson", color: "#9f1239", price: 800 },
+                { name: "Violet", color: "#4c1d95", price: 800 },
+                { name: "Black", color: "#000000", price: 1000 },
+                { name: "Cream", color: "#fef3c7", price: 800 },
+                { name: "Sky", color: "#0ea5e9", price: 600 },
+                { name: "Teal", color: "#14b8a6", price: 600 },
+                { name: "Amber", color: "#d97706", price: 700 },
+                { name: "Lime", color: "#65a30d", price: 700 },
+                { name: "Slate", color: "#475569", price: 500 },
+                { name: "Rose", color: "#e11d48", price: 900 },
+                { name: "Indigo", color: "#4f46e5", price: 900 },
+                { name: "Emerald", color: "#10b981", price: 700 },
+                { name: "Orange", color: "#ea580c", price: 600 },
+                { name: "Fuchsia", color: "#c026d3", price: 900 },
+                { name: "Cyan", color: "#06b6d4", price: 800 },
+                { name: "Stone", color: "#57534e", price: 600 },
+                { name: "Zinc", color: "#71717a", price: 500 },
+                { name: "Neutral", color: "#737373", price: 500 },
+                { name: "Red", color: "#ef4444", price: 800 },
+                { name: "Yellow", color: "#eab308", price: 700 },
+                { name: "Green", color: "#22c55e", price: 700 }
+                // More colors can be added here
+            ],
+            text: [
+                { name: "Dark", color: "#333333", price: 0, default: true },
+                { name: "Light", color: "#f1f1f1", price: 0, default: true },
+                { name: "Blue", color: "#2563eb", price: 500 },
+                { name: "Emerald", color: "#059669", price: 500 },
+                { name: "Ruby", color: "#dc2626", price: 800 },
+                { name: "Purple", color: "#7c3aed", price: 800 },
+                { name: "Gold", color: "#d97706", price: 1000 },
+                { name: "Pink", color: "#db2777", price: 800 },
+                { name: "Slate", color: "#334155", price: 500 },
+                { name: "Cyan", color: "#0891b2", price: 600 },
+                { name: "Amber", color: "#f59e0b", price: 600 },
+                { name: "Lime", color: "#84cc16", price: 700 },
+                { name: "Teal", color: "#0d9488", price: 700 },
+                { name: "Rose", color: "#be123c", price: 900 },
+                { name: "Indigo", color: "#4338ca", price: 900 },
+                { name: "Green", color: "#16a34a", price: 700 },
+                { name: "Orange", color: "#ea580c", price: 600 },
+                { name: "Fuchsia", color: "#a21caf", price: 900 },
+                { name: "Sky", color: "#0284c7", price: 800 },
+                { name: "Stone", color: "#44403c", price: 600 },
+                { name: "Red", color: "#b91c1c", price: 800 },
+                { name: "Yellow", color: "#ca8a04", price: 700 },
+                { name: "Purple", color: "#9333ea", price: 900 },
+                { name: "Violet", color: "#7c3aed", price: 900 },
+                { name: "White", color: "#ffffff", price: 1000 }
+                // More colors can be added here
+            ]
+        };
+
+        // Available fonts in the shop
+        const shopFonts = [
+            { name: "Roboto", font: "Roboto, sans-serif", price: 0, default: true },
+            { name: "Open Sans", font: "Open Sans, sans-serif", price: 0, default: true },
+            { name: "Montserrat", font: "Montserrat, sans-serif", price: 600 },
+            { name: "Lato", font: "Lato, sans-serif", price: 600 },
+            { name: "Poppins", font: "Poppins, sans-serif", price: 800 },
+            { name: "Raleway", font: "Raleway, sans-serif", price: 800 },
+            { name: "Oswald", font: "Oswald, sans-serif", price: 1000 },
+            { name: "Merriweather", font: "Merriweather, serif", price: 1200 },
+            { name: "Ubuntu", font: "Ubuntu, sans-serif", price: 1000 },
+            { name: "Playfair Display", font: "Playfair Display, serif", price: 1500 },
+        ];
+        // DOM Elements
+        const screens = {
+            home: document.getElementById('home-screen'),
+            game: document.getElementById('game-screen'),
+            search: document.getElementById('search-screen'),
+            countdown: document.getElementById('countdown-screen')
+        };
+
+        const elements = {
+            gameBoard: document.getElementById('game-board'),
+            statusMessage: document.getElementById('status-message'),
+            streakDisplay: document.getElementById('streak-display'),
+            coinCount: document.getElementById('coin-count'),
+            notification: document.getElementById('notification'),
+            boardTypeSelect: document.getElementById('board-type'),
+            countdown: document.getElementById('countdown'),
+            thinkingIndicator: document.getElementById('thinking-indicator'),
+            difficultyModal: document.getElementById('difficulty-modal'),
+            shopModal: document.getElementById('shop-modal'),
+            bgColorsContainer: document.getElementById('bg-colors-container'),
+            textColorsContainer: document.getElementById('text-colors-container'),
+            usernameInput: document.getElementById('username-input'),
+            usernameSubmit: document.getElementById('username-submit'),
+            usernameDisplay: document.getElementById('username-display'),
+            usernameModal: document.getElementById('username-modal'),
+            userProfile: document.getElementById('user-profile'),
+            leaderboardModal: document.getElementById('leaderboard-modal'),
+            leaderboardButton: document.getElementById('leaderboard-button'),
+            leaderboardModalClose: document.getElementById('leaderboard-modal-close'),
+            dailyTable: document.getElementById('daily-table').querySelector('tbody'),
+            weeklyTable: document.getElementById('weekly-table').querySelector('tbody'),
+            monthlyTable: document.getElementById('monthly-table').querySelector('tbody'),
+            dailyRank: document.getElementById('daily-rank'),
+            weeklyRank: document.getElementById('weekly-rank'),
+            monthlyRank: document.getElementById('monthly-rank'),
+            dailyCountdown: document.getElementById('daily-countdown'),
+            weeklyCountdown: document.getElementById('weekly-countdown'),
+            monthlyCountdown: document.getElementById('monthly-countdown'),
+            shopTabs: document.querySelectorAll('.shop-modal .leaderboard-tab'),
+            colorsTab: document.getElementById('colors-tab'),
+            fontsTab: document.getElementById('fonts-tab'),
+            fontsContainer: document.getElementById('fonts-container'),
+            leaderboardTabs: document.querySelectorAll('.leaderboard-modal .leaderboard-tab'),
+            leaderboardContents: document.querySelectorAll('.leaderboard-tab-content')
+        };
+
+        // Buttons
+        const buttons = {
+            singlePlayer: document.getElementById('single-player-btn'),
+            multiplayer: document.getElementById('multiplayer-btn'),
+            restart: document.getElementById('restart-btn'),
+            home: document.getElementById('home-btn'),
+            cancelSearch: document.getElementById('cancel-search-btn'),
+            darkModeToggle: document.getElementById('dark-mode-toggle'),
+            shopButton: document.getElementById('shop-button'),
+            shopModalClose: document.getElementById('shop-modal-close'),
+            difficultyModalClose: document.getElementById('difficulty-modal-close')
+        };
+
+        // Initialize game
+        function init() {
+            loadGameState();
+            updateCoinDisplay();
+            attachEventListeners();
+            checkDarkModePreference();
+            populateShopItems();
+            showUsernamePromptIfNeeded();
+            initializeLeaderboards();
+            startLeaderboardUpdates();
+        }
+
+         // Load saved game state from localStorage
+         function loadGameState() {
+            const savedState = localStorage.getItem('ticTacToeState');
+            if (savedState) {
+                const parsedState = JSON.parse(savedState);
+                state.coins = parsedState.coins || 0;
+                state.winStreak = parsedState.winStreak || 0;
+                state.username = parsedState.username || 'Guest';
+                
+                // Load color preferences
+                if (parsedState.unlockedColors) {
+                    state.unlockedColors = parsedState.unlockedColors;
+                }
+                
+                if (parsedState.activeColors) {
+                    state.activeColors = parsedState.activeColors;
+                }
+
+                // Load font preferences
+                if (parsedState.unlockedFonts) {
+                    state.unlockedFonts = parsedState.unlockedFonts;
+                }
+
+                if (parsedState.activeFont) {
+                    state.activeFont = parsedState.activeFont;
+                }
+
+                applyColorTheme();
+                applyFontTheme();
+            }
+
+            elements.usernameDisplay.textContent = state.username;
+        }
+
+        // Save game state to localStorage
+        function saveGameState() {
+            const stateToSave = {
+                coins: state.coins,
+                winStreak: state.winStreak,
+                username: state.username,
+                unlockedColors: state.unlockedColors,
+                activeColors: state.activeColors,
+                unlockedFonts: state.unlockedFonts,
+                activeFont: state.activeFont
+            };
+            localStorage.setItem('ticTacToeState', JSON.stringify(stateToSave));
+        }
+
+        // Show username prompt if needed
+        function showUsernamePromptIfNeeded() {
+            if (state.username === 'Guest') {
+                elements.usernameModal.classList.add('show');
+            }
+        }
+
+        // Initialize leaderboards with random players
+        function initializeLeaderboards() {
+            const playerNames = [
+                "MasterGamer", "TicTacPro", "XOChampion", "GameWizard", "ArenaKing",
+                "StrategyMaster", "TicTacQueen", "BoardDominator", "XOLegend", "GameElite",
+                "TicTacNinja", "GridMaster", "VictorySeeker", "TurnMaster", "BoardWizard",
+                "GameJedi", "TicTacWarrior", "XOExpert", "MatchWinner", "SquareDominator"
+            ];
+
+            // Generate daily leaderboard (max 10k coins)
+            state.leaderboard.daily = generateLeaderboard(playerNames, 10000);
+            
+            // Generate weekly leaderboard (max 50k coins)
+            state.leaderboard.weekly = generateLeaderboard(playerNames, 50000);
+            
+            // Generate monthly leaderboard (max 200k coins)
+            state.leaderboard.monthly = generateLeaderboard(playerNames, 200000);
+
+            // Insert the current user at a random position
+            insertUserInLeaderboards();
+
+            // Calculate end times for leaderboards
+            calculateLeaderboardEndTimes();
+
+            // Render leaderboards
+            renderLeaderboards();
+        }
+
+        // Generate a random leaderboard
+        function generateLeaderboard(playerNames, maxCoins) {
+            const leaderboard = [];
+            
+            // Number of players (15-25)
+            const numPlayers = Math.floor(Math.random() * 11) + 15;
+            
+            // Create a shuffled copy of player names
+            const shuffledNames = [...playerNames].sort(() => Math.random() - 0.5);
+            
+            // Generate players with random coin amounts in descending order
+            for (let i = 0; i < numPlayers && i < shuffledNames.length; i++) {
+                // More coins for higher ranks, with some randomness
+                const coins = Math.floor(maxCoins * (1 - (i / numPlayers) * 0.9) * (0.8 + Math.random() * 0.4));
+                
+                leaderboard.push({
+                    name: shuffledNames[i],
+                    coins: coins
+                });
+            }
+            
+            // Sort by coins in descending order
+            return leaderboard.sort((a, b) => b.coins - a.coins);
+        }
+
+        // Insert user in leaderboards at a random position
+        function insertUserInLeaderboards() {
+            // Insert in daily leaderboard
+            const dailyRank = Math.floor(Math.random() * (state.leaderboard.daily.length / 2)) + Math.floor(state.leaderboard.daily.length / 2);
+            let dailyCoins = 0;
+            if (dailyRank > 0 && dailyRank < state.leaderboard.daily.length) {
+                dailyCoins = Math.floor((state.leaderboard.daily[dailyRank-1].coins + state.leaderboard.daily[dailyRank].coins) / 2);
+            } else if (dailyRank === 0) {
+                dailyCoins = state.leaderboard.daily[0].coins + Math.floor(Math.random() * 1000) + 100;
+            } else {
+                dailyCoins = Math.floor(state.leaderboard.daily[state.leaderboard.daily.length-1].coins * 0.8);
+            }
+            state.leaderboard.daily.splice(state.coins, 0, { name: state.username, coins: state.coins, isUser: true });
+            state.userRanks.daily = dailyRank + 1;
+
+            // Insert in weekly leaderboard
+            const weeklyRank = Math.floor(Math.random() * (state.leaderboard.weekly.length / 2)) + Math.floor(state.leaderboard.weekly.length / 2);
+            let weeklyCoins = 0;
+            if (weeklyRank > 0 && weeklyRank < state.leaderboard.weekly.length) {
+                weeklyCoins = Math.floor((state.leaderboard.weekly[weeklyRank-1].coins + state.leaderboard.weekly[weeklyRank].coins) / 2);
+            } else if (weeklyRank === 0) {
+                weeklyCoins = state.leaderboard.weekly[0].coins + Math.floor(Math.random() * 5000) + 500;
+            } else {
+                weeklyCoins = Math.floor(state.leaderboard.weekly[state.leaderboard.weekly.length-1].coins * 0.8);
+            }
+            state.leaderboard.weekly.splice(weeklyRank, 0, { name: state.username, coins: weeklyCoins, isUser: true });
+            state.userRanks.weekly = weeklyRank + 1;
+
+            // Insert in monthly leaderboard
+            const monthlyRank = Math.floor(Math.random() * (state.leaderboard.monthly.length / 2)) + Math.floor(state.leaderboard.monthly.length / 2);
+            let monthlyCoins = 0;
+            if (monthlyRank > 0 && monthlyRank < state.leaderboard.monthly.length) {
+                monthlyCoins = Math.floor((state.leaderboard.monthly[monthlyRank-1].coins + state.leaderboard.monthly[monthlyRank].coins) / 2);
+            } else if (monthlyRank === 0) {
+                monthlyCoins = state.leaderboard.monthly[0].coins + Math.floor(Math.random() * 20000) + 2000;
+            } else {
+                monthlyCoins = Math.floor(state.leaderboard.monthly[state.leaderboard.monthly.length-1].coins * 0.8);
+            }
+            state.leaderboard.monthly.splice(monthlyRank, 0, { name: state.username, coins: monthlyCoins, isUser: true });
+            state.userRanks.monthly = monthlyRank + 1;
+        }
+
+        // Calculate end times for leaderboards
+        function calculateLeaderboardEndTimes() {
+            const now = new Date();
+            
+            // Daily leaderboard ends at the next midnight
+            const dailyEnd = new Date(now);
+            dailyEnd.setHours(24, 0, 0, 0);
+            state.leaderboardEndTimes.daily = dailyEnd;
+            
+            // Weekly leaderboard ends on the next Sunday at midnight
+            const weeklyEnd = new Date(now);
+            const daysUntilSunday = 7 - weeklyEnd.getDay();
+            weeklyEnd.setDate(weeklyEnd.getDate() + daysUntilSunday);
+            weeklyEnd.setHours(24, 0, 0, 0);
+            state.leaderboardEndTimes.weekly = weeklyEnd;
+            
+            // Monthly leaderboard ends at the end of the month
+            const monthlyEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0, 24, 0, 0, 0);
+            state.leaderboardEndTimes.monthly = monthlyEnd;
+        }
+
+        // Render leaderboards
+        function renderLeaderboards() {
+            // Render daily leaderboard
+            renderLeaderboardTable(state.leaderboard.daily, elements.dailyTable);
+            elements.dailyRank.textContent = `You are at #${state.userRanks.daily} rank`;
+            
+            // Render weekly leaderboard
+            renderLeaderboardTable(state.leaderboard.weekly, elements.weeklyTable);
+            elements.weeklyRank.textContent = `You are at #${state.userRanks.weekly} rank`;
+            
+            // Render monthly leaderboard
+            renderLeaderboardTable(state.leaderboard.monthly, elements.monthlyTable);
+            elements.monthlyRank.textContent = `You are at #${state.userRanks.monthly} rank`;
+            
+            // Update countdown timers
+            updateLeaderboardCountdowns();
+        }
+
+        // Render a single leaderboard table
+        function renderLeaderboardTable(leaderboardData, tableElement) {
+            tableElement.innerHTML = '';
+            
+            leaderboardData.forEach((player, index) => {
+                const row = document.createElement('tr');
+                if (player.isUser) {
+                    row.classList.add('highlight');
+                }
+                
+                const rankCell = document.createElement('td');
+                rankCell.className = 'rank-number';
+                if (index < 3) {
+                    rankCell.classList.add(`rank-${index + 1}`);
+                }
+                rankCell.textContent = index + 1;
+                
+                const nameCell = document.createElement('td');
+                nameCell.textContent = player.name;
+                
+                const coinsCell = document.createElement('td');
+                coinsCell.textContent = player.coins.toLocaleString();
+                
+                row.appendChild(rankCell);
+                row.appendChild(nameCell);
+                row.appendChild(coinsCell);
+                
+                tableElement.appendChild(row);
+            });
+        }
+
+        // Update leaderboard countdowns
+        function updateLeaderboardCountdowns() {
+            const now = new Date();
+            
+            // Update daily countdown
+            const dailyTimeLeft = formatTimeLeft(state.leaderboardEndTimes.daily - now);
+            elements.dailyCountdown.textContent = `Resets in: ${dailyTimeLeft}`;
+            
+            // Update weekly countdown
+            const weeklyTimeLeft = formatTimeLeft(state.leaderboardEndTimes.weekly - now);
+            elements.weeklyCountdown.textContent = `Resets in: ${weeklyTimeLeft}`;
+            
+            // Update monthly countdown
+            const monthlyTimeLeft = formatTimeLeft(state.leaderboardEndTimes.monthly - now);
+            elements.monthlyCountdown.textContent = `Resets in: ${monthlyTimeLeft}`;
+        }
+
+        // Format time left for countdown displays
+        function formatTimeLeft(timeMs) {
+            if (timeMs <= 0) return "Resetting...";
+            
+            const seconds = Math.floor((timeMs / 1000) % 60);
+            const minutes = Math.floor((timeMs / (1000 * 60)) % 60);
+            const hours = Math.floor((timeMs / (1000 * 60 * 60)) % 24);
+            const days = Math.floor(timeMs / (1000 * 60 * 60 * 24));
+            
+            if (days > 0) {
+                return `${days}d ${hours}h ${minutes}m`;
+            } else {
+                return `${hours}h ${minutes}m ${seconds}s`;
+            }
+        }
+
+        // Start leaderboard updates
+        function startLeaderboardUpdates() {
+            // Update countdowns every second
+            setInterval(updateLeaderboardCountdowns, 1000);
+            
+            // Increase leaderboard scores hourly to simulate competition
+            setInterval(updateLeaderboardScores, 60 * 60 * 1000); // Every hour
+            
+            // Check for leaderboard resets every minute
+            setInterval(checkLeaderboardResets, 60 * 1000);
+        }
+
+        // Update leaderboard scores to simulate competition
+        function updateLeaderboardScores() {
+            // Update daily scores (1-5% increase)
+            state.leaderboard.daily.forEach(player => {
+                if (!player.isUser) {
+                    const increase = Math.floor(player.coins * (0.01 + Math.random() * 0.04));
+                    player.coins += increase;
+                }
+            });
+            
+            // Update weekly scores (0.5-3% increase)
+            state.leaderboard.weekly.forEach(player => {
+                if (!player.isUser) {
+                    const increase = Math.floor(player.coins * (0.005 + Math.random() * 0.025));
+                    player.coins += increase;
+                }
+            });
+            
+            // Update monthly scores (0.2-2% increase)
+            state.leaderboard.monthly.forEach(player => {
+                if (!player.isUser) {
+                    const increase = Math.floor(player.coins * (0.002 + Math.random() * 0.018));
+                    player.coins += increase;
+                }
+            });
+            
+            // Resort leaderboards and update user ranks
+            updateUserRanks();
+            
+            // Render updated leaderboards
+            renderLeaderboards();
+        }
+
+        // Update user ranks in leaderboards
+        function updateUserRanks() {
+            // Sort daily leaderboard
+            state.leaderboard.daily.sort((a, b) => b.coins - a.coins);
+            state.userRanks.daily = state.leaderboard.daily.findIndex(player => player.isUser) + 1;
+            
+            // Sort weekly leaderboard
+            state.leaderboard.weekly.sort((a, b) => b.coins - a.coins);
+            state.userRanks.weekly = state.leaderboard.weekly.findIndex(player => player.isUser) + 1;
+            
+            // Sort monthly leaderboard
+            state.leaderboard.monthly.sort((a, b) => b.coins - a.coins);
+            state.userRanks.monthly = state.leaderboard.monthly.findIndex(player => player.isUser) + 1;
+        }
+
+        // Check for leaderboard resets
+        function checkLeaderboardResets() {
+            const now = new Date();
+            
+            // Check daily reset
+            if (now >= state.leaderboardEndTimes.daily) {
+                resetLeaderboard('daily');
+            }
+            
+            // Check weekly reset
+            if (now >= state.leaderboardEndTimes.weekly) {
+                resetLeaderboard('weekly');
+            }
+            
+            // Check monthly reset
+            if (now >= state.leaderboardEndTimes.monthly) {
+                resetLeaderboard('monthly');
+            }
+        }
+
+        // Reset a leaderboard and distribute rewards
+        function resetLeaderboard(type) {
+            // Distribute rewards to top 3 players
+            const leaderboard = state.leaderboard[type];
+            const userRank = state.userRanks[type];
+            
+            // Calculate rewards
+            let userReward = 0;
+            if (userRank === 1) {
+                userReward = type === 'daily' ? 5000 : type === 'weekly' ? 20000 : 100000;
+            } else if (userRank === 2) {
+                userReward = type === 'daily' ? 3000 : type === 'weekly' ? 10000 : 50000;
+            } else if (userRank === 3) {
+                userReward = type === 'daily' ? 1000 : type === 'weekly' ? 5000 : 25000;
+            }
+            
+            // Award coins to user if in top 3
+            if (userReward > 0) {
+                state.coins += userReward;
+                updateCoinDisplay();
+                saveGameState();
+                showNotification(`Congratulations! You placed #${userRank} in the ${type} leaderboard! +${userReward} coins`);
+            }
+            
+            // Generate new leaderboard
+            const playerNames = [
+                "MasterGamer", "TicTacPro", "XOChampion", "GameWizard", "ArenaKing",
+                "StrategyMaster", "TicTacQueen", "BoardDominator", "XOLegend", "GameElite",
+                "TicTacNinja", "GridMaster", "VictorySeeker", "TurnMaster", "BoardWizard",
+                "GameJedi", "TicTacWarrior", "XOExpert", "MatchWinner", "SquareDominator"
+            ];
+            
+            const maxCoins = type === 'daily' ? 10000 : type === 'weekly' ? 50000 : 200000;
+            state.leaderboard[type] = generateLeaderboard(playerNames, maxCoins);
+            
+            // Insert user at a new random position
+            const newRank = Math.floor(Math.random() * (state.leaderboard[type].length - 5)) + 5;
+            const newCoins = Math.floor((state.leaderboard[type][newRank-1].coins + state.leaderboard[type][newRank].coins) / 2);
+            state.leaderboard[type].splice(newRank, 0, { name: state.username, coins: newCoins, isUser: true });
+            state.userRanks[type] = newRank + 1;
+            
+            // Calculate new end time
+            const now = new Date();
+            if (type === 'daily') {
+                const dailyEnd = new Date(now);
+                dailyEnd.setHours(24, 0, 0, 0);
+                state.leaderboardEndTimes.daily = dailyEnd;
+            } else if (type === 'weekly') {
+                const weeklyEnd = new Date(now);
+                const daysUntilSunday = 7 - weeklyEnd.getDay();
+                weeklyEnd.setDate(weeklyEnd.getDate() + daysUntilSunday);
+                weeklyEnd.setHours(24, 0, 0, 0);
+                state.leaderboardEndTimes.weekly = weeklyEnd;
+            } else if (type === 'monthly') {
+                const monthlyEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0, 24, 0, 0, 0);
+                state.leaderboardEndTimes.monthly = monthlyEnd;
+            }
+            
+            // Render updated leaderboard
+            renderLeaderboards();
+        }
+
+        // Check dark mode preference
+        function checkDarkModePreference() {
+            const darkModeSaved = localStorage.getItem('darkMode');
+            if (darkModeSaved === 'true') {
+                document.body.classList.add('dark-mode');
+                buttons.darkModeToggle.checked = true;
+            }
+        }
+
+        // Populate shop items
+        function populateShopItems() {
+            // Background colors
+            elements.bgColorsContainer.innerHTML = '';
+            shopColors.bg.forEach(item => {
+                const isUnlocked = state.unlockedColors.bg.includes(item.color);
+                const isActive = state.activeColors.bg === item.color;
+                
+                const itemElement = document.createElement('div');
+                itemElement.className = `shop-item ${isUnlocked ? 'owned' : ''} ${isActive ? 'active' : ''}`;
+                itemElement.dataset.color = item.color;
+                itemElement.dataset.type = 'bg';
+                itemElement.dataset.price = item.price;
+                
+                const colorPreview = document.createElement('div');
+                colorPreview.className = 'color-preview';
+                colorPreview.style.backgroundColor = item.color;
+                
+                const nameElement = document.createElement('div');
+                nameElement.className = 'item-name';
+                nameElement.textContent = item.name;
+                
+                const priceElement = document.createElement('div');
+                priceElement.className = 'item-price';
+                if (isUnlocked) {
+                    priceElement.textContent = 'Owned';
+                } else {
+                    priceElement.innerHTML = `${item.price} <span class="coin-icon">🪙</span>`;
+                }
+                
+                itemElement.appendChild(colorPreview);
+                itemElement.appendChild(nameElement);
+                itemElement.appendChild(priceElement);
+                
+                itemElement.addEventListener('click', () => handleColorPurchase(item, 'bg'));
+                
+                elements.bgColorsContainer.appendChild(itemElement);
+            });
+            
+            // Text colors
+            elements.textColorsContainer.innerHTML = '';
+            shopColors.text.forEach(item => {
+                const isUnlocked = state.unlockedColors.text.includes(item.color);
+                const isActive = state.activeColors.text === item.color;
+                
+                const itemElement = document.createElement('div');
+                itemElement.className = `shop-item ${isUnlocked ? 'owned' : ''} ${isActive ? 'active' : ''}`;
+                itemElement.dataset.color = item.color;
+                itemElement.dataset.type = 'text';
+                itemElement.dataset.price = item.price;
+                
+                const colorPreview = document.createElement('div');
+                colorPreview.className = 'color-preview';
+                colorPreview.style.backgroundColor = item.color;
+                
+                const nameElement = document.createElement('div');
+                nameElement.className = 'item-name';
+                nameElement.textContent = item.name;
+                
+                const priceElement = document.createElement('div');
+                priceElement.className = 'item-price';
+                if (isUnlocked) {
+                    priceElement.textContent = 'Owned';
+                } else {
+                    priceElement.innerHTML = `${item.price} <span class="coin-icon">🪙</span>`;
+                }
+                
+                itemElement.appendChild(colorPreview);
+                itemElement.appendChild(nameElement);
+                itemElement.appendChild(priceElement);
+                
+                itemElement.addEventListener('click', () => handleColorPurchase(item, 'text'));
+                
+                elements.textColorsContainer.appendChild(itemElement);
+            });
+
+            // Fonts
+            elements.fontsContainer.innerHTML = '';
+            shopFonts.forEach(item => {
+                const isUnlocked = state.unlockedFonts.includes(item.name);
+                const isActive = state.activeFont === item.name;
+                
+                const itemElement = document.createElement('div');
+                itemElement.className = `shop-item ${isUnlocked ? 'owned' : ''} ${isActive ? 'active' : ''}`;
+                itemElement.dataset.font = item.name;
+                itemElement.dataset.fontFamily = item.font;
+                itemElement.dataset.price = item.price;
+                
+                const fontPreview = document.createElement('div');
+                fontPreview.className = 'font-preview';
+                fontPreview.style.fontFamily = item.font;
+                fontPreview.textContent = "Aa Bb Cc";
+                
+                const nameElement = document.createElement('div');
+                nameElement.className = 'item-name';
+                nameElement.textContent = item.name;
+                
+                const priceElement = document.createElement('div');
+                priceElement.className = 'item-price';
+                if (isUnlocked) {
+                    priceElement.textContent = 'Owned';
+                } else {
+                    priceElement.innerHTML = `${item.price} <span class="coin-icon">🪙</span>`;
+                }
+                
+                itemElement.appendChild(fontPreview);
+                itemElement.appendChild(nameElement);
+                itemElement.appendChild(priceElement);
+                
+                itemElement.addEventListener('click', () => handleFontPurchase(item));
+                
+                elements.fontsContainer.appendChild(itemElement);
+            });
+        }
+
+        // Handle color purchase or selection
+        function handleColorPurchase(item, type) {
+            // If already owned, just apply it
+            if (state.unlockedColors[type].includes(item.color)) {
+                state.activeColors[type] = item.color;
+                applyColorTheme();
+                populateShopItems(); // Refresh to show active state
+                saveGameState();
+                return;
+            }
+            
+            // Check if user has enough coins
+            if (state.coins >= item.price) {
+                // Deduct coins
+                state.coins -= item.price;
+                updateCoinDisplay();
+                
+                // Add to unlocked colors
+                state.unlockedColors[type].push(item.color);
+                
+                // Set as active
+                state.activeColors[type] = item.color;
+                
+                // Apply color theme
+                applyColorTheme();
+                
+                // Show notification
+                showNotification(`Purchased ${item.name} ${type === 'bg' ? 'background' : 'text'} color!`);
+                
+                // Refresh shop items
+                populateShopItems();
+                
+                // Save state
+                saveGameState();
+            } else {
+                showNotification(`Not enough coins! You need ${item.price - state.coins} more coins.`);
+            }
+        }
+
+        // Handle font purchase or selection
+        function handleFontPurchase(item) {
+            // If already owned, just apply it
+            if (state.unlockedFonts.includes(item.name)) {
+                state.activeFont = item.name;
+                applyFontTheme();
+                populateShopItems(); // Refresh to show active state
+                saveGameState();
+                return;
+            }
+            
+            // Check if user has enough coins
+            if (state.coins >= item.price) {
+                // Deduct coins
+                state.coins -= item.price;
+                updateCoinDisplay();
+                
+                // Add to unlocked fonts
+                state.unlockedFonts.push(item.name);
+                
+                // Set as active
+                state.activeFont = item.name;
+                
+                // Apply font theme
+                applyFontTheme();
+                
+                // Show notification
+                showNotification(`Purchased ${item.name} font!`);
+                
+                // Refresh shop items
+                populateShopItems();
+                
+                // Save state
+                saveGameState();
+            } else {
+                showNotification(`Not enough coins! You need ${item.price - state.coins} more coins.`);
+            }
+        }
+
+        // Apply color theme based on active colors
+        function applyColorTheme() {
+            document.documentElement.style.setProperty('--bg-primary', state.activeColors.bg);
+            document.documentElement.style.setProperty('--text-primary', state.activeColors.text);
+            
+            // Adjust secondary colors based on primary colors
+            const isDarkBg = isColorDark(state.activeColors.bg);
+            if (isDarkBg) {
+                document.documentElement.style.setProperty('--bg-secondary', lightenDarkenColor(state.activeColors.bg, 20));
+                document.documentElement.style.setProperty('--text-secondary', lightenDarkenColor(state.activeColors.text, -30));
+            } else {
+                document.documentElement.style.setProperty('--bg-secondary', lightenDarkenColor(state.activeColors.bg, -10));
+                document.documentElement.style.setProperty('--text-secondary', lightenDarkenColor(state.activeColors.text, 30));
+            }
+        }
+
+        // Apply font theme
+        function applyFontTheme() {
+            // Find the font family from the shopFonts array
+            const fontItem = shopFonts.find(item => item.name === state.activeFont);
+            if (fontItem) {
+                document.body.style.fontFamily = fontItem.font;
+            }
+        }
+
+        // Check if a color is dark
+        function isColorDark(hexColor) {
+            // Convert hex to RGB
+            const r = parseInt(hexColor.substr(1, 2), 16);
+            const g = parseInt(hexColor.substr(3, 2), 16);
+            const b = parseInt(hexColor.substr(5, 2), 16);
+            
+            // Calculate brightness (0-255)
+            const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+            
+            // Return true if the color is dark
+            return brightness < 128;
+        }
+
+        // Lighten or darken a color
+        function lightenDarkenColor(hex, amount) {
+            let r = parseInt(hex.substring(1, 3), 16);
+            let g = parseInt(hex.substring(3, 5), 16);
+            let b = parseInt(hex.substring(5, 7), 16);
+
+            r = Math.max(0, Math.min(255, r + amount));
+            g = Math.max(0, Math.min(255, g + amount));
+            b = Math.max(0, Math.min(255, b + amount));
+
+            return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+        }
+
+        // Attach event listeners
+        function attachEventListeners() {
+            // Mode buttons
+            buttons.singlePlayer.addEventListener('click', () => showDifficultyModal());
+            buttons.multiplayer.addEventListener('click', () => startMultiplayerSearch());
+            
+            // Game control buttons
+            buttons.restart.addEventListener('click', restartGame);
+            buttons.home.addEventListener('click', goToHome);
+            buttons.cancelSearch.addEventListener('click', goToHome);
+            
+            // Dark mode toggle
+            buttons.darkModeToggle.addEventListener('change', toggleDarkMode);
+            
+            // Board type select
+            elements.boardTypeSelect.addEventListener('change', () => {
+                state.boardSize = parseInt(elements.boardTypeSelect.value);
+            });
+            
+            // Shop button
+            buttons.shopButton.addEventListener('click', () => {
+                elements.shopModal.classList.add('show');
+            });
+            
+            // Shop modal close
+            buttons.shopModalClose.addEventListener('click', () => {
+                elements.shopModal.classList.remove('show');
+            });
+            
+            // Difficulty modal close
+            buttons.difficultyModalClose.addEventListener('click', () => {
+                elements.difficultyModal.classList.remove('show');
+            });
+            
+            // Difficulty options
+            document.querySelectorAll('.difficulty-option').forEach(option => {
+                option.addEventListener('click', () => {
+                    state.difficulty = option.dataset.difficulty;
+                    elements.difficultyModal.classList.remove('show');
+                    startGame('single');
+                });
+            });
+
+            // Username input and submission
+            elements.usernameSubmit.addEventListener('click', () => {
+                const username = elements.usernameInput.value.trim();
+                if (username) {
+                    state.username = username;
+                    elements.usernameDisplay.textContent = username;
+                    elements.usernameModal.classList.remove('show');
+                    saveGameState();
+                    showNotification(`Welcome, ${username}!`);
+                    
+                    // Update user in leaderboards
+                    state.leaderboard.daily.forEach(player => {
+                        if (player.isUser) player.name = username;
+                    });
+                    state.leaderboard.weekly.forEach(player => {
+                        if (player.isUser) player.name = username;
+                    });
+                    state.leaderboard.monthly.forEach(player => {
+                        if (player.isUser) player.name = username;
+                    });
+                    renderLeaderboards();
+                } else {
+                    showNotification('Please enter a valid username');
+                }
+            });
+            
+            // User profile click to change username
+            elements.userProfile.addEventListener('click', () => {
+                elements.usernameInput.value = state.username;
+                elements.usernameModal.classList.add('show');
+            });
+            
+            // Leaderboard button
+            elements.leaderboardButton.addEventListener('click', () => {
+                elements.leaderboardModal.classList.add('show');
+                renderLeaderboards();
+            });
+            
+            // Leaderboard modal close
+            elements.leaderboardModalClose.addEventListener('click', () => {
+                elements.leaderboardModal.classList.remove('show');
+            });
+            
+            // Leaderboard tabs
+            elements.leaderboardTabs = document.querySelectorAll('.leaderboard-tab');
+            elements.leaderboardContents = document.querySelectorAll('.leaderboard-tab-content');
+            elements.leaderboardTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabName = tab.dataset.tab;
+                    
+                    // Update active tab
+                    elements.leaderboardTabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    // Show selected content
+                    elements.leaderboardContents.forEach(content => {
+                        content.style.display = 'none';
+                    });
+                    document.getElementById(`${tabName}-leaderboard`).style.display = 'block';
+                });
+            });
+            
+            // Shop tabs
+            document.querySelectorAll('.shop-modal .leaderboard-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabName = tab.dataset.tab;
+                    
+                    // Update active tab
+                    document.querySelectorAll('.shop-modal .leaderboard-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    // Show selected content
+                    if (tabName === 'colors') {
+                        elements.colorsTab.style.display = 'block';
+                        elements.fontsTab.style.display = 'none';
+                    } else if (tabName === 'fonts') {
+                        elements.colorsTab.style.display = 'none';
+                        elements.fontsTab.style.display = 'block';
+                    }
+                });
+            });
+        }
+
+        // Show difficulty modal
+        function showDifficultyModal() {
+            elements.difficultyModal.classList.add('show');
+        }
+
+        // Switch screens
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+            state.currentScreen = screenId;
+        }
+
+        // Start countdown before game
+        function startCountdown(mode) {
+            showScreen('countdown-screen');
+            let count = 5;
+            elements.countdown.textContent = count;
+            
+            const countdownInterval = setInterval(() => {
+                count--;
+                elements.countdown.textContent = count;
+                
+                if (count <= 0) {
+                    clearInterval(countdownInterval);
+                    startGame(mode);
+                }
+            }, 1000);
+        }
+
+        // Start a new game
+        function startGame(mode) {
+            state.gameMode = mode;
+            state.gameActive = true;
+            state.currentPlayer = 'x';
+            state.playerSymbol = 'x';
+            state.opponentSymbol = 'o';
+            
+            // Create game board
+            createGameBoard();
+            
+            // Update UI
+            updateStatusMessage();
+            updateStreakDisplay();
+            
+            // Show game screen
+            showScreen('game-screen');
+            
+            // If single player and computer's turn (o), make a move
+            if (mode === 'single' && state.currentPlayer === state.opponentSymbol) {
+                showThinking();
+                setTimeout(makeComputerMove, getRandomThinkingTime());
+            }
+        }
+
+        // Start multiplayer search
+        function startMultiplayerSearch() {
+            showScreen('search-screen');
+            
+            // Simulate search time (1-3 seconds)
+            const searchTime = Math.floor(Math.random() * 2000) + 1000;
+            
+            setTimeout(() => {
+                // Select random bot name
+                state.botName = botNames[Math.floor(Math.random() * botNames.length)];
+                
+                // Show notification that opponent was found
+                showNotification(`Connected with ${state.botName}!`);
+                
+                // Start countdown
+                startCountdown('multiplayer');
+            }, searchTime);
+        }
+
+        // Create game board
+        function createGameBoard() {
+            // Clear existing board
+            elements.gameBoard.innerHTML = '';
+            
+            // Create new board array
+            state.gameBoard = Array(state.boardSize).fill().map(() => Array(state.boardSize).fill(''));
+            
+            // Set board size class
+            elements.gameBoard.className = `game-board size-${state.boardSize}`;
+            
+            // Create cells
+            for (let row = 0; row < state.boardSize; row++) {
+                for (let col = 0; col < state.boardSize; col++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.dataset.row = row;
+                    cell.dataset.col = col;
+                    cell.addEventListener('click', () => handleCellClick(row, col));
+                    elements.gameBoard.appendChild(cell);
+                }
+            }
+        }
+
+        // Handle cell click
+        function handleCellClick(row, col) {
+            // If game is not active or cell is already filled
+            if (!state.gameActive || state.gameBoard[row][col] !== '') {
+                return;
+            }
+            
+            // If it's not player's turn in single player mode
+            if (state.gameMode === 'single' && state.currentPlayer !== state.playerSymbol) {
+                return;
+            }
+            
+            // Make move
+            makeMove(row, col);
+            
+            // If game is still active and in single player mode, make computer move
+            if (state.gameActive && state.gameMode === 'single') {
+                showThinking();
+                setTimeout(makeComputerMove, getRandomThinkingTime());
+            } else if (state.gameActive && state.gameMode === 'multiplayer') {
+                // Bot moves in multiplayer
+                showThinking();
+                setTimeout(makeBotMove, getRandomThinkingTime());
+            }
+        }
+
+        // Show thinking animation
+        function showThinking() {
+            elements.thinkingIndicator.style.display = 'flex';
+        }
+
+        // Hide thinking animation
+        function hideThinking() {
+            elements.thinkingIndicator.style.display = 'none';
+        }
+
+        // Get random thinking time based on difficulty
+        function getRandomThinkingTime() {
+            if (state.gameMode === 'multiplayer') {
+                // Multiplayer bots think for 3-8 seconds
+                return Math.floor(Math.random() * 5000) + 3000;
+            }
+            
+            // Single player thinking time based on difficulty
+            switch (state.difficulty) {
+                case 'easy':
+                    return Math.floor(Math.random() * 2000) + 1000; // 1-3 seconds
+                case 'medium':
+                    return Math.floor(Math.random() * 2000) + 2000; // 2-4 seconds
+                case 'hard':
+                    return Math.floor(Math.random() * 3000) + 3000; // 3-6 seconds
+                default:
+                    return 2000;
+            }
+        }
+
+        // Make a move
+        function makeMove(row, col) {
+            state.gameBoard[row][col] = state.currentPlayer;
+            updateBoard();
+            hideThinking();
+            
+            // Check for win or draw
+            if (checkWin(row, col)) {
+                endGame(false);
+            } else if (checkDraw()) {
+                endGame(true);
+            } else {
+                // Switch player
+                state.currentPlayer = state.currentPlayer === 'x' ? 'o' : 'x';
+                updateStatusMessage();
+            }
+        }
+
+        // Make computer move
+        function makeComputerMove() {
+            if (!state.gameActive) return;
+            
+            let move;
+            
+            switch (state.difficulty) {
+                case 'hard':
+                    move = getBestMove();
+                    break;
+                case 'medium':
+                    // 70% chance of best move, 30% chance of random
+                    move = Math.random() < 0.7 ? getBestMove() : getRandomMove();
+                    break;
+                case 'easy':
+                default:
+                    // 30% chance of best move, 70% chance of random
+                    move = Math.random() < 0.3 ? getBestMove() : getRandomMove();
+                    break;
+            }
+            
+            if (move) {
+                makeMove(move.row, move.col);
+            }
+        }
+
+        // Make bot move in multiplayer
+        function makeBotMove() {
+            if (!state.gameActive) return;
+            
+            // Bot strategy similar to medium difficulty (mix of smart and random)
+            const move = Math.random() < 0.6 ? getBestMove() : getRandomMove();
+            
+            if (move) {
+                makeMove(move.row, move.col);
+            }
+        }
+
+        // Get random valid move
+        function getRandomMove() {
+            const emptyCells = [];
+            
+            for (let row = 0; row < state.boardSize; row++) {
+                for (let col = 0; col < state.boardSize; col++) {
+                    if (state.gameBoard[row][col] === '') {
+                        emptyCells.push({ row, col });
+                    }
+                }
+            }
+            
+            if (emptyCells.length === 0) return null;
+            
+            return emptyCells[Math.floor(Math.random() * emptyCells.length)];
+        }
+
+        // Minimax algorithm for AI
+        function getBestMove() {
+            // First move optimization for larger boards
+            if (state.boardSize > 3) {
+                const emptyCells = state.gameBoard.flat().filter(cell => cell === '').length;
+                const totalCells = state.boardSize * state.boardSize;
+                
+                if (emptyCells > totalCells - 3) {
+                    // Early game, play near center
+                    const mid = Math.floor(state.boardSize / 2);
+                    const options = [
+                        { row: mid, col: mid },
+                        { row: mid-1, col: mid },
+                        { row: mid, col: mid-1 },
+                        { row: mid-1, col: mid-1 }
+                    ];
+                    
+                    for (const option of options) {
+                        if (option.row >= 0 && option.col >= 0 && 
+                            option.row < state.boardSize && option.col < state.boardSize &&
+                            state.gameBoard[option.row][option.col] === '') {
+                            return option;
+                        }
+                    }
+                }
+            }
+            
+            // For 3x3 board, use minimax
+            if (state.boardSize === 3) {
+                return minimax();
+            }
+            
+            // For larger boards, use a simplified strategy to avoid performance issues
+            // Check for winning move
+            const winningMove = findWinningMove(state.currentPlayer);
+            if (winningMove) return winningMove;
+            
+            // Block opponent's winning move
+            const opponentSymbol = state.currentPlayer === 'x' ? 'o' : 'x';
+            const blockingMove = findWinningMove(opponentSymbol);
+            if (blockingMove) return blockingMove;
+            
+            // Play strategically
+            return findStrategicMove() || getRandomMove();
+        }
+
+        // Find a winning move for the given player
+        function findWinningMove(player) {
+            for (let row = 0; row < state.boardSize; row++) {
+                for (let col = 0; col < state.boardSize; col++) {
+                    if (state.gameBoard[row][col] === '') {
+                        // Try the move
+                        state.gameBoard[row][col] = player;
+                        
+                        // Check if it's a winning move
+                        const isWinning = checkWin(row, col, false);
+                        
+                        // Undo the move
+                        state.gameBoard[row][col] = '';
+                        
+                        if (isWinning) {
+                            return { row, col };
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
+        // Find a strategic move (center, corners, etc.)
+        function findStrategicMove() {
+            const mid = Math.floor(state.boardSize / 2);
+            
+            // Priority 1: Center
+            if (state.gameBoard[mid][mid] === '') {
+                return { row: mid, col: mid };
+            }
+            
+            // Priority 2: Corners
+            const corners = [
+                { row: 0, col: 0 },
+                { row: 0, col: state.boardSize - 1 },
+                { row: state.boardSize - 1, col: 0 },
+                { row: state.boardSize - 1, col: state.boardSize - 1 }
+            ];
+            
+            for (const corner of corners) {
+                if (state.gameBoard[corner.row][corner.col] === '') {
+                    return corner;
+                }
+            }
+            
+            // Priority 3: Edges
+            const edges = [
+                { row: 0, col: mid },
+                { row: mid, col: 0 },
+                { row: state.boardSize - 1, col: mid },
+                { row: mid, col: state.boardSize - 1 }
+            ];
+            
+            for (const edge of edges) {
+                if (state.gameBoard[edge.row][edge.col] === '') {
+                    return edge;
+                }
+            }
+            
+            return null;
+        }
+
+        // Minimax algorithm for 3x3 board
+        function minimax() {
+            let bestScore = -Infinity;
+            let bestMove = null;
+            
+            for (let row = 0; row < 3; row++) {
+                for (let col = 0; col < 3; col++) {
+                    if (state.gameBoard[row][col] === '') {
+                        state.gameBoard[row][col] = state.currentPlayer;
+                        const score = minimaxScore(0, false);
+                        state.gameBoard[row][col] = '';
+                        
+                        if (score > bestScore) {
+                            bestScore = score;
+                            bestMove = { row, col };
+                        }
+                    }
+                }
+            }
+            
+            return bestMove;
+        }
+
+        // Minimax helper function
+        function minimaxScore(depth, isMaximizing) {
+            // Check for terminal states
+            if (checkWinForMinimax(state.currentPlayer)) {
+                return 10 - depth;
+            }
+            
+            if (checkWinForMinimax(state.currentPlayer === 'x' ? 'o' : 'x')) {
+                return depth - 10;
+            }
+            
+            if (checkDraw()) {
+                return 0;
+            }
+            
+            if (isMaximizing) {
+                let bestScore = -Infinity;
+                for (let row = 0; row < 3; row++) {
+                    for (let col = 0; col < 3; col++) {
+                        if (state.gameBoard[row][col] === '') {
+                            state.gameBoard[row][col] = state.currentPlayer;
+                            const score = minimaxScore(depth + 1, false);
+                            state.gameBoard[row][col] = '';
+                            bestScore = Math.max(score, bestScore);
+                        }
+                    }
+                }
+                return bestScore;
+            } else {
+                let bestScore = Infinity;
+                const opponent = state.currentPlayer === 'x' ? 'o' : 'x';
+                for (let row = 0; row < 3; row++) {
+                    for (let col = 0; col < 3; col++) {
+                        if (state.gameBoard[row][col] === '') {
+                            state.gameBoard[row][col] = opponent;
+                            const score = minimaxScore(depth + 1, true);
+                            state.gameBoard[row][col] = '';
+                            bestScore = Math.min(score, bestScore);
+                        }
+                    }
+                }
+                return bestScore;
+            }
+        }
+
+        // Check for win for minimax (no visual updates)
+        function checkWinForMinimax(player) {
+            // Check rows
+            for (let row = 0; row < state.boardSize; row++) {
+                if (state.gameBoard[row].every(cell => cell === player)) {
+                    return true;
+                }
+            }
+            
+            // Check columns
+            for (let col = 0; col < state.boardSize; col++) {
+                let colWin = true;
+                for (let row = 0; row < state.boardSize; row++) {
+                    if (state.gameBoard[row][col] !== player) {
+                        colWin = false;
+                        break;
+                    }
+                }
+                if (colWin) return true;
+            }
+            
+            // Check diagonals
+            let diag1Win = true;
+            let diag2Win = true;
+            for (let i = 0; i < state.boardSize; i++) {
+                if (state.gameBoard[i][i] !== player) {
+                    diag1Win = false;
+                }
+                if (state.gameBoard[i][state.boardSize - 1 - i] !== player) {
+                    diag2Win = false;
+                }
+            }
+            
+            return diag1Win || diag2Win;
+        }
+
+        // Update the game board display
+        function updateBoard() {
+            const cells = document.querySelectorAll('.cell');
+            for (let row = 0; row < state.boardSize; row++) {
+                for (let col = 0; col < state.boardSize; col++) {
+                    const index = row * state.boardSize + col;
+                    const cell = cells[index];
+                    const value = state.gameBoard[row][col];
+                    
+                    cell.textContent = value.toUpperCase();
+                    cell.className = 'cell';
+                    
+                    if (value) {
+                        cell.classList.add(value);
+                    }
+                }
+            }
+        }
+
+        // Update status message
+        function updateStatusMessage() {
+            let message = '';
+            
+            if (state.gameMode === 'single') {
+                if (state.currentPlayer === state.playerSymbol) {
+                    message = `Your turn (${state.playerSymbol.toUpperCase()})`;
+                } else {
+                    message = `Computer's turn (${state.opponentSymbol.toUpperCase()})`;
+                }
+            } else {
+                if (state.currentPlayer === state.playerSymbol) {
+                    message = `Your turn (${state.playerSymbol.toUpperCase()})`;
+                } else {
+                    message = `${state.botName}'s turn (${state.opponentSymbol.toUpperCase()})`;
+                }
+            }
+            
+            elements.statusMessage.textContent = message;
+        }
+
+        // Update streak display
+        function updateStreakDisplay() {
+            if (state.winStreak > 0) {
+                const multiplier = state.winStreak > 1 ? ` (x${state.winStreak})` : '';
+                elements.streakDisplay.textContent = `Win Streak: ${state.winStreak}${multiplier}`;
+                elements.streakDisplay.style.display = 'block';
+            } else {
+                elements.streakDisplay.style.display = 'none';
+            }
+        }
+
+        // Update coin display
+        function updateCoinDisplay() {
+            elements.coinCount.textContent = state.coins;
+        }
+
+        // Check for win
+        function checkWin(row, col, visualize = true) {
+            const player = state.gameBoard[row][col];
+            if (!player) return false;
+            
+            // Determine win condition based on board size
+            const winCount = state.boardSize === 3 ? 3 : 4;
+            
+            // Check row
+            let rowWin = true;
+            for (let c = 0; c < state.boardSize; c++) {
+                if (state.gameBoard[row][c] !== player) {
+                    rowWin = false;
+                    break;
+                }
+            }
+            
+            // Check column
+            let colWin = true;
+            for (let r = 0; r < state.boardSize; r++) {
+                if (state.gameBoard[r][col] !== player) {
+                    colWin = false;
+                    break;
+                }
+            }
+            
+            // Check diagonals
+            let diag1Win = true;
+            let diag2Win = true;
+            
+            // Only check diagonals if the move is on a diagonal
+            const isOnDiag1 = row === col;
+            const isOnDiag2 = row + col === state.boardSize - 1;
+            
+            if (isOnDiag1) {
+                for (let i = 0; i < state.boardSize; i++) {
+                    if (state.gameBoard[i][i] !== player) {
+                        diag1Win = false;
+                        break;
+                    }
+                }
+            } else {
+                diag1Win = false;
+            }
+            
+            if (isOnDiag2) {
+                for (let i = 0; i < state.boardSize; i++) {
+                    if (state.gameBoard[i][state.boardSize - 1 - i] !== player) {
+                        diag2Win = false;
+                        break;
+                    }
+                }
+            } else {
+                diag2Win = false;
+            }
+            
+            const hasWon = rowWin || colWin || diag1Win || diag2Win;
+            
+            // Draw win line if there's a win and visualization is enabled
+            if (hasWon && visualize) {
+                setTimeout(() => {
+                    if (rowWin) drawWinLine('row', row);
+                    else if (colWin) drawWinLine('col', col);
+                    else if (diag1Win) drawWinLine('diag1');
+                    else if (diag2Win) drawWinLine('diag2');
+                }, 100);
+            }
+            
+            return hasWon;
+        }
+
+        // Check for draw
+        function checkDraw() {
+            for (let row = 0; row < state.boardSize; row++) {
+                for (let col = 0; col < state.boardSize; col++) {
+                    if (state.gameBoard[row][col] === '') {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        // Draw win line
+        function drawWinLine(type, index) {
+            const board = elements.gameBoard;
+            const cellSize = board.querySelector('.cell').offsetWidth;
+            const gap = 10; // gap between cells
+            const boardWidth = state.boardSize * cellSize + (state.boardSize - 1) * gap;
+            const boardHeight = state.boardSize * cellSize + (state.boardSize - 1) * gap;
+            
+            const line = document.createElement('div');
+            line.className = 'win-line';
+            
+            // Set line properties based on type
+            switch (type) {
+                case 'row':
+                    line.style.width = `${boardWidth}px`;
+                    line.style.height = '5px';
+                    line.style.top = `${index * (cellSize + gap) + cellSize / 2}px`;
+                    line.style.left = '0';
+                    break;
+                case 'col':
+                    line.style.width = '5px';
+                    line.style.height = `${boardHeight}px`;
+                    line.style.left = `${index * (cellSize + gap) + cellSize / 2}px`;
+                    line.style.top = '0';
+                    break;
+                case 'diag1':
+                    line.style.width = '5px';
+                    line.style.height = `${Math.sqrt(2) * boardHeight}px`;
+                    line.style.top = '0';
+                    line.style.left = `${boardWidth / 2}px`;
+                    line.style.transformOrigin = 'top center';
+                    line.style.transform = 'rotate(45deg)';
+                    break;
+                case 'diag2':
+                    line.style.width = '5px';
+                    line.style.height = `${Math.sqrt(2) * boardHeight}px`;
+                    line.style.top = '0';
+                    line.style.left = `${boardWidth / 2}px`;
+                    line.style.transformOrigin = 'top center';
+                    line.style.transform = 'rotate(135deg)';
+                    break;
+            }
+            
+            board.appendChild(line);
+        }
+        // End game
+        function endGame(isDraw) {
+            state.gameActive = false;
+            
+            if (isDraw) {
+                elements.statusMessage.textContent = 'Game ended in a draw!';
+                // Add draw coins
+                addCoins(50);
+                showNotification('Draw! +50 coins');
+                state.winStreak = 0;
+            } else {
+                const winner = state.currentPlayer;
+                
+                if (winner === state.playerSymbol) {
+                    // Player won
+                    state.winStreak++;
+                    const baseCoins = 200;
+                    const multiplier = Math.max(1, state.winStreak);
+                    const coinsWon = baseCoins * multiplier;
+                    
+                    elements.statusMessage.textContent = 'You won!';
+                    addCoins(coinsWon);
+                    showNotification(`Victory! +${coinsWon} coins (x${multiplier})`);
+                } else {
+                    // Player lost
+                    elements.statusMessage.textContent = state.gameMode === 'single' ? 
+                        'Computer won!' : `${state.botName} won!`;
+                    
+                    addCoins(100);
+                    showNotification('Good effort! +100 coins');
+                    state.winStreak = 0;
+                }
+            }
+            
+            updateStreakDisplay();
+            
+            // Update leaderboards with new coins
+            updateLeaderboardWithUserCoins();
+            
+            saveGameState();
+            
+            // Add post-game buttons
+            const buttonGroup = buttons.restart.parentElement;
+            
+            // Remove existing extra buttons if any
+            const existingExtraButtons = buttonGroup.querySelectorAll('.extra-btn');
+            existingExtraButtons.forEach(btn => btn.remove());
+            
+            // Show restart button again if hidden
+            buttons.restart.style.display = 'block';
+            
+            // Add revenge button for multiplayer
+            if (state.gameMode === 'multiplayer') {
+                const revengeBtn = document.createElement('button');
+                revengeBtn.className = 'btn extra-btn';
+                revengeBtn.textContent = 'Revenge';
+                revengeBtn.addEventListener('click', () => {
+                    startCountdown('multiplayer');
+                });
+                
+                const findNewBtn = document.createElement('button');
+                findNewBtn.className = 'btn extra-btn';
+                findNewBtn.textContent = 'Find New Opponent';
+                findNewBtn.addEventListener('click', () => {
+                    startMultiplayerSearch();
+                });
+                
+                buttonGroup.insertBefore(revengeBtn, buttons.restart);
+                buttonGroup.insertBefore(findNewBtn, buttons.home);
+            } else {
+                // Add retry button for single player
+                const retryBtn = document.createElement('button');
+                retryBtn.className = 'btn extra-btn';
+                retryBtn.textContent = 'Retry';
+                retryBtn.addEventListener('click', () => {
+                    startCountdown('single');
+                });
+                
+                buttonGroup.insertBefore(retryBtn, buttons.restart);
+            }
+        }
+
+        // Update leaderboards with user coins
+        function updateLeaderboardWithUserCoins() {
+            // Find the user in each leaderboard and increase their coins by the current amount
+            const userInDaily = state.leaderboard.daily.find(player => player.isUser);
+            if (userInDaily) {
+                // Add 10% of current coins to daily leaderboard
+                userInDaily.coins += Math.floor(state.coins * 0.1);
+            }
+            
+            const userInWeekly = state.leaderboard.weekly.find(player => player.isUser);
+            if (userInWeekly) {
+                // Add 5% of current coins to weekly leaderboard
+                userInWeekly.coins += Math.floor(state.coins * 0.05);
+            }
+            
+            const userInMonthly = state.leaderboard.monthly.find(player => player.isUser);
+            if (userInMonthly) {
+                // Add 2% of current coins to monthly leaderboard
+                userInMonthly.coins += Math.floor(state.coins * 0.02);
+            }
+            
+            // Resort leaderboards and update user ranks
+            updateUserRanks();
+        }
+
+        // Add coins
+        function addCoins(amount) {
+            state.coins += amount;
+            updateCoinDisplay();
+            saveGameState();
+            
+            // Animate coin count
+            const coinElement = elements.coinCount;
+            coinElement.classList.add('blinking');
+            setTimeout(() => {
+                coinElement.classList.remove('blinking');
+            }, 1000);
+        }
+
+        // Show notification
+        function showNotification(message) {
+            const notification = elements.notification;
+            notification.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Restart game
+        function restartGame() {
+            // Clear any win lines
+            const winLines = document.querySelectorAll('.win-line');
+            winLines.forEach(line => line.remove());
+            
+            // Remove extra buttons
+            const extraButtons = document.querySelectorAll('.extra-btn');
+            extraButtons.forEach(btn => btn.remove());
+            
+            // Start new game with same settings
+            if (state.gameMode === 'multiplayer') {
+                startCountdown('multiplayer');
+            } else {
+                startCountdown('single');
+            }
+        }
+
+        // Go to home screen
+        function goToHome() {
+            // Clear any win lines
+            const winLines = document.querySelectorAll('.win-line');
+            winLines.forEach(line => line.remove());
+            
+            // Reset game state
+            state.gameActive = false;
+            
+            // Show home screen
+            showScreen('home-screen');
+            
+            // Restore original buttons
+            buttons.restart.style.display = 'block';
+            
+            // Remove extra buttons
+            const extraButtons = document.querySelectorAll('.extra-btn');
+            extraButtons.forEach(btn => btn.remove());
+        }
+
+        // Toggle dark mode
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+        }
+
+        // Initialize the game
+        init();
+    </script>
+</body>
+</html>
