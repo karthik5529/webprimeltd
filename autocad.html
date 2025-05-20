@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DOWNLOAD AND ENJOY</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(-45deg, #ff9a9e, #fad0c4, #fbc2eb, #a18cd1);
+      background-size: 400% 400%;
+      animation: gradientMove 12s ease infinite;
+      text-align: center;
+    }
+
+    @keyframes gradientMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    h1 {
+      background: linear-gradient(90deg, #000000, #66c2ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-size: 3em;
+      margin: 40px 0 20px;
+      animation: fadeInDown 1s ease-out;
+    }
+
+    @keyframes fadeInDown {
+      0% {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      padding: 30px;
+      animation: fadeIn 2s ease;
+    }
+
+    @keyframes fadeIn {
+      0% { opacity: 0; transform: scale(0.9); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    .download-btn {
+      background: linear-gradient(90deg, #00c9ff, #92fe9d);
+      color: white;
+      padding: 15px 25px;
+      text-decoration: none;
+      border-radius: 30px;
+      font-size: 1.1em;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .download-btn:hover {
+      transform: scale(1.08);
+    }
+
+    .download-btn::after {
+      content: "\2193";
+      position: absolute;
+      right: 15px;
+      animation: bounce 1s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { top: 0; }
+      50% { top: 5px; }
+    }
+
+    footer {
+      margin-top: 50px;
+      padding: 20px;
+      background-color: #333;
+      color: #fff;
+      animation: fadeIn 2s ease;
+    }
+
+    footer a {
+      color: #00ffff;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <h1>DOWNLOAD AND ENJOY</h1>
+  <div class="container">
+    <a class="download-btn" href="expno1.dwg" download>Download EXP 1</a>
+    <a class="download-btn" href="expno2.dwg" download>Download EXP 2</a>
+    <a class="download-btn" href="expno3.dwg" download>Download EXP 3</a>
+    <a class="download-btn" href="expno4A.dwg" download>Download EXP 4A</a>
+    <a class="download-btn" href="expno4B.dwg" download>Download EXP 4B</a>
+    <a class="download-btn" href="expno5.dwg" download>Download EXP 5</a>
+    <a class="download-btn" href="expno6.dwg" download>Download EXP 6</a>
+  </div>
+
+  <footer>
+    All rights reserved by <a href="https://webprime.top" target="_blank">WebPrime</a>
+  </footer>
+</body>
+</html>
