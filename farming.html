@@ -1,2606 +1,2298 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pocket Empire Builder</title>
-  <style>
-    /* Reset and Base Styles */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Arial', sans-serif;
-    }
-    
-    :root {
-      --primary: #9b87f5;
---primary-light: #b8a8f8;
---primary-dark: #7E69AB;
---dark: #1A1F2C;
---light: #F1F0FB;
---success: #4CAF50;
---warning: #FFC107;
---danger: #F44336;
---info: #2196F3;
---transition-speed: 0.3s;
-}
-
-body {
-background-color: var(--light);
-color: var(--dark);
-min-height: 100vh;
-display: flex;
-flex-direction: column;
-overflow-x: hidden;
-}
-
-/* Layout Containers */
-.container {
-width: 100%;
-max-width: 1200px;
-margin: 0 auto;
-padding: 1rem;
-}
-
-.game-container {
-display: flex;
-flex-direction: column;
-gap: 1rem;
-animation: fadeIn 0.5s ease-out;
-}
-
-/* Header Styles */
-header {
-background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-color: white;
-padding: 1rem;
-text-align: center;
-box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-position: relative;
-overflow: hidden;
-}
-
-header:before {
-content: '';
-position: absolute;
-top: -50%;
-left: -50%;
-width: 200%;
-height: 200%;
-background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
-animation: headerShine 8s linear infinite;
-}
-
-@keyframes headerShine {
-0% {
-  transform: rotate(0deg);
-}
-100% {
-  transform: rotate(360deg);
-}
-}
-
-h1 {
-font-size: 1.8rem;
-margin-bottom: 0.5rem;
-position: relative;
-display: inline-block;
-text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-}
-
-h1:after {
-content: '';
-position: absolute;
-bottom: -5px;
-left: 25%;
-width: 50%;
-height: 3px;
-background: white;
-border-radius: 2px;
-transform: scaleX(0);
-transform-origin: center;
-animation: underlineAnimation 2s ease-in-out infinite;
-}
-
-@keyframes underlineAnimation {
-0%, 100% { transform: scaleX(0); }
-50% { transform: scaleX(1); }
-}
-
-/* Resource Bar */
-.resource-bar {
-display: flex;
-justify-content: space-around;
-background: linear-gradient(180deg, #ffffff 0%, #f9f9f9 100%);
-padding: 0.75rem;
-border-radius: 12px;
-box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-flex-wrap: wrap;
-transition: transform var(--transition-speed), box-shadow var(--transition-speed);
-}
-
-.resource-bar:hover {
-transform: translateY(-2px);
-box-shadow: 0 6px 20px rgba(0,0,0,0.08);
-}
-
-.resource {
-display: flex;
-flex-direction: column;
-align-items: center;
-padding: 0.5rem;
-min-width: 80px;
-position: relative;
-transition: transform var(--transition-speed);
-}
-
-.resource:hover {
-transform: scale(1.05);
-}
-
-.resource:after {
-content: '';
-position: absolute;
-bottom: 0;
-left: 10%;
-width: 80%;
-height: 2px;
-background: var(--primary);
-border-radius: 1px;
-transform: scaleX(0);
-transition: transform 0.3s ease;
-transform-origin: center;
-}
-
-.resource:hover:after {
-transform: scaleX(1);
-}
-
-.resource-icon {
-font-size: 1.5rem;
-margin-bottom: 0.25rem;
-transition: transform 0.3s ease;
-}
-
-.resource:hover .resource-icon {
-transform: scale(1.2) rotate(5deg);
-}
-
-.resource-label {
-font-size: 0.75rem;
-color: #666;
-transition: color 0.3s ease;
-}
-
-.resource:hover .resource-label {
-color: var(--primary-dark);
-}
-
-.resource-value {
-font-weight: bold;
-font-size: 1.1rem;
-transition: all 0.2s ease;
-}
-
-.resource-value.updated {
-animation: valueUpdate 0.5s ease;
-}
-
-@keyframes valueUpdate {
-0% { transform: scale(1); color: var(--primary); }
-50% { transform: scale(1.2); color: var(--primary); }
-100% { transform: scale(1); }
-}
-
-/* Grid System */
-.grid {
-display: grid;
-grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-gap: 1rem;
-}
-
-/* Card Component */
-.card {
-background-color: white;
-border-radius: 12px;
-box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-overflow: hidden;
-transition: transform var(--transition-speed), box-shadow var(--transition-speed);
-position: relative;
-}
-
-.card:hover {
-transform: translateY(-4px);
-box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-}
-
-.card-header {
-background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-color: white;
-padding: 0.75rem 1.25rem;
-font-weight: bold;
-position: relative;
-overflow: hidden;
-}
-
-.card-header:before {
-content: '';
-position: absolute;
-top: -50%;
-left: -50%;
-width: 200%;
-height: 200%;
-background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
-opacity: 0;
-transition: opacity 0.5s ease;
-}
-
-.card:hover .card-header:before {
-opacity: 1;
-animation: cardHeaderShine 2s linear;
-}
-
-@keyframes cardHeaderShine {
-0% { transform: translateX(-100%) rotate(45deg); }
-100% { transform: translateX(100%) rotate(45deg); }
-}
-
-.card-body {
-padding: 1.25rem;
-}
-
-/* Button Styles */
-.btn {
-display: inline-block;
-padding: 0.5rem 1.25rem;
-background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-color: white;
-border: none;
-border-radius: 8px;
-cursor: pointer;
-font-size: 0.9rem;
-transition: all 0.2s, transform 0.1s;
-text-align: center;
-position: relative;
-overflow: hidden;
-box-shadow: 0 4px 10px rgba(126, 105, 171, 0.3);
-}
-
-.btn:before {
-content: '';
-position: absolute;
-top: 0;
-left: 0;
-width: 100%;
-height: 100%;
-background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0) 100%);
-transform: translateX(-100%);
-}
-
-.btn:hover {
-background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
-box-shadow: 0 6px 15px rgba(126, 105, 171, 0.4);
-}
-
-.btn:hover:before {
-animation: btnShine 1s;
-}
-
-@keyframes btnShine {
-0% { transform: translateX(-100%); }
-100% { transform: translateX(100%); }
-}
-
-.btn:active {
-transform: scale(0.97);
-box-shadow: 0 2px 5px rgba(126, 105, 171, 0.2);
-}
-
-.btn-block {
-display: block;
-width: 100%;
-}
-
-.btn-disabled {
-background: linear-gradient(135deg, #cccccc 0%, #aaaaaa 100%);
-cursor: not-allowed;
-box-shadow: none;
-}
-
-.btn-disabled:hover {
-background: linear-gradient(135deg, #cccccc 0%, #aaaaaa 100%);
-box-shadow: none;
-}
-
-/* Progress Bars */
-.progress-container {
-background-color: #eef1f6;
-border-radius: 8px;
-height: 10px;
-overflow: hidden;
-margin: 0.5rem 0;
-position: relative;
-box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
-}
-
-.progress-bar {
-height: 100%;
-background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
-width: 0%;
-transition: width 0.5s ease;
-border-radius: 8px;
-position: relative;
-box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-.progress-bar:after {
-content: '';
-position: absolute;
-top: 0;
-left: 0;
-width: 100%;
-height: 100%;
-background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%);
-animation: progressShine 2s linear infinite;
-border-radius: 8px;
-}
-
-@keyframes progressShine {
-0% { transform: translateX(-100%); }
-100% { transform: translateX(100%); }
-}
-
-/* Building Items */
-.building-item {
-margin-bottom: 1.25rem;
-padding-bottom: 1.25rem;
-border-bottom: 1px solid #eee;
-transition: all 0.3s ease;
-}
-
-.building-item:hover {
-transform: translateX(5px);
-border-bottom-color: var(--primary-light);
-padding-left: 5px;
-}
-
-.building-header {
-display: flex;
-justify-content: space-between;
-align-items: center;
-margin-bottom: 0.75rem;
-}
-
-.building-title {
-font-weight: bold;
-font-size: 1.1rem;
-position: relative;
-display: inline-block;
-transition: color 0.3s ease;
-}
-
-.building-item:hover .building-title {
-color: var(--primary-dark);
-}
-
-.building-level {
-background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
-color: white;
-padding: 0.25rem 0.75rem;
-border-radius: 20px;
-font-size: 0.8rem;
-box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-transition: all 0.3s ease;
-}
-
-.building-item:hover .building-level {
-transform: scale(1.05);
-box-shadow: 0 3px 8px rgba(0,0,0,0.15);
-}
-
-.building-description {
-font-size: 0.9rem;
-margin-bottom: 0.75rem;
-color: #666;
-line-height: 1.4;
-}
-
-.building-production {
-font-size: 0.9rem;
-color: var(--success);
-margin-bottom: 0.75rem;
-font-weight: 500;
-display: flex;
-align-items: center;
-}
-
-.building-production:before {
-content: '➕';
-margin-right: 5px;
-font-size: 0.8rem;
-}
-
-.building-cost {
-display: flex;
-gap: 0.75rem;
-font-size: 0.85rem;
-color: #666;
-margin-bottom: 0.75rem;
-align-items: center;
-}
-
-.cost-item {
-display: flex;
-align-items: center;
-gap: 0.25rem;
-padding: 4px 8px;
-background-color: #f9f9f9;
-border-radius: 6px;
-transition: all 0.3s ease;
-}
-
-.building-item:hover .cost-item {
-background-color: #f0f0f0;
-}
-
-/* Tabs */
-.tabs {
-display: flex;
-background-color: white;
-border-radius: 12px 12px 0 0;
-overflow: hidden;
-box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
-position: relative;
-z-index: 1;
-}
-
-.tab {
-flex: 1;
-padding: 0.85rem;
-text-align: center;
-cursor: pointer;
-background-color: #f5f5f5;
-transition: all 0.3s ease;
-position: relative;
-overflow: hidden;
-font-weight: 500;
-}
-
-.tab:before {
-content: '';
-position: absolute;
-top: 0;
-left: 0;
-width: 100%;
-height: 4px;
-background: var(--primary);
-transform: translateY(-4px);
-transition: transform 0.3s ease;
-}
-
-.tab:hover:before {
-transform: translateY(0);
-}
-
-.tab:after {
-content: '';
-position: absolute;
-bottom: 0;
-left: 10%;
-width: 80%;
-height: 2px;
-background: var(--primary-dark);
-transform: scaleX(0);
-transition: transform 0.3s ease;
-transform-origin: center;
-}
-
-.tab:hover:after {
-transform: scaleX(1);
-}
-
-.tab.active {
-background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-color: white;
-font-weight: 600;
-box-shadow: 0 4px 12px rgba(126, 105, 171, 0.3);
-transform: translateY(-2px);
-}
-
-.tab.active:before, .tab.active:after {
-display: none;
-}
-
-.tab-content {
-display: none;
-animation: fadeIn 0.3s ease-out;
-}
-
-.tab-content.active {
-display: block;
-}
-
-/* Notifications */
-#notification-container {
-position: fixed;
-bottom: 20px;
-right: 20px;
-z-index: 1000;
-display: flex;
-flex-direction: column-reverse;
-gap: 10px;
-}
-
-.notification {
-background-color: white;
-border-left: 4px solid var(--primary);
-padding: 1rem;
-border-radius: 8px;
-box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-transform: translateX(120%);
-transition: transform 0.3s cubic-bezier(.17,.67,.83,.67);
-display: flex;
-justify-content: space-between;
-min-width: 250px;
-position: relative;
-overflow: hidden;
-}
-
-.notification:before {
-content: '';
-position: absolute;
-top: 0;
-left: 0;
-width: 4px;
-height: 100%;
-opacity: 0.7;
-animation: notificationPulse 2s infinite;
-}
-
-@keyframes notificationPulse {
-0% { opacity: 0.7; }
-50% { opacity: 1; }
-100% { opacity: 0.7; }
-}
-
-.notification.show {
-transform: translateX(0);
-}
-
-.notification.success {
-border-left-color: var(--success);
-}
-
-.notification.success:before {
-background-color: var(--success);
-}
-
-.notification.warning {
-border-left-color: var(--warning);
-}
-
-.notification.warning:before {
-background-color: var(--warning);
-}
-
-.notification.error {
-border-left-color: var(--danger);
-}
-
-.notification.error:before {
-background-color: var(--danger);
-}
-
-.notification.info {
-border-left-color: var(--info);
-}
-
-.notification.info:before {
-background-color: var(--info);
-}
-
-.notification-close {
-background: none;
-border: none;
-font-size: 1.2rem;
-line-height: 1;
-cursor: pointer;
-color: #999;
-transition: color 0.2s, transform 0.2s;
-}
-
-.notification-close:hover {
-color: #333;
-transform: scale(1.1);
-}
-
-/* Achievements */
-.achievement {
-display: flex;
-align-items: center;
-gap: 1rem;
-padding: 1rem;
-border-radius: 8px;
-background-color: rgba(155, 135, 245, 0.05);
-margin-bottom: 0.75rem;
-transition: all 0.3s ease;
-position: relative;
-overflow: hidden;
-}
-
-.achievement:hover {
-background-color: rgba(155, 135, 245, 0.1);
-transform: translateY(-2px);
-box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-}
-
-.achievement:before {
-content: '';
-position: absolute;
-top: 0;
-left: 0;
-right: 0;
-bottom: 0;
-background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0) 100%);
-transform: translateX(-100%);
-}
-
-.achievement:hover:before {
-animation: achievementShine 1.5s;
-}
-
-@keyframes achievementShine {
-0% { transform: translateX(-100%); }
-100% { transform: translateX(100%); }
-}
-
-.achievement-icon {
-font-size: 1.8rem;
-color: var(--primary);
-transition: all 0.3s ease;
-display: flex;
-align-items: center;
-justify-content: center;
-width: 40px;
-height: 40px;
-border-radius: 50%;
-background-color: rgba(155, 135, 245, 0.1);
-}
-
-.achievement:hover .achievement-icon {
-transform: scale(1.1) rotate(5deg);
-background-color: rgba(155, 135, 245, 0.2);
-}
-
-.achievement-info {
-flex: 1;
-}
-
-.achievement-title {
-font-weight: bold;
-margin-bottom: 3px;
-transition: color 0.3s ease;
-}
-
-.achievement:hover .achievement-title {
-color: var(--primary-dark);
-}
-
-.achievement-desc {
-font-size: 0.85rem;
-color: #666;
-line-height: 1.3;
-}
-
-.achievement-progress {
-text-align: right;
-transition: all 0.3s ease;
-}
-
-.achievement.completed {
-background-color: rgba(76, 175, 80, 0.05);
-}
-
-.achievement.completed:hover {
-background-color: rgba(76, 175, 80, 0.1);
-}
-
-.achievement.completed .achievement-icon {
-color: var(--success);
-background-color: rgba(76, 175, 80, 0.1);
-}
-
-.achievement.completed:hover .achievement-icon {
-background-color: rgba(76, 175, 80, 0.2);
-}
-
-.claim-reward {
-padding: 5px 10px;
-font-size: 0.85rem;
-background: linear-gradient(135deg, #4CAF50 0%, #3d8b40 100%);
-box-shadow: 0 3px 8px rgba(76, 175, 80, 0.3);
-}
-
-.claim-reward:hover {
-background: linear-gradient(135deg, #5cb860 0%, #4CAF50 100%);
-box-shadow: 0 4px 10px rgba(76, 175, 80, 0.4);
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-.grid {
-  grid-template-columns: 1fr;
-}
-
-.resource-bar {
-  flex-wrap: wrap;
-  justify-content: space-between;
-}
-
-.resource {
-  min-width: 60px;
-  padding: 0.25rem;
-}
-
-.building-header {
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.building-level {
-  margin-top: 0.25rem;
-}
-
-.notification {
-  min-width: auto;
-  width: 85vw;
-}
-}
-
-/* Animations */
-@keyframes pulse {
-0% { transform: scale(1); }
-50% { transform: scale(1.05); }
-100% { transform: scale(1); }
-}
-
-@keyframes fadeIn {
-from { opacity: 0; transform: translateY(10px); }
-to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes slideIn {
-from { transform: translateY(20px); opacity: 0; }
-to { transform: translateY(0); opacity: 1; }
-}
-
-@keyframes scaleIn {
-from { transform: scale(0.9); opacity: 0; }
-to { transform: scale(1); opacity: 1; }
-}
-
-.pulse {
-animation: pulse 0.5s ease;
-}
-
-.fade-in {
-animation: fadeIn 0.3s ease-out;
-}
-
-.slide-in {
-animation: slideIn 0.3s ease-out;
-}
-
-.scale-in {
-animation: scaleIn 0.3s ease-out;
-}
-
-/* Modal */
-.modal-overlay {
-position: fixed;
-top: 0;
-left: 0;
-right: 0;
-bottom: 0;
-background-color: rgba(0,0,0,0.6);
-z-index: 100;
-display: none;
-align-items: center;
-justify-content: center;
-animation: fadeIn 0.3s;
-backdrop-filter: blur(3px);
-}
-
-.modal {
-background-color: white;
-border-radius: 12px;
-width: 90%;
-max-width: 500px;
-max-height: 90vh;
-overflow-y: auto;
-box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-animation: scaleIn 0.3s;
-}
-
-.modal-header {
-display: flex;
-justify-content: space-between;
-align-items: center;
-padding: 1.25rem;
-border-bottom: 1px solid #eee;
-background: linear-gradient(135deg, #f9f9f9 0%, #f5f5f5 100%);
-border-radius: 12px 12px 0 0;
-}
-
-.modal-title {
-font-weight: bold;
-font-size: 1.3rem;
-color: var(--primary-dark);
-}
-
-.modal-close {
-background: none;
-border: none;
-font-size: 1.5rem;
-cursor: pointer;
-color: #777;
-transition: all 0.2s;
-width: 30px;
-height: 30px;
-display: flex;
-align-items: center;
-justify-content: center;
-border-radius: 50%;
-}
-
-.modal-close:hover {
-background-color: rgba(0,0,0,0.05);
-color: #333;
-transform: rotate(90deg);
-}
-
-.modal-body {
-padding: 1.25rem;
-}
-
-.modal-footer {
-padding: 1.25rem;
-border-top: 1px solid #eee;
-display: flex;
-justify-content: flex-end;
-gap: 0.75rem;
-background: linear-gradient(135deg, #f9f9f9 0%, #f5f5f5 100%);
-border-radius: 0 0 12px 12px;
-}
-
-/* Game specific elements */
-.plot-grid {
-display: grid;
-grid-template-columns: repeat(3, 1fr);
-gap: 0.75rem;
-margin-top: 1rem;
-}
-
-.plot {
-aspect-ratio: 1/1;
-background: linear-gradient(135deg, #8E5E3F 0%, #7E4E2F 100%);
-border-radius: 8px;
-display: flex;
-align-items: center;
-justify-content: center;
-cursor: pointer;
-color: white;
-position: relative;
-overflow: hidden;
-transition: all 0.3s ease;
-box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
-.plot:before {
-content: '';
-position: absolute;
-top: 0;
-left: 0;
-right: 0;
-height: 40%;
-background: linear-gradient(to bottom, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
-z-index: 1;
-}
-
-.plot.empty {
-background: linear-gradient(135deg, #8E5E3F 0%, #7E4E2F 100%);
-}
-
-.plot.empty:hover {
-transform: scale(1.03);
-box-shadow: 0 6px 15px rgba(142, 94, 63, 0.3);
-}
-
-.plot.planted {
-background: linear-gradient(135deg, #4CAF50 0%, #3d8b40 100%);
-}
-
-.plot.planted:hover {
-transform: translateY(-3px);
-box-shadow: 0 6px 15px rgba(76, 175, 80, 0.3);
-}
-
-.plot.ready {
-background: linear-gradient(135deg, #CDDC39 0%, #AFB42B 100%);
-animation: readyPulse 1.5s infinite;
-}
-
-@keyframes readyPulse {
-0% { transform: scale(1); box-shadow: 0 4px 10px rgba(205, 220, 57, 0.3); }
-50% { transform: scale(1.05); box-shadow: 0 6px 18px rgba(205, 220, 57, 0.5); }
-100% { transform: scale(1); box-shadow: 0 4px 10px rgba(205, 220, 57, 0.3); }
-}
-
-.plot-overlay {
-position: absolute;
-top: 0;
-left: 0;
-right: 0;
-bottom: 0;
-display: flex;
-align-items: center;
-justify-content: center;
-background-color: rgba(0,0,0,0.5);
-opacity: 0;
-transition: opacity 0.3s;
-border-radius: 8px;
-z-index: 2;
-}
-
-.plot:hover .plot-overlay {
-opacity: 1;
-}
-
-.plot-overlay span {
-background-color: rgba(0,0,0,0.6);
-padding: 5px 12px;
-border-radius: 20px;
-font-size: 0.85rem;
-font-weight: 500;
-transform: translateY(10px);
-transition: transform 0.3s ease;
-}
-
-.plot:hover .plot-overlay span {
-transform: translateY(0);
-}
-
-/* Tooltip */
-.tooltip {
-position: relative;
-display: inline-block;
-}
-
-.tooltip-text {
-visibility: hidden;
-background-color: #333;
-color: white;
-text-align: center;
-padding: 8px 12px;
-border-radius: 6px;
-position: absolute;
-z-index: 10;
-bottom: 125%;
-left: 50%;
-transform: translateX(-50%) scale(0.9);
-opacity: 0;
-transition: opacity 0.3s, transform 0.3s;
-font-size: 0.85rem;
-white-space: nowrap;
-box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-pointer-events: none;
-}
-
-.tooltip-text:after {
-content: '';
-position: absolute;
-top: 100%;
-left: 50%;
-margin-left: -5px;
-border-width: 5px;
-border-style: solid;
-border-color: #333 transparent transparent transparent;
-}
-
-.tooltip:hover .tooltip-text {
-visibility: visible;
-opacity: 1;
-transform: translateX(-50%) scale(1);
-}
-
-/* Particle Effects */
-.confetti-container {
-position: fixed;
-top: 0;
-left: 0;
-width: 100%;
-height: 100%;
-pointer-events: none;
-z-index: 1000;
-overflow: hidden;
-}
-
-.confetti {
-position: absolute;
-width: 10px;
-height: 10px;
-background-color: #f00;
-opacity: 0;
-animation: confettiFall 3s ease-out forwards;
-transform-origin: center;
-}
-
-@keyframes confettiFall {
-0% {
-  opacity: 1;
-  transform: translateY(-10px) rotate(0deg);
-}
-100% {
-  opacity: 0;
-  transform: translateY(100vh) rotate(720deg);
-}
-}
-
-/* Sound Toggle */
-.sound-toggle {
-position: fixed;
-top: 20px;
-right: 20px;
-width: 36px;
-height: 36px;
-background-color: rgba(255, 255, 255, 0.8);
-border-radius: 50%;
-display: flex;
-align-items: center;
-justify-content: center;
-cursor: pointer;
-z-index: 100;
-box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-transition: all 0.3s ease;
-}
-
-.sound-toggle:hover {
-transform: scale(1.1);
-background-color: white;
-box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.sound-toggle span {
-font-size: 1.2rem;
-}
-
-.sound-toggle.muted span:after {
-content: '❌';
-position: absolute;
-font-size: 0.8rem;
-bottom: -2px;
-right: -2px;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚜 Farm Paradise - Ultimate Farming Simulator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: all 0.5s ease;
+            overflow-x: hidden;
+            user-select: none;
+            background: linear-gradient(135deg, #87CEEB 0%, #98FB98 50%, #F0E68C 100%);
+        }
+
+        body.night {
+            background: linear-gradient(135deg, #191970 0%, #2F4F4F 50%, #483D8B 100%);
+            color: white;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 10px;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        body.night .header {
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+        }
+
+        .player-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .badge {
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            color: #333;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 12px;
+            box-shadow: 0 2px 10px rgba(255, 215, 0, 0.3);
+        }
+
+        .resources {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .resource {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 12px;
+            border-radius: 25px;
+            font-weight: bold;
+            backdrop-filter: blur(5px);
+        }
+
+        .level-bar {
+            width: 200px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .level-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #8BC34A);
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+
+        /* Game Area */
+        .game-area {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .game-area {
+                grid-template-columns: 2fr 1fr;
+            }
+        }
+
+        .farming-section {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        body.night .farming-section {
+            background: rgba(0, 0, 0, 0.6);
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #2E7D32;
+        }
+
+        body.night .section-title {
+            color: #4CAF50;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .tab.active {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .tab:hover {
+            background: rgba(76, 175, 80, 0.2);
+        }
+
+        /* Farm Grid */
+        .farm-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .plot {
+            aspect-ratio: 1;
+            border: 3px dashed #8BC34A;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            background: #F1F8E9;
+        }
+
+        body.night .plot {
+            background: #2E3B2E;
+            border-color: #66BB6A;
+        }
+
+        .plot:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(76, 175, 80, 0.3);
+        }
+
+        .plot.planted {
+            background: #E8F5E8;
+            border-color: #4CAF50;
+        }
+
+        body.night .plot.planted {
+            background: #1B2E1B;
+        }
+
+        .plot.ready {
+            background: #FFE0B2;
+            border-color: #FF9800;
+            animation: glow 2s infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 10px rgba(255, 152, 0, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(255, 152, 0, 0.8); }
+        }
+
+        .crop-icon {
+            font-size: 30px;
+            margin-bottom: 5px;
+            animation: grow 2s infinite;
+        }
+
+        @keyframes grow {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .timer {
+            font-size: 12px;
+            color: #666;
+            font-weight: bold;
+        }
+
+        body.night .timer {
+            color: #ccc;
+        }
+
+        /* Animal Farm */
+        .animal-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .animal-pen {
+            aspect-ratio: 1;
+            border: 3px solid #8D6E63;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            background: #FFF3E0;
+        }
+
+        body.night .animal-pen {
+            background: #3E2723;
+            border-color: #A1887F;
+        }
+
+        .animal-pen:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(141, 110, 99, 0.3);
+        }
+
+        .animal-pen.occupied {
+            background: #E3F2FD;
+            border-color: #2196F3;
+        }
+
+        body.night .animal-pen.occupied {
+            background: #1A237E;
+        }
+
+        .animal-icon {
+            font-size: 35px;
+            margin-bottom: 5px;
+            animation: bounce 3s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .status-icons {
+            display: flex;
+            gap: 5px;
+            position: absolute;
+            top: 5px;
+            right: 5px;
+        }
+
+        .status-icon {
+            font-size: 16px;
+            padding: 2px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Store */
+        .store-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+        }
+
+        .store-item {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        body.night .store-item {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .store-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            border-color: #4CAF50;
+        }
+
+        .item-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .item-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .item-price {
+            color: #FF9800;
+            font-weight: bold;
+        }
+
+        /* Modals */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 90vw;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        body.night .modal-content {
+            background: #333;
+            color: white;
+        }
+
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 30px;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .close:hover {
+            color: #333;
+        }
+
+        /* Floating Action Button */
+        .fab {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, #4CAF50, #8BC34A);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(76, 175, 80, 0.4);
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .fab:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 25px rgba(76, 175, 80, 0.6);
+        }
+
+        /* Popup */
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            z-index: 2000;
+            max-width: 90vw;
+            text-align: center;
+            display: none;
+        }
+
+        body.night .popup {
+            background: #333;
+            color: white;
+        }
+
+        .popup.show {
+            display: block;
+            animation: popIn 0.3s ease;
+        }
+
+        @keyframes popIn {
+            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+
+        .popup h3 {
+            margin-bottom: 15px;
+            color: #4CAF50;
+        }
+
+        .popup-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #ccc;
+            color: #333;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Floating Numbers */
+        .floating-number {
+            position: absolute;
+            font-weight: bold;
+            font-size: 18px;
+            pointer-events: none;
+            animation: float 2s ease-out forwards;
+            z-index: 10;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(-50px); opacity: 0; }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .player-info, .resources {
+                justify-content: center;
+            }
+
+            .level-bar {
+                width: 150px;
+            }
+
+            .farm-grid {
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+                gap: 10px;
+            }
+
+            .animal-grid {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            }
+
+            .store-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+
+            .fab {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+                bottom: 15px;
+                right: 15px;
+            }
+        }
+
+        /* Achievements */
+        .achievement-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .achievement-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .achievement-item.completed {
+            background: rgba(76, 175, 80, 0.2);
+            border-left: 4px solid #4CAF50;
+        }
+
+        .achievement-icon {
+            font-size: 30px;
+        }
+
+        .achievement-info {
+            flex: 1;
+        }
+
+        .achievement-reward {
+            background: #FF9800;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .achievement-reward.claimed {
+            background: #ccc;
+            cursor: default;
+        }
+
+        /* Inventory */
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+        }
+
+        .inventory-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .inventory-icon {
+            font-size: 35px;
+            margin-bottom: 10px;
+        }
+
+        .inventory-count {
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+        /* Daily Quest */
+        .quest-item {
+            background: rgba(255, 215, 0, 0.2);
+            border: 2px solid #FFD700;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+
+        .quest-progress {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .quest-progress-bar {
+            height: 100%;
+            background: #FFD700;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+
+        /* Weather System */
+        .weather-indicator {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px 15px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        body.night .weather-indicator {
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #FFD700;
+            animation: confetti-fall 3s linear forwards;
+            z-index: 1500;
+        }
+
+        @keyframes confetti-fall {
+            0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+    </style>
 </head>
 <body>
-<header>
-<h1>Pocket Empire Builder</h1>
-<p>Build your own farming empire!</p>
-</header>
-
-<main class="container game-container">
-<section class="resource-bar">
-<div class="resource">
-  <div class="resource-icon">💰</div>
-  <div class="resource-label">Gold</div>
-  <div class="resource-value" id="gold-value">0</div>
-</div>
-<div class="resource">
-  <div class="resource-icon">🌾</div>
-  <div class="resource-label">Crops</div>
-  <div class="resource-value" id="crops-value">0</div>
-</div>
-<div class="resource">
-  <div class="resource-icon">⚡</div>
-  <div class="resource-label">Energy</div>
-  <div class="resource-value" id="energy-value">10/10</div>
-</div>
-<div class="resource">
-  <div class="resource-icon">📈</div>
-  <div class="resource-label">Level</div>
-  <div class="resource-value" id="level-value">1</div>
-</div>
-</section>
-
-<section class="tabs-container">
-<div class="tabs">
-  <div class="tab active" data-tab="farm">Farm</div>
-  <div class="tab" data-tab="buildings">Buildings</div>
-  <div class="tab" data-tab="market">Market</div>
-  <div class="tab" data-tab="achievements">Achievements</div>
-</div>
-
-<div id="farm" class="tab-content active">
-  <div class="card">
-    <div class="card-header">Your Farm</div>
-    <div class="card-body">
-      <p>Plant crops, wait for them to grow, and harvest them for profit!</p>
-      <div class="plot-grid" id="farm-plots">
-        <!-- Farm plots will be generated here -->
-      </div>
+    <!-- Weather Indicator -->
+    <div class="weather-indicator">
+        <span id="weather-icon">☀️</span>
+        <span id="weather-text">Sunny</span>
     </div>
-  </div>
-  
-  <div class="card" style="margin-top: 1rem;">
-    <div class="card-header">Seeds</div>
-    <div class="card-body" id="seeds-container">
-      <!-- Seeds will be generated here -->
-    </div>
-  </div>
-</div>
 
-<div id="buildings" class="tab-content">
-  <div class="card">
-    <div class="card-header">Buildings</div>
-    <div class="card-body">
-      <p>Upgrade buildings to increase production and unlock new features.</p>
-      <div id="buildings-container">
-        <!-- Buildings will be generated here -->
-      </div>
-    </div>
-  </div>
-</div>
-
-<div id="market" class="tab-content">
-  <div class="card">
-    <div class="card-header">Market</div>
-    <div class="card-body">
-      <p>Sell your crops for gold!</p>
-      <div id="market-container">
-        <!-- Market items will be generated here -->
-      </div>
-    </div>
-  </div>
-</div>
-
-<div id="achievements" class="tab-content">
-  <div class="card">
-    <div class="card-header">Achievements</div>
-    <div class="card-body">
-      <p>Complete achievements to earn rewards!</p>
-      <div id="achievements-container">
-        <!-- Achievements will be generated here -->
-      </div>
-    </div>
-  </div>
-</div>
-</section>
-</main>
-
-<div id="notification-container"></div>
-<div id="confetti-container" class="confetti-container"></div>
-
-<div class="sound-toggle" id="sound-toggle">
-<span>🔊</span>
-</div>
-
-<div class="modal-overlay" id="modal">
-<div class="modal">
-<div class="modal-header">
-  <div class="modal-title" id="modal-title">Modal Title</div>
-  <button class="modal-close" id="modal-close">&times;</button>
-</div>
-<div class="modal-body" id="modal-body">
-  <!-- Modal content will be inserted here -->
-</div>
-<div class="modal-footer">
-  <button class="btn" id="modal-cancel">Cancel</button>
-  <button class="btn" id="modal-confirm">Confirm</button>
-</div>
-</div>
-</div>
-
-<script>
-// Game State and Constants
-const SAVE_KEY = 'pocket-empire-game';
-const AUTO_SAVE_INTERVAL = 60000; // Save every minute
-const ENERGY_REGEN_TIME = 300000; // 5 minutes per energy
-
-const SEED_TYPES = {
-corn: {
-  name: 'Corn',
-  icon: '🌽',
-  cost: 10,
-  growthTime: 60000, // 1 minute for testing (normally longer)
-  yield: 3,
-  xp: 5,
-  unlockLevel: 1
-},
-carrot: {
-  name: 'Carrot',
-  icon: '🥕',
-  cost: 20,
-  growthTime: 120000, // 2 minutes
-  yield: 7,
-  xp: 10,
-  unlockLevel: 2
-},
-wheat: {
-  name: 'Wheat',
-  icon: '🌾',
-  cost: 50,
-  growthTime: 180000, // 3 minutes
-  yield: 15,
-  xp: 20,
-  unlockLevel: 3
-},
-tomato: {
-  name: 'Tomato',
-  icon: '🍅',
-  cost: 100,
-  growthTime: 240000, // 4 minutes
-  yield: 30,
-  xp: 40,
-  unlockLevel: 5
-},
-strawberry: {
-  name: 'Strawberry',
-  icon: '🍓',
-  cost: 200,
-  growthTime: 300000, // 5 minutes
-  yield: 60,
-  xp: 80,
-  unlockLevel: 8
-}
-};
-
-const BUILDINGS = {
-silo: {
-  name: 'Silo',
-  description: 'Increases crop storage capacity',
-  icon: '🏢',
-  maxLevel: 5,
-  baseCost: 100,
-  unlockLevel: 1,
-  effect: (level) => `Storage: +${level * 50} crops`
-},
-barn: {
-  name: 'Barn',
-  description: 'Generates crops over time',
-  icon: '🏚️',
-  maxLevel: 5,
-  baseCost: 200,
-  unlockLevel: 3,
-  effect: (level) => `Production: +${level} crop/min`
-},
-well: {
-  name: 'Well',
-  description: 'Increases maximum energy',
-  icon: '⛲',
-  maxLevel: 5,
-  baseCost: 150,
-  unlockLevel: 2,
-  effect: (level) => `Energy: +${level * 2} max`
-},
-windmill: {
-  name: 'Windmill',
-  description: 'Increases crop selling prices',
-  icon: '🏭',
-  maxLevel: 5,
-  baseCost: 500,
-  unlockLevel: 5,
-  effect: (level) => `Sell price: +${level * 10}%`
-}
-};
-
-const ACHIEVEMENTS = {
-harvester: {
-  name: 'Harvester',
-  description: 'Harvest crops',
-  icon: '🧑‍🌾',
-  levels: [10, 50, 100, 500, 1000],
-  rewards: [20, 50, 100, 500, 1000]
-},
-richFarmer: {
-  name: 'Rich Farmer',
-  description: 'Earn gold',
-  icon: '💰',
-  levels: [100, 500, 1000, 5000, 10000],
-  rewards: [20, 50, 100, 500, 1000]
-},
-builder: {
-  name: 'Builder',
-  description: 'Upgrade buildings',
-  icon: '👷',
-  levels: [1, 5, 10, 15, 20],
-  rewards: [20, 50, 100, 500, 1000]
-},
-farmer: {
-  name: 'Farmer',
-  description: 'Plant crops',
-  icon: '🚜',
-  levels: [10, 50, 100, 500, 1000],
-  rewards: [20, 50, 100, 500, 1000]
-}
-};
-
-// Sound effects
-const SOUNDS = {
-click: 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA/+NAwAAAAAAAAAAAAFhpbmcAAAAPAAAAAwAAA3YAlpaWlpaWlpaWlpaWlpaWlpaWlpaWlpaWlpaWlpaWlpaW8PDw8PDw8PDw8PDw8PDw8PDw8PDw8PDw8PDw8PDw8PDw////////////////////////////////////////////AAAAAExhdmM1OC4xMwAAAAAAAAAAAAAAACQDQAAAAAAAAN2UR8DzAAAAAAAAAAAAAAAAAAAAAP/jYMQAEvgiwl/AAAAAAQ8DHBkOGBkhkOD4nBwMHRgfBAIPgg+CDDYPg+D5/wQfB8Hw/lHyT5J8IQhP/BIQj/yX5P8m+IPh8EAAAAAIBgGAYBgAAAAAAGAYBgAAAAAQDAAAwDAMAAwDAAA0BAIBwTAcGQ0TgcSwcCQoC4IhwFx4QjBCP//////////////////////////9A6Cgg//8IDA4JhQKBgAAAAABAgKAgICAgICAgICAgICAgICAgICAgP/jaMQAGMpFgJfmBCTARgJAUAZDKDJJIILnXJJJJIRERERBEREQ7u7u7MzMzMzMzCIiIiIiIoiIiIiIiIxERERERERBEREQiIiIiIiIiIiIiIiIgwMDAwMDBAQEBDAwMDAwMEBAQEMDAwQEBAQEId3d3REREREcREREYiIiIiIiIiIiIiIiIiIiIiIiIiIhERERERERERERERERERERERJJJJJIgICAgICAgICAgICAgICAgAg',
-plant: 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA/+NAwAAAAAAAAAAAAFhpbmcAAAAPAAAABwAACZAAEhISEhISQkJCQkJCYmJiYmJicHBwcHBwkJCQkJCQrq6urq6uvLy8vLy8zMzMzMzM3Nzc3Nzc8vLy8vLy////////////AAAAAExhdmM1OC4xMwAAAAAAAAAAAAAAACQCQAAAAAAAAAmQ2L89JAAAAAAAAAAAAAAAAAAAAP/jaMQAEegxtH+0AAQ2BYKgUAgAAwPgeDUiIQGP4Pg+D4+P/5CEHx8fH//8fHwQdBwEI//+gEYIPj4+P//4+Pj49A/B8AAABBCEIP////wQCDknB0dErOTjEvtgRXxVdDcsIgHAA0QAgBACDr//KAgEwTBwYDryZJJWVqytMatyle9tLFxRWPHBEBAtYn0p3bjSpe83Kz2NXlqyuHxaGR//lMrpSSSVTkQERFWCbxAsDjyQqAgICkiMiOZElI3b7v///////4VkokREVJJXKlJXKpV/85U1OEoZL//Mrkkkrn/+XOpIiDBUEHP/+Unbvqqomd3d//+TuVrAuQVKqqv/jcMQ6L9XG7ysoAW+bmbO9qOl0ry9LtQxfm70qlS7lre1C5rdb1K3rWW96a3utb1rLepatLW7rWr0q1S65e9VVYqdKu9S9Se3NbnqTC3W96KlSXovTXoU6a1K3qTFwpi4VZcKbmhSlStLrW61XptTpvQxcKYuFMXCmGLvXCmFTWpWlzW63vQxcMXDF0IaNalSt6rW96NUngoaGhS6qvoQsaVK3oYuFMXCmGLkzW9NjQ0IS6lIZrU0rXehiakNC3WthDWn/5w0w0w0w0wqza67ZKt60VXCtONCHLktONCkM0IcuS040KQzQhy5LTjQwrThphy5LTjQpDNCHLktONCkM0IcuS040MK04aYchw4tHDVBYAEU0PQmaH5j4//x////g+Hw//////////ouYVIABERAiIiESIrANuDh4dLHRtFNcJZEdjOHOJrxwQGhoaAkBoaGhQxIZg4SGgJCgoYAkNCQ4ZY0NhQgcIGDDgyQMmhrTRKCpK//jgMQaK4PnEyyvAAhRMyO1hAMOoBxwgYMNDQ3QBKgnDgVwXhOHArhQXGMTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVQ',
-harvest: 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA/+NAwAAAAAAAAAAAAFhpbmcAAAAPAAAACAAACcoAFhYWFhYWJycnJycnNzc3Nzc3SEhISEhIWFhYWFhYaWlpaWlpe3t7e3t7jIyMjIyMnJycnJyc/////////////////////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AAAAIAAAJyAASEhISEhISEiAgICAgICAgMDAwMDAwMDBAQEBAQEBAQFBQUFBQUFBQYGBgYGBgYGBwcHBwcHBwcICAgICAgICAkJCQkJCQkJCgoKCgoKCgoLCwsLCwsLCwwMDAwMDAwMDQ0NDQ0NDQ0ODg4ODg4ODg8PDw8PDw8PD/AAAAAExhdmM1OC4xMgAAAAAAAAAAAAAAACQCQAAAAAAAAAAAAAAAAAAAAAAAAAD/40DEACIGLRVzBgAIJAbfydAAAAAQCAIAiCIAAABhRBBBE888gAJsCATYPj44IPj44EOQAgE/BA5wQCDg+DnwQ8HwQcEAgGfA+CB//ghwQcHydoQcHB88EHQR6CBzgIPj5/BB8EIDwQc/CB8gEHIAgE/wQfgAgc/BAIPyfJHxE8AAwQ8EAhzwQDPweAkGAxMKBgmLx4mJtxpndGrSSRs5pDMJzmjWTSNjObtZNJIzmmTSNjObtZNI2M0yV7KVbNIZnN2UkjYzTJXspVGxnF22q8tEgAiP//+G3//w2//////CPDfDf//4b4b4bwz/ClK8N8NlsjX/40LEOzBmHLIwzODQI64jdGxnNMaYxGGqf//yRhRdMYjDVf//wGAwCAwp//lg3//8MCBA3//+MYxGMul4b//+G8N//8N4b4bw3///hvDf//8N8N8NlsjYzehV//8mSQ2M5pk0jYzm7aTSRs5pk0JBNkABSR//+SML//yRhDf/+G+G+G+G///hvhvhvhvDf//8N8NLj8yuY+G+G///wjwx/41DEODJlrLLQzNjcPAGMSGa+N//y4b4b4a//+BQKBQKuGyNiVGRsZzTGmMRhzS4Z///BwcHBhb/+TFkZGS3//+G+G+G+G///w3w3//8N8NlsjYzekbGc0rqRsZzRGGqGBwYZLhvhvhvhvhvhvhvDf//8N8N8Oj//////AwcHQwCAQjf/wODg4MP/5MRIRDj4b4b/jQMQmLqYcuufLAnwmKKMxgY4M5IxEwYzGSAyUCLilQO0jBQgMGCAwwCDzXIMBAFYUKVgYEIgDPQDIQRQh3QVqAOlgKCIAURQWi2QDBAdjhhvG8YEKMaPIaDhXxnggJjyRBGVoNSDFlzFWBHiXOMcB4MF1HFSMMRoQtQjzQVgxBZayiOAxwygvTHDMGIeI1AFFjRFKgWNMZBLIzhWQd85wdhjiJi3Cf/40LEJjRNxdi5u9G9jxn5pAFiZwKLmpEeaEBpp+JivUb7brJmZkizBCpI0gNljCIS3aYth/1xQk1q6x2011//4qaaaaanZoppppqaaaaadmimmmkFpttNCE000gW0eimatYobvHmZfWrOz1JeEev5we6sFd64U+W5YXFw+DRhjfn743tGOWgPVX3DSuUvcvyyuL84//1dVVVTSq//0rLgpSH//lKlZpTuqq//yQpVLSVQ3//kmSSasrmkr//5WVzkxBTUUzLjEw/jUMQULSWcyYe70SRVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV',
-upgrade: 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA/+NAwAAAAAAAAAAAAFhpbmcAAAAPAAAAEwAAEJYAGBgYLi4uLS0tRUVFQUFBUlJSUFBQYmJiYGBgcnJyb29vgICAfX19jY2NioqKnJycmpqapqamnp6er6+vraGhoaCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKAAAAAASW5mbwAAAA8AAAMJAACSAAB+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+AAAAAExhdmM1OC4xMwAAAAAAAAAAAAAAACQDQAAAAAAAABCW38W6/gAAAAAAAAAAAAAAAAAAAAD/42DEAAAEgAWvIAAEwmDIdswMCAAZAAdBwa4UOu6DoQAgC+D4Jhzgg4IAxMfH8EHwQA+D4PggOcHwfHwQgg5wcHwfBB8EHB8Hw+CAYHODg5wffgM+ffHx8E99/+DhxAIBgQchzkJ48BW5IpEwskEDEwQGBhEEHGBMgUbdkCxgOQxmEQidGCHAe//jYMQpL4Ns0W8jYOwPGAIg4YIsT5g8IQmDBx0MChU0KUjQSsOAgESEERgEDIvCMEhzCQgfDiAA8YOGszudIGQQgNhYCYnAOYCQYNGFQCaJCYbDREEQSqkFQkyFGfo2/ROMlC0Ixj4DL9GqAQLOEA0FQI5JlyivE0CRIgnRMDBgaC7VBUCpLsFRVBnmR2S0iQEAUlogGQ5SqPYNeJzMODQ9c8SR+LCQA2KhGIpl1O+lhQCEgXCwDHV9YMIhYZsEYdC0xONjodqyMpUJEDiRHQpLIKinT1IkQMowpHcEIx5giHw//DJKQ4Jxm//jYMTYL+fk+WsfNkjO8sZpkK4FglgAJwgwhE0koL3MVKgCBvTH2+sHhUDwl45zU+l627aogkzlygUMDhDL7qrZ1UZq5xPSKXwVnfpPDQWxw6XV9yuIAcBdmpr8ug7i0NSkZloa8JfBgCAsAQFpcYMIMQACXcne2ESAQKEACD5hDjgZZUSJCH/Jy5CEiVGQlRKsbbihOACkxAkKtyH2/o0IEPwkRUlS5j/Fc+pGoqERhCAoISebVv/S8yp9Aj04srFRyNNKfQiYmpf93z////N////7////n9OLSu1KuVNLf9BuGfYQQBGIUZHCEyAKC5LIYOouECJT/42DE8DiZVLgAwoSVXxC8rpmc5RGv6/+X9/+JMVSkXTIXKhRi6qqqVSo/+MrHvmVQvN4SPzf8sZ+UkfeKnOrjNzkZ1W1FJ0MG3+pjweDzpIrAxaGQVsoZQJBGCTIoZT9+Ry+ny5IVImiRQRi6TzcpsXnLssj835TExOc2MVSYaTd90T56MTEIiIiIiIiIiIREiERERERIiRERECIREwNKxKRkpsQnZOS4hOD78KTleP3YmJy+7oiImJiIGnh95BcRomOP/jYMT7LOR8uAcQJHh4Ynw88ggav4uXFxcN35cXJTh6ceQ9POSjDlCc6cgrOVHk5wXOC45csVAvrgZd+q9q32XXX3cyMgwrbdbdalVLUOaqJ3332eypp62/6/WA9eAAAAQiRgR9JJZzIkZHydv7b8c3/633YE2gMDPxMRi42Nyc+PtrixBMbO3NnZm/6rVnZMh5mZkzMzP/+Zi3MzdzZnJvy5c5e6trBjEpP/MoE1DEQMICkCFQJsADJTVye0MoDh4oQJUZECIwKAnEEdBSCCYQ2rsOBgWFBQg//jYMUDLnlEuQDCA3SVAYIIhYCzxsAhq9j9nooDxULAGYGBQaA4FZQ5OAggaS0Gh7t7AO3JX6/Wslx4HBoGJqvR9KTQHiwcGhaYKJCAtdCwgBASAkAAoCBADU7AwDdwYonQdHn/9b61uNBAQjgFEhQEOYYEuChtrKb/+x79bnuGwMIVFTgxRXNyuP/7at6ytmVHgcvjooIiwaC0YEAwN/+1NAgQs1X1/sHhwxZosjFYoG2MHv8a//IXqGIIIPG4eSDINBZTUDtpnUFXBSsKC0ZLjD/42DE9y6jLLmywwLvFYgQFmYoClBTpwJVIbbWT9KlQ8oAKUtVFD1AcSJhsipAsSEg4rxOlJMhKXKqVM1Tn0ep5h9eScnjgv/9f/+lWvXpV9alhHrkVAwNG4anGG6HYf0v+T/pJRJRYWAEBhESLHREQUkV/z//o/UpJVJU7AIAAtEQGkIIRKRSQvP////9a1IXGSEI4JCMqUj/////9upqbm3VjSFQiNEiKRTK9JarX9S1/X6tTVrvv1pVKpUqmpqanpr3Xa6/5STLuH3IXu2LSiWnc//jYMUTL3QctLDCBXVISGfKRYcpGldWBSlIpJSMoaJOLycp+f+5WO5pc+WSuUiNLz4QDEonl5PVqkWnIJnpTjuoxUxBTUUzLjEwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV',
-achievement: 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA/+NAwAAAAAAAAAAAAFhpbmcAAAAPAAAAFwAAHwQAEhISEhIiIiIiIiIyMjIyMjJCQkJCQkJSUlJSUlJiYmJiYmJycnJycnKCgoKCgoKSkpKSkpKioqKioqKysrKysrLCwsLCwsLS0tLS0tLi4uLi4uLy8vLy8vICAgICAgL/AAAAAExhdmM1OC4xMwAAAAAAAAAAAAAAACQEQAAAAAAAAB8E59kneQAAAAAAAAAAAAAAAAAAAP/jYMQAELmncP2BgBBwc4ID4wOQAXBznBznBdBwd8HB8fBwc///B/5CIPD/Lg58Hz/wcHB8/f+CAYC5B8EIPnwfBB/BB//BB/BB8//ggEC5wHO5///s+CgLpyflxwTDDwwxAOB8TBGJQXopUy7mEkFKTKCHQqGTSEJJp0K7tJNLJpZNKGbS5m0skylZNKgzabmbSsmmS63W62W9XuMARJMupoC4GOhiGFxnEpJMmk0mlk0iCYUubdZLJp0Kh/jYMQtK+ORB7yyAAlRqhtgYYSMk0svJtLJpSd3d3d2GRFDLQ7u7u8MiGTJFRSSSSCkkkkSQyKSRZWVmZlllZlZXREWVBifYXRcYYYWZZZZXi4uLDDC4vGHi4vF0XJJJBckkmngAQju7u7u7oiIiJGGRDJu7ukRERFXERCkREQn4lVz8JJEhHArhONxOFcTjcJwrhOE4+HArhXE4nE4ThOLofJ8oCk4Pw8Hwf0JKa9ET/88whx8m799dRldcq//7VKH/42DEOTODYss9u8AAmp1MiVX///KZU7iqcpTyPFUqv//4XR8HRQiUSiUSn//8pVf//LhlciNTK5Ea//+WOILzGAwMDAwMDcyA4JQnBv//yYxMY4zhMYxjP//wxjGMPjT//+JjGMYxjGGxjGMYbGMYxhsYT7GEKSkpKSkpUlJSUn/5KjSUlRpKSmkpKaR///8lJTSVGkpKVAsLhYKQrCwoBCwsKBSQsKBS//+qqqqqq1VVVVVqqnL//4aqhqsNVVSqqqpqqGqw1UN//qqqqqqr//mVVUNVDeGqqqqqqrDVUNVVVVVVVVVVVVVVVVVVVVVVVVVVXiYmpX/42DEJSpTNsvsEAQAVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV',
-error: 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA/+NAwAAAAAAAAAAAAFhpbmcAAAAPAAAAEwAACaAAGhsbGxsbMTExMTExR0dHR0dHXFxcXFxcc3NzcXFxi4uLi4uLoqKioqKipaWlurq6u7u709PT09PT5ubm5ubm9PT09PT0//////////8AAAAAExlifgAAAAAAAAAAAAAAAAAAAAAAAExhdmM1OC4xMwAAAAAAAAAAAAAAACQLkAAAAAAAAAmmYGR1GgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/jYMQAEvQANLcDAAA/gCAILkvgjB/8EOcHB8Hz4PPnB8H4IOCD//gg+fBBzg/yCcHwf/8HB//+D7+CAYIOCDnB//BB8EHBiD4Px8IQiEQPnzgg5wQcHwfHwQcE+D8EH8HO58HB8fx8Pj//cWCRIYRIULEgJF2FfgMU97TmuqgkBdrrADgQHt9zPcrt3WsN1qYDldu61hjd1gBw3db3Nc17fW9YbgZ+5nEy5nud1tYbrVwNjMJlaGMYxhu3dbu62HoefBn6Ca9xnDdayDGb99zPB8+DHt9zUoGk4GMZw3dYAcN3WAHDZ++5mQQXu8H/jYMQiL2X8lQCjAQAgAYzwKrjDDJ426XF0XCuE8J4ThQCrqtd22Z3YyazuaJwrkvF8J4l26YZ3dlu2I8SZMlcXcvF8K5dwiOzs7NChEEMQQ7N02zuOqruV1dUtMXCeJ4ThRZZhmnj/////////nET1QIhLlcK5LEROzZJ2YZly8XwrhOE4ThOy2hTwn//////aJwnc4Twni7lYu5eLuUqqzGdxnZ2dn////////chQiQpEOEcJ4rheL4ThOE7Mzu7M7Mz9XLgRQoUJ3QoQpQoV4u5eLuXBF3Lv/jYMQxLqQksSSzwAFHbpq2YZp9ndiJFCr////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////jYMRJIwAO0AQwAAf////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//jYMRJIwAO0AQwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//jYMRJIwAO0AQwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
-};
-
-// Game State
-let gameState = {
-gold: 100,
-crops: 0,
-energy: 10,
-maxEnergy: 10,
-lastEnergyRegen: Date.now(),
-level: 1,
-xp: 0,
-xpToNextLevel: 100,
-plots: [],
-buildings: {},
-achievements: {},
-stats: {
-  cropsSold: 0,
-  cropsHarvested: 0,
-  goldEarned: 0,
-  cropsPlanted: 0,
-  buildingsUpgraded: 0
-},
-lastSaved: Date.now(),
-initialized: false,
-soundEnabled: true
-};
-
-// DOM Elements
-const goldValueElement = document.getElementById('gold-value');
-const cropsValueElement = document.getElementById('crops-value');
-const energyValueElement = document.getElementById('energy-value');
-const levelValueElement = document.getElementById('level-value');
-const farmPlotsElement = document.getElementById('farm-plots');
-const seedsContainerElement = document.getElementById('seeds-container');
-const buildingsContainerElement = document.getElementById('buildings-container');
-const marketContainerElement = document.getElementById('market-container');
-const achievementsContainerElement = document.getElementById('achievements-container');
-const notificationContainerElement = document.getElementById('notification-container');
-const confettiContainerElement = document.getElementById('confetti-container');
-const modalOverlay = document.getElementById('modal');
-const modalTitle = document.getElementById('modal-title');
-const modalBody = document.getElementById('modal-body');
-const modalCloseButton = document.getElementById('modal-close');
-const modalCancelButton = document.getElementById('modal-cancel');
-const modalConfirmButton = document.getElementById('modal-confirm');
-const soundToggle = document.getElementById('sound-toggle');
-
-// Audio elements
-const audioElements = {};
-
-// Initialize audio elements
-function initAudio() {
-for (const [key, src] of Object.entries(SOUNDS)) {
-  audioElements[key] = new Audio(src);
-  audioElements[key].volume = 0.3;
-}
-
-soundToggle.addEventListener('click', toggleSound);
-}
-
-// Toggle sound
-function toggleSound() {
-gameState.soundEnabled = !gameState.soundEnabled;
-if (gameState.soundEnabled) {
-  soundToggle.innerHTML = '<span>🔊</span>';
-  soundToggle.classList.remove('muted');
-} else {
-  soundToggle.innerHTML = '<span>🔈</span>';
-  soundToggle.classList.add('muted');
-}
-saveGame();
-}
-
-// Play sound
-function playSound(sound) {
-if (gameState.soundEnabled && audioElements[sound]) {
-  // Stop and reset the sound before playing again
-  audioElements[sound].pause();
-  audioElements[sound].currentTime = 0;
-  audioElements[sound].play().catch(e => console.error('Error playing sound:', e));
-}
-}
-
-// Game Functions
-
-// Initialize the game
-function initGame() {
-loadGame();
-
-if (!gameState.initialized) {
-  // First time setup
-  for (let i = 0; i < 9; i++) {
-    gameState.plots.push({
-      index: i,
-      status: 'empty',
-      plantedTime: null,
-      seedType: null
-    });
-  }
-  
-  // Initialize buildings
-  Object.keys(BUILDINGS).forEach(buildingId => {
-    gameState.buildings[buildingId] = {
-      level: 0,
-      unlocked: gameState.level >= BUILDINGS[buildingId].unlockLevel
-    };
-  });
-  
-  // Initialize achievements
-  Object.keys(ACHIEVEMENTS).forEach(achievementId => {
-    gameState.achievements[achievementId] = {
-      progress: 0,
-      level: 0,
-      claimed: []
-    };
-  });
-  
-  gameState.initialized = true;
-  saveGame();
-}
-
-initAudio();
-renderUI();
-setupEventListeners();
-startGameLoop();
-
-// Show welcome notification on first load
-if (gameState.lastSaved === Date.now()) {
-  showNotification('Welcome to Pocket Empire Builder!', 'Start by planting some crops in your farm.', 'info');
-}
-
-// Add first-time user tutorial
-if (gameState.lastSaved === Date.now()) {
-  setTimeout(() => {
-    showTutorial();
-  }, 1500);
-}
-}
-
-// Show tutorial for new players
-function showTutorial() {
-modalTitle.textContent = 'Welcome to Your Farm!';
-modalBody.innerHTML = `
-  <div style="text-align: center; margin-bottom: 1.5rem;">
-    <div style="font-size: 2.5rem; margin-bottom: 1rem;">🌱</div>
-    <h3 style="margin-bottom: 0.5rem;">How to Play</h3>
-    <p>Welcome to your pocket farm empire! Let me show you how to get started:</p>
-  </div>
-  <div style="margin-bottom: 1rem;">
-    <p><strong>1. Plant Crops:</strong> Click on an empty plot to plant seeds.</p>
-    <p><strong>2. Harvest:</strong> When crops are ready, click to harvest them.</p>
-    <p><strong>3. Sell Crops:</strong> Go to the Market tab to sell your crops for gold.</p>
-    <p><strong>4. Upgrade:</strong> Use gold to upgrade your buildings for better production.</p>
-  </div>
-  <div>
-    <p>Your energy regenerates over time, so plan your farming wisely!</p>
-    <p style="text-align: center; margin-top: 1rem; font-weight: bold; color: var(--primary-dark);">Good luck, farmer!</p>
-  </div>
-`;
-
-modalConfirmButton.style.display = 'block';
-modalConfirmButton.textContent = 'Let\'s Start!';
-modalCancelButton.style.display = 'none';
-
-modalOverlay.style.display = 'flex';
-
-modalConfirmButton.onclick = () => {
-  modalOverlay.style.display = 'none';
-  showNotification('First Steps', 'Click on an empty plot to plant your first crop!', 'info');
-};
-}
-
-// Save game state to localStorage
-function saveGame() {
-gameState.lastSaved = Date.now();
-try {
-  localStorage.setItem(SAVE_KEY, JSON.stringify(gameState));
-  console.log('Game saved successfully');
-} catch (error) {
-  console.error('Error saving game:', error);
-  showNotification('Save Error', 'Could not save your game progress.', 'error');
-}
-}
-
-// Load game state from localStorage
-function loadGame() {
-try {
-  const savedGame = localStorage.getItem(SAVE_KEY);
-  if (savedGame) {
-    const loadedState = JSON.parse(savedGame);
-    // Merge saved state with default state to ensure we have all properties
-    gameState = { ...gameState, ...loadedState };
-    console.log('Game loaded successfully');
-    
-    // Calculate offline progress
-    if (gameState.lastSaved) {
-      calculateOfflineProgress(Date.now() - gameState.lastSaved);
-    }
-  }
-} catch (error) {
-  console.error('Error loading game:', error);
-  showNotification('Load Error', 'Could not load your saved game.', 'error');
-}
-}
-
-// Calculate progress while player was away
-function calculateOfflineProgress(timePassed) {
-if (timePassed < 5000) return; // Less than 5 seconds, ignore
-
-let notification = 'While you were away:';
-let changes = false;
-
-// Energy regeneration
-const energyGained = Math.min(
-  gameState.maxEnergy - gameState.energy,
-  Math.floor(timePassed / ENERGY_REGEN_TIME)
-);
-if (energyGained > 0) {
-  gameState.energy += energyGained;
-  notification += `\n+${energyGained} energy regenerated`;
-  changes = true;
-}
-
-// Update last energy regen time
-gameState.lastEnergyRegen = Date.now() - (timePassed % ENERGY_REGEN_TIME);
-
-// Crop growth and harvesting
-gameState.plots.forEach(plot => {
-  if (plot.status === 'planted' && plot.plantedTime) {
-    const growthTime = SEED_TYPES[plot.seedType].growthTime;
-    const timeElapsed = timePassed + (Date.now() - plot.plantedTime);
-    
-    if (timeElapsed >= growthTime) {
-      plot.status = 'ready';
-      changes = true;
-    }
-  }
-});
-
-// Building production
-if (gameState.buildings.barn && gameState.buildings.barn.level > 0) {
-  const productionRate = gameState.buildings.barn.level; // crops per minute
-  const cropsProduced = Math.floor(productionRate * timePassed / 60000);
-  
-  if (cropsProduced > 0) {
-    addCrops(cropsProduced);
-    notification += `\n+${cropsProduced} crops from barn production`;
-    changes = true;
-  }
-}
-
-if (changes) {
-  showNotification('Welcome Back!', notification, 'info');
-}
-}
-
-// Main game loop
-function startGameLoop() {
-// Update timers every second
-setInterval(() => {
-  updateTimers();
-  renderResources();
-}, 1000);
-
-// Auto-save game
-setInterval(() => {
-  saveGame();
-}, AUTO_SAVE_INTERVAL);
-
-// Regenerate energy
-setInterval(() => {
-  regenerateEnergy();
-}, 10000); // Check every 10 seconds
-}
-
-// Update all timers (plots, energy, etc.)
-function updateTimers() {
-// Update plot growth timers
-gameState.plots.forEach((plot, index) => {
-  if (plot.status === 'planted' && plot.plantedTime) {
-    const seed = SEED_TYPES[plot.seedType];
-    const growthTime = seed.growthTime;
-    const timeElapsed = Date.now() - plot.plantedTime;
-    
-    // Update progress bar if there's one
-    const plotElement = document.querySelector(`.plot[data-index="${index}"]`);
-    if (plotElement) {
-      const progressBar = plotElement.querySelector('.progress-bar');
-      if (progressBar) {
-        const progress = Math.min(100, (timeElapsed / growthTime) * 100);
-        progressBar.style.width = `${progress}%`;
-      }
-    }
-    
-    if (timeElapsed >= growthTime) {
-      plot.status = 'ready';
-      renderPlot(index);
-      showNotification('Crops Ready!', `Your ${seed.name} is ready to harvest!`, 'success');
-    }
-  }
-});
-
-// Passive income from buildings
-if (gameState.buildings.barn && gameState.buildings.barn.level > 0) {
-  // Every full minute
-  if (Math.floor(Date.now() / 60000) > Math.floor(gameState.lastSaved / 60000)) {
-    const production = gameState.buildings.barn.level;
-    addCrops(production);
-  }
-}
-}
-
-// Regenerate energy over time
-function regenerateEnergy() {
-if (gameState.energy < gameState.maxEnergy) {
-  const now = Date.now();
-  const timeSinceLastRegen = now - gameState.lastEnergyRegen;
-  
-  if (timeSinceLastRegen >= ENERGY_REGEN_TIME) {
-    const energyToAdd = Math.min(
-      Math.floor(timeSinceLastRegen / ENERGY_REGEN_TIME),
-      gameState.maxEnergy - gameState.energy
-    );
-    
-    gameState.energy += energyToAdd;
-    gameState.lastEnergyRegen = now - (timeSinceLastRegen % ENERGY_REGEN_TIME);
-    
-    renderResources();
-  }
-}
-}
-
-// Resource Management
-function addGold(amount) {
-gameState.gold += amount;
-gameState.stats.goldEarned += amount;
-checkAchievements('richFarmer', gameState.stats.goldEarned);
-animateResourceValue(goldValueElement);
-renderResources();
-}
-
-function spendGold(amount) {
-if (gameState.gold >= amount) {
-  gameState.gold -= amount;
-  animateResourceValue(goldValueElement);
-  renderResources();
-  return true;
-}
-return false;
-}
-
-function addCrops(amount) {
-gameState.crops += amount;
-animateResourceValue(cropsValueElement);
-renderResources();
-}
-
-function spendCrops(amount) {
-if (gameState.crops >= amount) {
-  gameState.crops -= amount;
-  animateResourceValue(cropsValueElement);
-  renderResources();
-  return true;
-}
-return false;
-}
-
-function useEnergy(amount) {
-if (gameState.energy >= amount) {
-  gameState.energy -= amount;
-  animateResourceValue(energyValueElement);
-  renderResources();
-  return true;
-}
-return false;
-}
-
-function animateResourceValue(element) {
-element.classList.add('updated');
-setTimeout(() => {
-  element.classList.remove('updated');
-}, 500);
-}
-
-function addXP(amount) {
-gameState.xp += amount;
-
-while (gameState.xp >= gameState.xpToNextLevel) {
-  gameState.xp -= gameState.xpToNextLevel;
-  gameState.level++;
-  gameState.xpToNextLevel = Math.floor(gameState.xpToNextLevel * 1.5);
-  
-  showNotification('Level Up!', `Congratulations! You reached level ${gameState.level}!`, 'success');
-  animateResourceValue(levelValueElement);
-  createConfetti(30);
-  playSound('achievement');
-  
-  // Unlock new features based on level
-  checkUnlocks();
-}
-
-renderResources();
-}
-
-// Check for new unlocks based on level
-function checkUnlocks() {
-// Check for building unlocks
-Object.keys(BUILDINGS).forEach(buildingId => {
-  const building = BUILDINGS[buildingId];
-  if (gameState.level >= building.unlockLevel && (!gameState.buildings[buildingId] || !gameState.buildings[buildingId].unlocked)) {
-    if (!gameState.buildings[buildingId]) {
-      gameState.buildings[buildingId] = { level: 0, unlocked: true };
-    } else {
-      gameState.buildings[buildingId].unlocked = true;
-    }
-    showNotification('New Building Unlocked!', `You've unlocked the ${building.name}!`, 'info');
-  }
-});
-
-// Render buildings to show new unlocks
-renderBuildings();
-
-// Render seeds to show new unlocks
-renderSeeds();
-}
-
-// Achievement System
-function checkAchievements(type, value) {
-if (!gameState.achievements[type]) return;
-
-const achievement = gameState.achievements[type];
-achievement.progress = value;
-
-const levels = ACHIEVEMENTS[type].levels;
-const currentLevel = achievement.level;
-
-// Check if we've reached a new level
-let newLevel = currentLevel;
-while (newLevel < levels.length && value >= levels[newLevel]) {
-  newLevel++;
-}
-
-if (newLevel > currentLevel) {
-  achievement.level = newLevel;
-  
-  // Show notification for each level gained
-  for (let i = currentLevel + 1; i <= newLevel; i++) {
-    if (!achievement.claimed.includes(i - 1)) {
-      showNotification(
-        'Achievement Unlocked!',
-        `${ACHIEVEMENTS[type].name} Level ${i}! Claim your reward!`,
-        'success'
-      );
-      createConfetti(20);
-      playSound('achievement');
-    }
-  }
-  
-  renderAchievements();
-}
-}
-
-function claimAchievementReward(type, level) {
-const achievement = gameState.achievements[type];
-if (achievement.level >= level + 1 && !achievement.claimed.includes(level)) {
-  const reward = ACHIEVEMENTS[type].rewards[level];
-  addGold(reward);
-  achievement.claimed.push(level);
-  showNotification('Reward Claimed!', `You received ${reward} gold!`, 'success');
-  createConfetti(15);
-  playSound('achievement');
-  renderAchievements();
-  return true;
-}
-return false;
-}
-
-// UI Rendering Functions
-function renderUI() {
-renderResources();
-renderPlots();
-renderSeeds();
-renderBuildings();
-renderMarket();
-renderAchievements();
-}
-
-function renderResources() {
-goldValueElement.textContent = gameState.gold;
-cropsValueElement.textContent = gameState.crops;
-energyValueElement.textContent = `${gameState.energy}/${gameState.maxEnergy}`;
-levelValueElement.textContent = gameState.level;
-}
-
-function renderPlots() {
-farmPlotsElement.innerHTML = '';
-
-gameState.plots.forEach((plot, index) => {
-  const plotElement = document.createElement('div');
-  plotElement.className = `plot ${plot.status}`;
-  plotElement.dataset.index = index;
-  
-  let content = '';
-  let overlayContent = '';
-  
-  switch (plot.status) {
-    case 'empty':
-      content = '🏞️';
-      overlayContent = 'Plant';
-      break;
-    case 'planted':
-      const seed = SEED_TYPES[plot.seedType];
-      const timeElapsed = Date.now() - plot.plantedTime;
-      const progress = Math.min(100, (timeElapsed / seed.growthTime) * 100);
-      
-      content = seed.icon;
-      // Add progress bar
-      content += `<div class="progress-container" style="position: absolute; bottom: 5px; left: 5px; right: 5px;">
-                    <div class="progress-bar" style="width: ${progress}%"></div>
-                  </div>`;
-      overlayContent = formatTime(seed.growthTime - timeElapsed);
-      break;
-    case 'ready':
-      content = SEED_TYPES[plot.seedType].icon;
-      overlayContent = 'Harvest';
-      plotElement.classList.add('pulse');
-      break;
-  }
-  
-  plotElement.innerHTML = `
-    ${content}
-    <div class="plot-overlay">
-      <span>${overlayContent}</span>
-    </div>
-  `;
-  
-  plotElement.addEventListener('click', () => handlePlotClick(index));
-  farmPlotsElement.appendChild(plotElement);
-});
-}
-
-function renderPlot(index) {
-const plotElements = document.querySelectorAll('.plot');
-if (index < plotElements.length) {
-  const plot = gameState.plots[index];
-  const plotElement = plotElements[index];
-  
-  // Update class
-  plotElement.className = `plot ${plot.status}`;
-  
-  let content = '';
-  let overlayContent = '';
-  
-  switch (plot.status) {
-    case 'empty':
-      content = '🏞️';
-      overlayContent = 'Plant';
-      break;
-    case 'planted':
-      const seed = SEED_TYPES[plot.seedType];
-      const timeElapsed = Date.now() - plot.plantedTime;
-      const progress = Math.min(100, (timeElapsed / seed.growthTime) * 100);
-      
-      content = seed.icon;
-      // Add progress bar
-      content += `<div class="progress-container" style="position: absolute; bottom: 5px; left: 5px; right: 5px;">
-                    <div class="progress-bar" style="width: ${progress}%"></div>
-                  </div>`;
-      overlayContent = formatTime(seed.growthTime - timeElapsed);
-      break;
-    case 'ready':
-      content = SEED_TYPES[plot.seedType].icon;
-      overlayContent = 'Harvest';
-      plotElement.classList.add('pulse');
-      break;
-  }
-  
-  plotElement.innerHTML = `
-    ${content}
-    <div class="plot-overlay">
-      <span>${overlayContent}</span>
-    </div>
-  `;
-}
-}
-
-function renderSeeds() {
-seedsContainerElement.innerHTML = '';
-
-Object.keys(SEED_TYPES).forEach(seedId => {
-  const seed = SEED_TYPES[seedId];
-  
-  // Only show seeds that the player has unlocked
-  if (gameState.level >= seed.unlockLevel) {
-    const seedElement = document.createElement('div');
-    seedElement.className = 'building-item';
-    
-    seedElement.innerHTML = `
-      <div class="building-header">
-        <span class="building-title">${seed.icon} ${seed.name}</span>
-      </div>
-      <div class="building-description">Grows in ${formatTime(seed.growthTime)}</div>
-      <div class="building-production">Yield: ${seed.yield} crops</div>
-      <div class="building-cost">
-        <span class="cost-item">
-          <span>💰</span> ${seed.cost}
-        </span>
-        <span class="tooltip">
-          <span class="cost-item">
-            <span>⚡</span> 1
-          </span>
-          <span class="tooltip-text">Requires 1 energy to plant</span>
-        </span>
-      </div>
-      <button class="btn btn-block" data-seed="${seedId}">Plant (${seed.cost} gold)</button>
-    `;
-    
-    const plantButton = seedElement.querySelector('button');
-    plantButton.addEventListener('click', () => handleSeedSelect(seedId));
-    
-    if (gameState.gold < seed.cost || gameState.energy < 1) {
-      plantButton.classList.add('btn-disabled');
-    }
-    
-    seedsContainerElement.appendChild(seedElement);
-  }
-});
-}
-
-function renderBuildings() {
-buildingsContainerElement.innerHTML = '';
-
-Object.keys(BUILDINGS).forEach(buildingId => {
-  const building = BUILDINGS[buildingId];
-  const userBuilding = gameState.buildings[buildingId] || { level: 0, unlocked: false };
-  
-  // Only show buildings that the player has unlocked
-  if (userBuilding.unlocked) {
-    const buildingElement = document.createElement('div');
-    buildingElement.className = 'building-item';
-    
-    const nextLevel = userBuilding.level + 1;
-    const isMaxLevel = userBuilding.level >= building.maxLevel;
-    const upgradeCost = Math.floor(building.baseCost * Math.pow(1.5, userBuilding.level));
-    
-    buildingElement.innerHTML = `
-      <div class="building-header">
-        <span class="building-title">${building.icon} ${building.name}</span>
-        <span class="building-level">Level ${userBuilding.level}</span>
-      </div>
-      <div class="building-description">${building.description}</div>
-      <div class="building-production">${building.effect(userBuilding.level)}</div>
-      ${!isMaxLevel ? `
-        <div class="building-cost">
-          <span class="cost-item">
-            <span>💰</span> ${upgradeCost}
-          </span>
+    <!-- Header -->
+    <div class="container">
+        <div class="header">
+            <div class="player-info">
+                <h2 id="player-name">Farmer</h2>
+                <span id="player-badge" class="badge">Bronze</span>
+                <div class="level-bar">
+                    <div id="level-progress" class="level-progress" style="width: 0%"></div>
+                </div>
+                <span id="level-text">Level 1</span>
+            </div>
+            <div class="resources">
+                <div class="resource">
+                    <span>💰</span>
+                    <span id="coins">100</span>
+                </div>
+                <div class="resource">
+                    <span>💎</span>
+                    <span id="diamonds">5</span>
+                </div>
+                <div class="resource">
+                    <span>⚡</span>
+                    <span id="energy">100</span>
+                </div>
+                <div class="resource">
+                    <span>🎯</span>
+                    <span id="combo">0x</span>
+                </div>
+            </div>
         </div>
-        <div class="building-production">Next level: ${building.effect(nextLevel)}</div>
-        <button class="btn btn-block" data-building="${buildingId}">Upgrade (${upgradeCost} gold)</button>
-      ` : `
-        <div class="building-cost">
-          <span class="cost-item">Maximum level reached</span>
+
+        <!-- Game Area -->
+        <div class="game-area">
+            <div class="farming-section">
+                <!-- Tabs -->
+                <div class="tabs">
+                    <div class="tab active" onclick="switchTab('crops')">🌾 Crops</div>
+                    <div class="tab" onclick="switchTab('animals')">🐄 Animals</div>
+                    <div class="tab" onclick="switchTab('store')">🛒 Store</div>
+                </div>
+
+                <!-- Crops Tab -->
+                <div id="crops-tab" class="tab-content">
+                    <h3 class="section-title">🚜 Your Farm</h3>
+                    <div id="crop-grid" class="farm-grid">
+                        <!-- Crop plots will be generated here -->
+                    </div>
+                    <button class="btn btn-primary" onclick="showSeedSelector()">🌱 Plant Seeds</button>
+                </div>
+
+                <!-- Animals Tab -->
+                <div id="animals-tab" class="tab-content" style="display: none;">
+                    <h3 class="section-title">🐄 Animal Farm</h3>
+                    <div id="animal-grid" class="animal-grid">
+                        <!-- Animal pens will be generated here -->
+                    </div>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px;">
+                        <button class="btn btn-primary" onclick="showAnimalMarket()">🏪 Buy Animals</button>
+                        <button class="btn btn-secondary" onclick="feedAllAnimals()">🌾 Feed All</button>
+                        <button class="btn btn-secondary" onclick="healAllAnimals()">💊 Heal All</button>
+                    </div>
+                </div>
+
+                <!-- Store Tab -->
+                <div id="store-tab" class="tab-content" style="display: none;">
+                    <h3 class="section-title">🛒 Farm Store</h3>
+                    <div class="tabs">
+                        <div class="tab active" onclick="switchStoreTab('seeds')">🌱 Seeds</div>
+                        <div class="tab" onclick="switchStoreTab('upgrades')">⚡ Upgrades</div>
+                        <div class="tab" onclick="switchStoreTab('supplies')">📦 Supplies</div>
+                    </div>
+                    <div id="store-content" class="store-grid">
+                        <!-- Store items will be generated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="farming-section">
+                <h3 class="section-title">📊 Farm Stats</h3>
+                
+                <!-- Daily Quest -->
+                <div id="daily-quest" class="quest-item">
+                    <h4>🎯 Daily Quest</h4>
+                    <p id="quest-text">Harvest 5 crops</p>
+                    <div class="quest-progress">
+                        <div id="quest-progress-bar" class="quest-progress-bar" style="width: 0%"></div>
+                    </div>
+                    <button id="claim-quest" class="btn btn-primary" onclick="claimQuestReward()" style="margin-top: 10px; display: none;">Claim Reward</button>
+                </div>
+
+                <!-- Power-ups -->
+                <div style="margin: 20px 0;">
+                    <h4>⚡ Active Boosts</h4>
+                    <div id="active-boosts">
+                        <!-- Active boosts will be shown here -->
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <button class="btn btn-primary" onclick="showInventory()">📦 Inventory</button>
+                    <button class="btn btn-primary" onclick="showAchievements()">🏆 Achievements</button>
+                    <button class="btn btn-primary" onclick="showProfile()">👤 Profile</button>
+                    <button class="btn btn-secondary" onclick="collectAllReady()">🌾 Harvest All</button>
+                </div>
+            </div>
         </div>
-        <button class="btn btn-block btn-disabled">Maxed Out</button>
-      `}
-    `;
-    
-    if (!isMaxLevel) {
-      const upgradeButton = buildingElement.querySelector('button');
-      upgradeButton.addEventListener('click', () => handleBuildingUpgrade(buildingId));
-      
-      if (gameState.gold < upgradeCost) {
-        upgradeButton.classList.add('btn-disabled');
-      }
-    }
-    
-    buildingsContainerElement.appendChild(buildingElement);
-  }
-});
-}
-
-function renderMarket() {
-marketContainerElement.innerHTML = '';
-
-const sellElement = document.createElement('div');
-sellElement.className = 'building-item';
-
-// Calculate sell price with windmill bonus
-const windmillLevel = gameState.buildings.windmill ? gameState.buildings.windmill.level : 0;
-const sellBonus = 1 + (windmillLevel * 0.1); // 10% per level
-const sellPrice = Math.floor(2 * sellBonus); // Base price is 2 gold per crop
-
-sellElement.innerHTML = `
-  <div class="building-header">
-    <span class="building-title">🌾 Sell Crops</span>
-  </div>
-  <div class="building-description">Sell your crops for gold</div>
-  <div class="building-production">Current price: ${sellPrice} gold per crop</div>
-  <div class="tooltip">
-    <span class="cost-item">
-      <span>🏭</span> Windmill bonus: +${windmillLevel * 10}%
-    </span>
-    <span class="tooltip-text">Upgrade your windmill to increase selling prices</span>
-  </div>
-  <div style="margin-top: 1rem;">
-    <label for="sell-amount">Amount to sell: <span id="sell-amount-value">${Math.min(10, gameState.crops)}</span> crops</label>
-    <div class="progress-container" style="height: 15px; margin: 0.75rem 0;">
-      <input type="range" id="sell-amount" min="1" max="${gameState.crops}" value="${Math.min(10, gameState.crops)}" style="width: 100%; position: absolute; top: 0; left: 0; opacity: 0; height: 100%; cursor: pointer; z-index: 2;" />
-      <div class="progress-bar" style="width: ${Math.min(100, (Math.min(10, gameState.crops) / gameState.crops) * 100)}%"></div>
     </div>
-    <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
-      <span>1</span>
-      <span>${gameState.crops}</span>
-    </div>
-    <button class="btn btn-block" id="sell-button">Sell ${Math.min(10, gameState.crops)} Crops for ${Math.min(10, gameState.crops) * sellPrice} Gold</button>
-  </div>
-`;
 
-marketContainerElement.appendChild(sellElement);
+    <!-- Floating Action Button -->
+    <button class="fab" onclick="showQuickActions()">⚡</button>
 
-// Set up sell slider
-const sellAmountInput = document.getElementById('sell-amount');
-const sellAmountValue = document.getElementById('sell-amount-value');
-const sellButton = document.getElementById('sell-button');
-const progressBar = sellElement.querySelector('.progress-bar');
-
-sellAmountInput.addEventListener('input', () => {
-  const amount = parseInt(sellAmountInput.value);
-  sellAmountValue.textContent = amount;
-  progressBar.style.width = `${Math.min(100, (amount / gameState.crops) * 100)}%`;
-  sellButton.textContent = `Sell ${amount} Crops for ${amount * sellPrice} Gold`;
-});
-
-sellButton.addEventListener('click', () => {
-  const amount = parseInt(sellAmountInput.value);
-  if (amount > 0 && amount <= gameState.crops) {
-    spendCrops(amount);
-    const goldEarned = amount * sellPrice;
-    addGold(goldEarned);
-    gameState.stats.cropsSold += amount;
-    showNotification('Crops Sold!', `You sold ${amount} crops for ${goldEarned} gold!`, 'success');
-    playSound('click');
-    createCoinEffect(sellButton, goldEarned);
-    renderMarket();
-  } else {
-    playSound('error');
-  }
-});
-
-// Disable button if no crops
-if (gameState.crops === 0) {
-  sellButton.classList.add('btn-disabled');
-  sellAmountInput.disabled = true;
-}
-}
-
-function renderAchievements() {
-achievementsContainerElement.innerHTML = '';
-
-Object.keys(ACHIEVEMENTS).forEach(achievementId => {
-  const achievement = ACHIEVEMENTS[achievementId];
-  const userProgress = gameState.achievements[achievementId] || { progress: 0, level: 0, claimed: [] };
-  
-  for (let i = 0; i < achievement.levels.length; i++) {
-    const level = i;
-    const target = achievement.levels[level];
-    const completed = userProgress.progress >= target;
-    const claimed = userProgress.claimed.includes(level);
-    const canClaim = completed && !claimed;
-    
-    const achievementElement = document.createElement('div');
-    achievementElement.className = `achievement ${completed ? 'completed' : ''}`;
-    
-    const progressPercent = Math.min(100, (userProgress.progress / target) * 100);
-    
-    achievementElement.innerHTML = `
-      <div class="achievement-icon">${achievement.icon}</div>
-      <div class="achievement-info">
-        <div class="achievement-title">${achievement.name} ${level + 1}</div>
-        <div class="achievement-desc">${achievement.description} (${userProgress.progress}/${target})</div>
-        <div class="progress-container">
-          <div class="progress-bar" style="width: ${progressPercent}%"></div>
+    <!-- Popup -->
+    <div id="popup" class="popup">
+        <h3 id="popup-title"></h3>
+        <p id="popup-message"></p>
+        <div class="popup-buttons">
+            <button id="popup-confirm" class="btn btn-primary" onclick="hidePopup()">OK</button>
+            <button id="popup-cancel" class="btn btn-secondary" onclick="hidePopup()" style="display: none;">Cancel</button>
         </div>
-      </div>
-      <div class="achievement-progress">
-        ${canClaim ? `
-          <button class="btn claim-reward" data-type="${achievementId}" data-level="${level}">
-            Claim ${achievement.rewards[level]} 💰
-          </button>
-        ` : claimed ? `
-          <span style="color: var(--success)">Claimed</span>
-        ` : `
-          <span>${Math.floor(progressPercent)}%</span>
-        `}
-      </div>
-    `;
-    
-    if (canClaim) {
-      const claimButton = achievementElement.querySelector('.claim-reward');
-      claimButton.addEventListener('click', () => {
-        claimAchievementReward(achievementId, level);
-      });
-    }
-    
-    achievementsContainerElement.appendChild(achievementElement);
-  }
-});
-}
-
-// Event Handlers
-function setupEventListeners() {
-// Tab switching
-const tabs = document.querySelectorAll('.tab');
-tabs.forEach(tab => {
-  tab.addEventListener('click', () => {
-    playSound('click');
-    tabs.forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-    
-    const tabContents = document.querySelectorAll('.tab-content');
-    tabContents.forEach(content => content.classList.remove('active'));
-    
-    const tabName = tab.dataset.tab;
-    const activeContent = document.getElementById(tabName);
-    activeContent.classList.add('active');
-    activeContent.classList.add('fade-in');
-    setTimeout(() => activeContent.classList.remove('fade-in'), 300);
-  });
-});
-
-// Modal close button
-modalCloseButton.addEventListener('click', () => {
-  playSound('click');
-  modalOverlay.style.display = 'none';
-});
-
-// Modal cancel button
-modalCancelButton.addEventListener('click', () => {
-  playSound('click');
-  modalOverlay.style.display = 'none';
-});
-
-// Save game when page is closed
-window.addEventListener('beforeunload', () => {
-  saveGame();
-});
-
-// Button to manually save game
-document.addEventListener('keydown', (e) => {
-  if (e.key === 's' && (e.ctrlKey || e.metaKey)) {
-    e.preventDefault();
-    saveGame();
-    showNotification('Game Saved', 'Your progress has been saved.', 'info');
-  }
-});
-}
-
-function handlePlotClick(index) {
-playSound('click');
-const plot = gameState.plots[index];
-
-switch (plot.status) {
-  case 'empty':
-    showSeedSelectionModal(index);
-    break;
-  case 'ready':
-    harvestPlot(index);
-    break;
-  case 'planted':
-    showPlotInfoModal(index);
-    break;
-}
-}
-
-function showSeedSelectionModal(plotIndex) {
-modalTitle.textContent = 'Select Seed';
-modalBody.innerHTML = '';
-
-Object.keys(SEED_TYPES).forEach(seedId => {
-  const seed = SEED_TYPES[seedId];
-  
-  // Only show seeds that the player has unlocked
-  if (gameState.level >= seed.unlockLevel) {
-    const seedElement = document.createElement('div');
-    seedElement.className = 'building-item';
-    
-    seedElement.innerHTML = `
-      <div class="building-header">
-        <span class="building-title">${seed.icon} ${seed.name}</span>
-      </div>
-      <div class="building-description">Grows in ${formatTime(seed.growthTime)}</div>
-      <div class="building-production">Yield: ${seed.yield} crops</div>
-      <div class="building-cost">
-        <span class="cost-item">
-          <span>💰</span> ${seed.cost}
-        </span>
-        <span class="cost-item">
-          <span>⚡</span> 1
-        </span>
-      </div>
-      <button class="btn btn-block seed-select" data-seed="${seedId}">Plant (${seed.cost} gold)</button>
-    `;
-    
-    const plantButton = seedElement.querySelector('.seed-select');
-    
-    if (gameState.gold < seed.cost || gameState.energy < 1) {
-      plantButton.classList.add('btn-disabled');
-    } else {
-      plantButton.addEventListener('click', () => {
-        plantSeed(plotIndex, seedId);
-        modalOverlay.style.display = 'none';
-      });
-    }
-    
-    modalBody.appendChild(seedElement);
-  }
-});
-
-modalConfirmButton.style.display = 'none';
-modalCancelButton.textContent = 'Close';
-modalOverlay.style.display = 'flex';
-}
-
-function showPlotInfoModal(plotIndex) {
-const plot = gameState.plots[plotIndex];
-const seed = SEED_TYPES[plot.seedType];
-
-if (plot.status === 'planted') {
-  const timeElapsed = Date.now() - plot.plantedTime;
-  const timeRemaining = Math.max(0, seed.growthTime - timeElapsed);
-  const progress = Math.min(100, (timeElapsed / seed.growthTime) * 100);
-  
-  modalTitle.textContent = `${seed.name} Growth`;
-  modalBody.innerHTML = `
-    <div style="text-align: center; margin-bottom: 1rem;">
-      <div style="font-size: 3rem; margin-bottom: 0.5rem;">${seed.icon}</div>
-      <h3>${seed.name}</h3>
     </div>
-    <div class="progress-container" style="height: 20px; margin: 1.5rem 0;">
-      <div class="progress-bar" style="width: ${progress}%"></div>
+
+    <!-- Modals -->
+    <div id="inventory-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('inventory-modal')">&times;</span>
+            <h2>📦 Inventory</h2>
+            <div class="tabs">
+                <div class="tab active" onclick="switchInventoryTab('crops')">🌾 Crops</div>
+                <div class="tab" onclick="switchInventoryTab('animals')">🥛 Animal Products</div>
+                <div class="tab" onclick="switchInventoryTab('seeds')">🌱 Seeds</div>
+            </div>
+            <div id="inventory-content" class="inventory-grid">
+                <!-- Inventory items will be generated here -->
+            </div>
+        </div>
     </div>
-    <p style="text-align: center; font-size: 1.1rem; margin-bottom: 1rem;">Growth: ${Math.floor(progress)}% complete</p>
-    <p style="text-align: center;">Time remaining: <strong>${formatTime(timeRemaining)}</strong></p>
-    <p style="text-align: center; margin-top: 0.5rem;">Expected yield: <strong>${seed.yield} crops</strong></p>
-  `;
-  
-  modalConfirmButton.style.display = 'none';
-  modalCancelButton.textContent = 'Close';
-  modalOverlay.style.display = 'flex';
-}
-}
 
-function handleSeedSelect(seedId) {
-playSound('click');
-if (gameState.energy < 1) {
-  showNotification('Not Enough Energy', 'You need 1 energy to plant.', 'warning');
-  playSound('error');
-  return;
-}
+    <div id="achievements-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('achievements-modal')">&times;</span>
+            <h2>🏆 Achievements</h2>
+            <div id="achievements-content">
+                <!-- Achievements will be generated here -->
+            </div>
+        </div>
+    </div>
 
-showSeedSelectionModal(-1);
-}
+    <div id="profile-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('profile-modal')">&times;</span>
+            <h2>👤 Player Profile</h2>
+            <div id="profile-content">
+                <!-- Profile content will be generated here -->
+            </div>
+        </div>
+    </div>
 
-function plantSeed(plotIndex, seedId) {
-const seed = SEED_TYPES[seedId];
+    <script>
+        // Game State
+        let gameData = {
+            player: {
+                name: 'Farmer',
+                level: 1,
+                xp: 0,
+                coins: 100,
+                diamonds: 5,
+                energy: 100,
+                maxEnergy: 100,
+                loginStreak: 1,
+                lastLogin: Date.now(),
+                totalPlayTime: 0,
+                sessionStartTime: Date.now()
+            },
+            crops: [],
+            animals: [],
+            inventory: {
+                crops: {},
+                seeds: { wheat: 5, tomato: 3, corn: 2, rice: 1 },
+                animalProducts: {},
+                supplies: { feed: 10, medicine: 2 }
+            },
+            landPlots: 4,
+            animalPens: 2,
+            upgrades: {
+                growthSpeed: 1,
+                yieldMultiplier: 1,
+                autoHarvest: false,
+                autoFeed: false,
+                weatherResistance: false
+            },
+            achievements: {},
+            dailyQuest: {
+                type: 'harvest',
+                target: 5,
+                progress: 0,
+                claimed: false,
+                lastReset: Date.now()
+            },
+            weather: 'sunny',
+            boosts: {
+                doubleCoins: 0,
+                fastGrowth: 0,
+                luckyChance: 0
+            },
+            comboMultiplier: 1,
+            comboCount: 0,
+            lastAction: 0,
+            harvestStreak: 0
+        };
 
-if (gameState.gold >= seed.cost && gameState.energy >= 1) {
-  spendGold(seed.cost);
-  useEnergy(1);
-  
-  gameState.plots[plotIndex] = {
-    index: plotIndex,
-    status: 'planted',
-    plantedTime: Date.now(),
-    seedType: seedId
-  };
-  
-  gameState.stats.cropsPlanted++;
-  checkAchievements('farmer', gameState.stats.cropsPlanted);
-  
-  renderPlot(plotIndex);
-  playSound('plant');
-  showNotification('Seed Planted!', `You planted ${seed.name}.`, 'success');
-  
-  // Save game after planting
-  saveGame();
-} else {
-  if (gameState.gold < seed.cost) {
-    showNotification('Not Enough Gold', `You need ${seed.cost} gold to plant this seed.`, 'warning');
-    playSound('error');
-  } else if (gameState.energy < 1) {
-    showNotification('Not Enough Energy', 'You need 1 energy to plant.', 'warning');
-    playSound('error');
-  }
-}
-}
+        // Game Data
+        const cropTypes = {
+            wheat: { name: 'Wheat', icon: '🌾', growTime: 30000, baseValue: 10, seedCost: 5 },
+            tomato: { name: 'Tomato', icon: '🍅', growTime: 45000, baseValue: 15, seedCost: 8 },
+            corn: { name: 'Corn', icon: '🌽', growTime: 60000, baseValue: 20, seedCost: 12 },
+            rice: { name: 'Rice', icon: '🌾', growTime: 90000, baseValue: 25, seedCost: 15 },
+            carrot: { name: 'Carrot', icon: '🥕', growTime: 35000, baseValue: 12, seedCost: 6 },
+            potato: { name: 'Potato', icon: '🥔', growTime: 50000, baseValue: 18, seedCost: 10 },
+            pumpkin: { name: 'Pumpkin', icon: '🎃', growTime: 120000, baseValue: 35, seedCost: 25 },
+            strawberry: { name: 'Strawberry', icon: '🍓', growTime: 40000, baseValue: 16, seedCost: 9 },
+            eggplant: { name: 'Eggplant', icon: '🍆', growTime: 55000, baseValue: 22, seedCost: 14 },
+            broccoli: { name: 'Broccoli', icon: '🥦', growTime: 65000, baseValue: 24, seedCost: 16 }
+        };
 
-function harvestPlot(index) {
-if (gameState.energy >= 1) {
-  const plot = gameState.plots[index];
-  const seed = SEED_TYPES[plot.seedType];
-  
-  useEnergy(1);
-  addCrops(seed.yield);
-  addXP(seed.xp);
-  
-  // Reset plot
-  plot.status = 'empty';
-  plot.plantedTime = null;
-  plot.seedType = null;
-  
-  gameState.stats.cropsHarvested += seed.yield;
-  checkAchievements('harvester', gameState.stats.cropsHarvested);
-  
-  renderPlot(index);
-  playSound('harvest');
-  showNotification('Harvest Complete!', `You harvested ${seed.yield} ${seed.name}.`, 'success');
-  
-  // Create crop particles
-  createCropParticles(document.querySelector(`.plot[data-index="${index}"]`), seed.icon);
-  
-  // Save game after harvesting
-  saveGame();
-} else {
-  showNotification('Not Enough Energy', 'You need 1 energy to harvest.', 'warning');
-  playSound('error');
-}
-}
+        const animalTypes = {
+            hen: { name: 'Hen', icon: '🐔', cost: 50, product: 'egg', productTime: 60000, productIcon: '🥚' },
+            cow: { name: 'Cow', icon: '🐄', cost: 200, product: 'milk', productTime: 120000, productIcon: '🥛' },
+            goat: { name: 'Goat', icon: '🐐', cost: 150, product: 'milk', productTime: 90000, productIcon: '🥛' },
+            sheep: { name: 'Sheep', icon: '🐑', cost: 180, product: 'wool', productTime: 180000, productIcon: '🧶' },
+            horse: { name: 'Horse', icon: '🐎', cost: 500, product: null, productTime: 0, productIcon: '' }
+        };
 
-function handleBuildingUpgrade(buildingId) {
-playSound('click');
-const building = BUILDINGS[buildingId];
-const userBuilding = gameState.buildings[buildingId];
+        const achievements = {
+            firstHarvest: { name: 'First Harvest', icon: '🌱', desc: 'Harvest your first crop', reward: 5, type: 'diamonds' },
+            harvester: { name: 'Harvester', icon: '🌾', desc: 'Harvest 50 crops', reward: 10, type: 'diamonds', target: 50 },
+            animalLover: { name: 'Animal Lover', icon: '🐄', desc: 'Own 5 animals', reward: 15, type: 'diamonds', target: 5 },
+            millionaire: { name: 'Millionaire', icon: '💰', desc: 'Earn 1000 coins', reward: 20, type: 'diamonds', target: 1000 },
+            speedFarmer: { name: 'Speed Farmer', icon: '⚡', desc: 'Complete 10 harvests in a row quickly', reward: 25, type: 'diamonds', target: 10 }
+        };
 
-if (userBuilding.level >= building.maxLevel) {
-  showNotification('Max Level Reached', `${building.name} is already at maximum level.`, 'info');
-  return;
-}
+        // Utility Functions
+        function saveGame() {
+            localStorage.setItem('farmGameData', JSON.stringify(gameData));
+        }
 
-const upgradeCost = Math.floor(building.baseCost * Math.pow(1.5, userBuilding.level));
+        function loadGame() {
+            const saved = localStorage.getItem('farmGameData');
+            if (saved) {
+                const loadedData = JSON.parse(saved);
+                gameData = { ...gameData, ...loadedData };
+                
+                // Check for ready crops/animals while away
+                checkProgressWhileAway();
+            }
+            
+            // Reset daily quest if needed
+            resetDailyQuestIfNeeded();
+            updateUI();
+        }
 
-if (gameState.gold >= upgradeCost) {
-  spendGold(upgradeCost);
-  userBuilding.level++;
-  
-  // Apply building effects
-  applyBuildingEffects(buildingId);
-  
-  gameState.stats.buildingsUpgraded++;
-  checkAchievements('builder', gameState.stats.buildingsUpgraded);
-  
-  renderBuildings();
-  renderResources();
-  
-  playSound('upgrade');
-  showNotification('Building Upgraded!', `${building.name} upgraded to level ${userBuilding.level}!`, 'success');
-  createConfetti(15);
-  
-  // Save game after upgrading
-  saveGame();
-} else {
-  showNotification('Not Enough Gold', `You need ${upgradeCost} gold to upgrade this building.`, 'warning');
-  playSound('error');
-}
-}
+        function checkProgressWhileAway() {
+            const now = Date.now();
+            let readyItems = [];
 
-function applyBuildingEffects(buildingId) {
-const userBuilding = gameState.buildings[buildingId];
+            // Check crops
+            gameData.crops.forEach(crop => {
+                if (crop.plantTime && now >= crop.plantTime + crop.growTime) {
+                    readyItems.push(`${cropTypes[crop.type].name} is ready to harvest! ${cropTypes[crop.type].icon}`);
+                }
+            });
 
-switch (buildingId) {
-  case 'silo':
-    // No direct effect, increases storage capacity in the future
-    break;
-  case 'well':
-    // Increases max energy
-    gameState.maxEnergy = 10 + (userBuilding.level * 2);
-    break;
-  case 'barn':
-    // Passive crop generation (handled in updateTimers)
-    break;
-  case 'windmill':
-    // Increases selling price (handled in market)
-    renderMarket();
-    break;
-}
-}
+            // Check animals
+            gameData.animals.forEach(animal => {
+                if (animal.lastProduct && animalTypes[animal.type].productTime > 0) {
+                    const timeSinceProduct = now - animal.lastProduct;
+                    if (timeSinceProduct >= animalTypes[animal.type].productTime) {
+                        readyItems.push(`${animalTypes[animal.type].name} has produced ${animalTypes[animal.type].productIcon}!`);
+                    }
+                }
+            });
 
-// Particle effects
-function createConfetti(count) {
-confettiContainerElement.innerHTML = '';
+            if (readyItems.length > 0) {
+                showPopup('Welcome Back!', `🎉 Welcome back, ${gameData.player.name}!\n\n${readyItems.join('\n')}`);
+            }
+        }
 
-const colors = ['#9b87f5', '#7E69AB', '#4CAF50', '#FFC107', '#2196F3', '#F44336'];
+        function resetDailyQuestIfNeeded() {
+            const now = Date.now();
+            const lastReset = gameData.dailyQuest.lastReset;
+            const oneDayMs = 24 * 60 * 60 * 1000;
 
-for (let i = 0; i < count; i++) {
-  const confetti = document.createElement('div');
-  confetti.className = 'confetti';
-  
-  const size = Math.random() * 10 + 5; // 5-15px
-  const color = colors[Math.floor(Math.random() * colors.length)];
-  
-  confetti.style.width = `${size}px`;
-  confetti.style.height = `${size}px`;
-  confetti.style.backgroundColor = color;
-  confetti.style.left = `${Math.random() * 100}%`;
-  confetti.style.animationDelay = `${Math.random() * 0.5}s`;
-  confetti.style.animationDuration = `${Math.random() * 2 + 2}s`; // 2-4s
-  
-  // Random shapes
-  if (Math.random() > 0.5) {
-    confetti.style.borderRadius = '50%';
-  } else if (Math.random() > 0.5) {
-    confetti.style.borderRadius = '4px';
-  } else {
-    confetti.style.transform = 'rotate(45deg)';
-  }
-  
-  confettiContainerElement.appendChild(confetti);
-  
-  // Remove confetti after animation
-  setTimeout(() => {
-    if (confetti.parentNode) {
-      confetti.parentNode.removeChild(confetti);
-    }
-  }, 4000);
-}
-}
+            if (now - lastReset >= oneDayMs) {
+                const quests = [
+                    { type: 'harvest', target: 5, desc: 'Harvest 5 crops' },
+                    { type: 'plant', target: 10, desc: 'Plant 10 seeds' },
+                    { type: 'collect', target: 3, desc: 'Collect 3 animal products' },
+                    { type: 'earn', target: 100, desc: 'Earn 100 coins' }
+                ];
+                
+                const randomQuest = quests[Math.floor(Math.random() * quests.length)];
+                gameData.dailyQuest = {
+                    ...randomQuest,
+                    progress: 0,
+                    claimed: false,
+                    lastReset: now
+                };
+            }
+        }
 
-function createCropParticles(parentElement, cropIcon) {
-const rect = parentElement.getBoundingClientRect();
-const centerX = rect.left + rect.width / 2;
-const centerY = rect.top + rect.height / 2;
+        function updateUI() {
+            // Update header
+            document.getElementById('player-name').textContent = gameData.player.name;
+            document.getElementById('coins').textContent = gameData.player.coins;
+            document.getElementById('diamonds').textContent = gameData.player.diamonds;
+            document.getElementById('energy').textContent = gameData.player.energy;
+            document.getElementById('combo').textContent = `${gameData.comboCount}x`;
+            
+            // Update level and badge
+            const badge = getBadge(gameData.player.xp);
+            document.getElementById('player-badge').textContent = badge;
+            document.getElementById('player-badge').className = `badge badge-${badge.toLowerCase()}`;
+            
+            const level = Math.floor(gameData.player.xp / 100) + 1;
+            gameData.player.level = level;
+            document.getElementById('level-text').textContent = `Level ${level}`;
+            
+            const xpInLevel = gameData.player.xp % 100;
+            document.getElementById('level-progress').style.width = `${xpInLevel}%`;
 
-for (let i = 0; i < 5; i++) {
-  const particle = document.createElement('div');
-  particle.textContent = cropIcon;
-  particle.style.position = 'fixed';
-  particle.style.left = `${centerX}px`;
-  particle.style.top = `${centerY}px`;
-  particle.style.fontSize = '1.5rem';
-  particle.style.pointerEvents = 'none';
-  particle.style.zIndex = '1000';
-  particle.style.transition = 'all 1s cubic-bezier(0.23, 1, 0.32, 1)';
-  
-  document.body.appendChild(particle);
-  
-  // Trigger animation after a small delay to ensure transition works
-  setTimeout(() => {
-    const angle = Math.random() * Math.PI * 2;
-    const distance = 50 + Math.random() * 50;
-    const x = centerX + Math.cos(angle) * distance;
-    const y = centerY + Math.sin(angle) * distance - 50;
-    
-    particle.style.transform = 'scale(1.5)';
-    particle.style.opacity = '0';
-    particle.style.left = `${x}px`;
-    particle.style.top = `${y}px`;
-    
-    // Remove particle after animation
-    setTimeout(() => {
-      if (particle.parentNode) {
-        particle.parentNode.removeChild(particle);
-      }
-    }, 1000);
-  }, 10);
-}
-}
+            // Update day/night theme
+            updateDayNightTheme();
+            
+            // Update weather
+            updateWeather();
+            
+            // Update daily quest
+            updateDailyQuest();
+            
+            // Update active boosts
+            updateActiveBoosts();
+            
+            // Generate farm areas
+            generateCropGrid();
+            generateAnimalGrid();
+        }
 
-function createCoinEffect(buttonElement, amount) {
-const rect = buttonElement.getBoundingClientRect();
-const centerX = rect.left + rect.width / 2;
-const centerY = rect.top + rect.height / 2;
+        function updateDayNightTheme() {
+            const hour = new Date().getHours();
+            const isNight = hour < 6 || hour >= 18;
+            
+            if (isNight) {
+                document.body.classList.add('night');
+            } else {
+                document.body.classList.remove('night');
+            }
+        }
 
-for (let i = 0; i < Math.min(10, amount / 10); i++) {
-  const coin = document.createElement('div');
-  coin.textContent = '💰';
-  coin.style.position = 'fixed';
-  coin.style.left = `${centerX}px`;
-  coin.style.top = `${centerY}px`;
-  coin.style.fontSize = '1.5rem';
-  coin.style.pointerEvents = 'none';
-  coin.style.zIndex = '1000';
-  coin.style.transition = 'all 1s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
-  
-  document.body.appendChild(coin);
-  
-  // Trigger animation after a small delay
-  setTimeout(() => {
-    const goldValueRect = goldValueElement.getBoundingClientRect();
-    const targetX = goldValueRect.left + goldValueRect.width / 2;
-    const targetY = goldValueRect.top + goldValueRect.height / 2;
-    
-    coin.style.transform = 'scale(0.5)';
-    coin.style.left = `${targetX}px`;
-    coin.style.top = `${targetY}px`;
-    
-    // Remove coin after animation
-    setTimeout(() => {
-      if (coin.parentNode) {
-        coin.parentNode.removeChild(coin);
-      }
-    }, 1000);
-  }, 10 + i * 100);
-}
-}
+        function updateWeather() {
+            const weathers = [
+                { type: 'sunny', icon: '☀️', text: 'Sunny', boost: 'normal' },
+                { type: 'rainy', icon: '🌧️', text: 'Rainy', boost: 'growth' },
+                { type: 'cloudy', icon: '☁️', text: 'Cloudy', boost: 'normal' },
+                { type: 'windy', icon: '💨', text: 'Windy', boost: 'coins' }
+            ];
 
-// Helper Functions
-function formatTime(ms) {
-if (ms < 60000) {
-  return `${Math.ceil(ms / 1000)} seconds`;
-} else {
-  const minutes = Math.floor(ms / 60000);
-  const seconds = Math.ceil((ms % 60000) / 1000);
-  return `${minutes}m ${seconds}s`;
-}
-}
+            // Change weather randomly every 5 minutes
+            if (Math.random() < 0.1) {
+                gameData.weather = weathers[Math.floor(Math.random() * weathers.length)].type;
+            }
 
-function showNotification(title, message, type = 'info') {
-const notification = document.createElement('div');
-notification.className = `notification ${type}`;
-notification.innerHTML = `
-  <div>
-    <strong>${title}</strong>
-    <p>${message}</p>
-  </div>
-  <button class="notification-close">&times;</button>
-`;
+            const currentWeather = weathers.find(w => w.type === gameData.weather) || weathers[0];
+            document.getElementById('weather-icon').textContent = currentWeather.icon;
+            document.getElementById('weather-text').textContent = currentWeather.text;
+        }
 
-notificationContainerElement.appendChild(notification);
+        function updateDailyQuest() {
+            const quest = gameData.dailyQuest;
+            document.getElementById('quest-text').textContent = quest.desc;
+            
+            const progress = Math.min(quest.progress / quest.target * 100, 100);
+            document.getElementById('quest-progress-bar').style.width = `${progress}%`;
+            
+            const claimButton = document.getElementById('claim-quest');
+            if (quest.progress >= quest.target && !quest.claimed) {
+                claimButton.style.display = 'block';
+            } else {
+                claimButton.style.display = 'none';
+            }
+        }
 
-// Show notification with animation
-setTimeout(() => {
-  notification.classList.add('show');
-}, 10);
+        function updateActiveBoosts() {
+            const boostsContainer = document.getElementById('active-boosts');
+            boostsContainer.innerHTML = '';
 
-// Auto-hide after 5 seconds
-setTimeout(() => {
-  notification.classList.remove('show');
-  setTimeout(() => {
-    if (notification.parentNode) {
-      notification.parentNode.removeChild(notification);
-    }
-  }, 300);
-}, 5000);
+            Object.keys(gameData.boosts).forEach(boostType => {
+                const timeLeft = gameData.boosts[boostType];
+                if (timeLeft > 0) {
+                    const boostElement = document.createElement('div');
+                    boostElement.className = 'boost-item';
+                    boostElement.innerHTML = `
+                        <span>${getBoostIcon(boostType)} ${getBoostName(boostType)}</span>
+                        <span>${Math.ceil(timeLeft / 1000)}s</span>
+                    `;
+                    boostsContainer.appendChild(boostElement);
+                }
+            });
 
-// Close button
-const closeButton = notification.querySelector('.notification-close');
-closeButton.addEventListener('click', () => {
-  notification.classList.remove('show');
-  setTimeout(() => {
-    if (notification.parentNode) {
-      notification.parentNode.removeChild(notification);
-    }
-  }, 300);
-});
+            if (boostsContainer.children.length === 0) {
+                boostsContainer.innerHTML = '<p style="color: #999;">No active boosts</p>';
+            }
+        }
 
-// Play sound based on notification type
-if (type === 'error') {
-  playSound('error');
-} else if (type === 'success') {
-  playSound('click');
-}
-}
+        function getBoostIcon(boostType) {
+            const icons = {
+                doubleCoins: '💰',
+                fastGrowth: '⚡',
+                luckyChance: '🍀'
+            };
+            return icons[boostType] || '⚡';
+        }
 
-// Start the game
-document.addEventListener('DOMContentLoaded', initGame);
-</script>
+        function getBoostName(boostType) {
+            const names = {
+                doubleCoins: 'Double Coins',
+                fastGrowth: 'Fast Growth',
+                luckyChance: 'Lucky Chance'
+            };
+            return names[boostType] || boostType;
+        }
+
+        function getBadge(xp) {
+            if (xp >= 1200) return 'Master Legend';
+            if (xp >= 700) return 'Master';
+            if (xp >= 400) return 'Crystal';
+            if (xp >= 200) return 'Gold';
+            if (xp >= 100) return 'Silver';
+            return 'Bronze';
+        }
+
+        function generateCropGrid() {
+            const grid = document.getElementById('crop-grid');
+            grid.innerHTML = '';
+
+            for (let i = 0; i < gameData.landPlots; i++) {
+                const plot = document.createElement('div');
+                plot.className = 'plot';
+                plot.dataset.index = i;
+
+                const crop = gameData.crops[i];
+                if (crop) {
+                    const now = Date.now();
+                    const isReady = now >= crop.plantTime + crop.growTime;
+                    
+                    plot.classList.add(isReady ? 'ready' : 'planted');
+                    plot.innerHTML = `
+                        <div class="crop-icon">${cropTypes[crop.type].icon}</div>
+                        <div class="timer">${isReady ? 'Ready!' : formatTime((crop.plantTime + crop.growTime) - now)}</div>
+                    `;
+                    
+                    if (isReady) {
+                        plot.onclick = () => harvestCrop(i);
+                    }
+                } else {
+                    plot.innerHTML = `
+                        <div style="color: #999;">Empty Plot</div>
+                        <div style="font-size: 12px;">Click to plant</div>
+                    `;
+                    plot.onclick = () => showSeedSelector(i);
+                }
+
+                grid.appendChild(plot);
+            }
+        }
+
+        function generateAnimalGrid() {
+            const grid = document.getElementById('animal-grid');
+            grid.innerHTML = '';
+
+            for (let i = 0; i < gameData.animalPens; i++) {
+                const pen = document.createElement('div');
+                pen.className = 'animal-pen';
+                pen.dataset.index = i;
+
+                const animal = gameData.animals[i];
+                if (animal) {
+                    pen.classList.add('occupied');
+                    
+                    const statusIcons = [];
+                    if (animal.needsFood) statusIcons.push('<span class="status-icon" style="background: #f44336;">🍽️</span>');
+                    if (animal.sick) statusIcons.push('<span class="status-icon" style="background: #ff9800;">🏥</span>');
+                    if (animal.canProduce) statusIcons.push('<span class="status-icon" style="background: #4caf50;">✨</span>');
+
+                    pen.innerHTML = `
+                        <div class="animal-icon">${animalTypes[animal.type].icon}</div>
+                        <div class="timer">${animal.name || animalTypes[animal.type].name}</div>
+                        <div class="status-icons">${statusIcons.join('')}</div>
+                    `;
+                    
+                    pen.onclick = () => interactWithAnimal(i);
+                } else {
+                    pen.innerHTML = `
+                        <div style="color: #999;">Empty Pen</div>
+                        <div style="font-size: 12px;">Buy animal</div>
+                    `;
+                    pen.onclick = () => showAnimalMarket(i);
+                }
+
+                grid.appendChild(pen);
+            }
+        }
+
+        function formatTime(ms) {
+            if (ms <= 0) return 'Ready!';
+            const seconds = Math.ceil(ms / 1000);
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            
+            if (minutes > 0) {
+                return `${minutes}m ${remainingSeconds}s`;
+            }
+            return `${remainingSeconds}s`;
+        }
+
+        function showSeedSelector(plotIndex = null) {
+            const availableSeeds = Object.keys(gameData.inventory.seeds).filter(seed => gameData.inventory.seeds[seed] > 0);
+            
+            if (availableSeeds.length === 0) {
+                showPopup('No Seeds', 'You need to buy seeds from the store first!');
+                return;
+            }
+
+            let content = '<h3>🌱 Select Seed to Plant</h3><div class="store-grid">';
+            
+            availableSeeds.forEach(seedType => {
+                const crop = cropTypes[seedType];
+                const count = gameData.inventory.seeds[seedType];
+                
+                content += `
+                    <div class="store-item" onclick="plantSeed('${seedType}', ${plotIndex})">
+                        <div class="item-icon">${crop.icon}</div>
+                        <div class="item-name">${crop.name}</div>
+                        <div class="item-price">Stock: ${count}</div>
+                        <div style="font-size: 12px;">Grow time: ${formatTime(crop.growTime)}</div>
+                    </div>
+                `;
+            });
+            
+            content += '</div>';
+            
+            showCustomModal('seed-selector', content);
+        }
+
+        function plantSeed(seedType, plotIndex = null) {
+            if (gameData.player.energy < 10) {
+                showPopup('Not Enough Energy', 'You need at least 10 energy to plant seeds!');
+                return;
+            }
+
+            if (gameData.inventory.seeds[seedType] <= 0) {
+                showPopup('No Seeds', `You don't have any ${cropTypes[seedType].name} seeds!`);
+                return;
+            }
+
+            let targetPlot = plotIndex;
+            if (targetPlot === null) {
+                // Find first empty plot
+                targetPlot = gameData.crops.findIndex(crop => !crop);
+                if (targetPlot === -1) {
+                    targetPlot = gameData.crops.length;
+                    if (targetPlot >= gameData.landPlots) {
+                        showPopup('No Empty Plots', 'All your plots are occupied. Harvest some crops first!');
+                        return;
+                    }
+                }
+            }
+
+            // Plant the seed
+            gameData.crops[targetPlot] = {
+                type: seedType,
+                plantTime: Date.now(),
+                growTime: cropTypes[seedType].growTime * (gameData.boosts.fastGrowth > 0 ? 0.5 : 1)
+            };
+
+            // Update inventory and energy
+            gameData.inventory.seeds[seedType]--;
+            gameData.player.energy -= 10;
+
+            // Update quest progress
+            if (gameData.dailyQuest.type === 'plant') {
+                gameData.dailyQuest.progress++;
+            }
+
+            // Add XP
+            addXP(2);
+
+            closeModal('custom-modal');
+            updateUI();
+            saveGame();
+
+            showFloatingNumber('+2 XP', document.querySelector(`[data-index="${targetPlot}"]`));
+            updateCombo();
+        }
+
+        function harvestCrop(plotIndex) {
+            const crop = gameData.crops[plotIndex];
+            if (!crop) return;
+
+            const now = Date.now();
+            if (now < crop.plantTime + crop.growTime) {
+                showPopup('Not Ready', 'This crop is still growing!');
+                return;
+            }
+
+            const cropType = cropTypes[crop.type];
+            let coinsEarned = cropType.baseValue * gameData.upgrades.yieldMultiplier;
+            
+            // Apply weather bonus
+            if (gameData.weather === 'windy') {
+                coinsEarned *= 1.5;
+            }
+
+            // Apply combo multiplier
+            coinsEarned = Math.floor(coinsEarned * gameData.comboMultiplier);
+
+            // Apply double coins boost
+            if (gameData.boosts.doubleCoins > 0) {
+                coinsEarned *= 2;
+            }
+
+            // Add to inventory
+            if (!gameData.inventory.crops[crop.type]) {
+                gameData.inventory.crops[crop.type] = 0;
+            }
+            gameData.inventory.crops[crop.type]++;
+
+            // Add coins
+            gameData.player.coins += coinsEarned;
+
+            // Chance for diamonds
+            if (Math.random() < 0.1 * (gameData.boosts.luckyChance > 0 ? 2 : 1)) {
+                gameData.player.diamonds++;
+                showFloatingNumber('+1 💎', document.querySelector(`[data-index="${plotIndex}"]`));
+            }
+
+            // Add XP
+            addXP(5);
+
+            // Update quest progress
+            if (gameData.dailyQuest.type === 'harvest') {
+                gameData.dailyQuest.progress++;
+            }
+
+            // Update achievements
+            updateAchievement('firstHarvest');
+            updateAchievement('harvester');
+
+            // Clear the plot
+            gameData.crops[plotIndex] = null;
+
+            updateUI();
+            saveGame();
+
+            showFloatingNumber(`+${coinsEarned} 💰`, document.querySelector(`[data-index="${plotIndex}"]`));
+            showFloatingNumber('+5 XP', document.querySelector(`[data-index="${plotIndex}"]`));
+            
+            updateCombo();
+            gameData.harvestStreak++;
+            
+            // Check for speed farmer achievement
+            if (gameData.harvestStreak >= 10) {
+                updateAchievement('speedFarmer');
+            }
+        }
+
+        function showAnimalMarket(penIndex = null) {
+            let content = '<h3>🏪 Animal Market</h3><div class="store-grid">';
+            
+            Object.keys(animalTypes).forEach(animalType => {
+                const animal = animalTypes[animalType];
+                
+                content += `
+                    <div class="store-item" onclick="buyAnimal('${animalType}', ${penIndex})">
+                        <div class="item-icon">${animal.icon}</div>
+                        <div class="item-name">${animal.name}</div>
+                        <div class="item-price">💰 ${animal.cost}</div>
+                        <div style="font-size: 12px;">
+                            ${animal.product ? `Produces: ${animal.productIcon}` : 'Special: Racing & Transport'}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            content += '</div>';
+            
+            showCustomModal('animal-market', content);
+        }
+
+        function buyAnimal(animalType, penIndex = null) {
+            const animal = animalTypes[animalType];
+            
+            if (gameData.player.coins < animal.cost) {
+                showPopup('Not Enough Coins', `You need ${animal.cost} coins to buy a ${animal.name}!`);
+                return;
+            }
+
+            let targetPen = penIndex;
+            if (targetPen === null) {
+                // Find first empty pen
+                targetPen = gameData.animals.findIndex(animal => !animal);
+                if (targetPen === -1) {
+                    targetPen = gameData.animals.length;
+                    if (targetPen >= gameData.animalPens) {
+                        showPopup('No Empty Pens', 'All your pens are occupied. Upgrade your farm first!');
+                        return;
+                    }
+                }
+            }
+
+            // Buy the animal
+            gameData.animals[targetPen] = {
+                type: animalType,
+                name: animal.name,
+                health: 100,
+                happiness: 100,
+                lastFed: Date.now(),
+                lastProduct: Date.now(),
+                needsFood: false,
+                sick: false,
+                canProduce: true
+            };
+
+            gameData.player.coins -= animal.cost;
+
+            // Update achievements
+            updateAchievement('animalLover');
+
+            closeModal('custom-modal');
+            updateUI();
+            saveGame();
+
+            showPopup('Animal Purchased!', `You bought a ${animal.name}! 🎉`);
+        }
+
+        function interactWithAnimal(penIndex) {
+            const animal = gameData.animals[penIndex];
+            if (!animal) return;
+
+            const animalType = animalTypes[animal.type];
+            
+            // Check if can produce
+            if (animalType.product && animal.canProduce) {
+                const now = Date.now();
+                if (now >= animal.lastProduct + animalType.productTime) {
+                    // Collect product
+                    const product = animalType.product;
+                    if (!gameData.inventory.animalProducts[product]) {
+                        gameData.inventory.animalProducts[product] = 0;
+                    }
+                    gameData.inventory.animalProducts[product]++;
+                    
+                    animal.lastProduct = now;
+                    animal.canProduce = false;
+                    
+                    // Restore production after some time
+                    setTimeout(() => {
+                        if (gameData.animals[penIndex]) {
+                            gameData.animals[penIndex].canProduce = true;
+                            updateUI();
+                        }
+                    }, animalType.productTime);
+
+                    // Add coins
+                    const coinsEarned = 15;
+                    gameData.player.coins += coinsEarned;
+
+                    // Update quest progress
+                    if (gameData.dailyQuest.type === 'collect') {
+                        gameData.dailyQuest.progress++;
+                    }
+
+                    // Add XP
+                    addXP(3);
+
+                    updateUI();
+                    saveGame();
+
+                    showFloatingNumber(`+${coinsEarned} 💰`, document.querySelector(`[data-index="${penIndex}"]`));
+                    showFloatingNumber('+3 XP', document.querySelector(`[data-index="${penIndex}"]`));
+                    showPopup('Product Collected!', `You collected ${animalType.productIcon} from your ${animalType.name}!`);
+                    return;
+                }
+            }
+
+            // Pet animal for bonus coins
+            if (Math.random() < 0.3) {
+                const bonusCoins = Math.floor(Math.random() * 10) + 5;
+                gameData.player.coins += bonusCoins;
+                animal.happiness = Math.min(animal.happiness + 10, 100);
+                
+                updateUI();
+                saveGame();
+                
+                showFloatingNumber(`+${bonusCoins} 💰`, document.querySelector(`[data-index="${penIndex}"]`));
+                showPopup('Animal Happy!', `${animal.name} is happy and gave you bonus coins! 🎉`);
+            } else {
+                showPopup('Animal Info', `This is your ${animalType.name}.\nHealth: ${animal.health}%\nHappiness: ${animal.happiness}%`);
+            }
+        }
+
+        function feedAllAnimals() {
+            const feedCost = gameData.animals.filter(a => a).length * 2;
+            
+            if (gameData.inventory.supplies.feed < feedCost) {
+                showPopup('Not Enough Feed', `You need ${feedCost} feed to feed all animals!`);
+                return;
+            }
+
+            gameData.animals.forEach(animal => {
+                if (animal) {
+                    animal.lastFed = Date.now();
+                    animal.needsFood = false;
+                    animal.health = Math.min(animal.health + 10, 100);
+                    animal.happiness = Math.min(animal.happiness + 5, 100);
+                }
+            });
+
+            gameData.inventory.supplies.feed -= feedCost;
+            
+            updateUI();
+            saveGame();
+            
+            showPopup('Animals Fed!', 'All your animals have been fed! 🌾');
+        }
+
+        function healAllAnimals() {
+            const sickAnimals = gameData.animals.filter(a => a && a.sick);
+            const medicineCost = sickAnimals.length;
+            
+            if (medicineCost === 0) {
+                showPopup('No Sick Animals', 'All your animals are healthy! 💪');
+                return;
+            }
+
+            if (gameData.inventory.supplies.medicine < medicineCost) {
+                showPopup('Not Enough Medicine', `You need ${medicineCost} medicine to heal all sick animals!`);
+                return;
+            }
+
+            sickAnimals.forEach(animal => {
+                animal.sick = false;
+                animal.health = 100;
+                animal.canProduce = true;
+            });
+
+            gameData.inventory.supplies.medicine -= medicineCost;
+            
+            updateUI();
+            saveGame();
+            
+            showPopup('Animals Healed!', 'All sick animals have been healed! 💊');
+        }
+
+        function addXP(amount) {
+            const oldLevel = gameData.player.level;
+            gameData.player.xp += amount;
+            const newLevel = Math.floor(gameData.player.xp / 100) + 1;
+            
+            if (newLevel > oldLevel) {
+                // Level up!
+                gameData.player.level = newLevel;
+                gameData.player.diamonds += 5;
+                gameData.landPlots++;
+                
+                showLevelUpEffect();
+                showPopup('Level Up!', `🎉 Congratulations! You reached level ${newLevel}!\n\n+5 💎 Diamonds\n+1 🌱 Land Plot`);
+            }
+        }
+
+        function showLevelUpEffect() {
+            // Create confetti
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.background = ['#FFD700', '#FF6B6B', '#4ECDC4', '#45B7D1'][Math.floor(Math.random() * 4)];
+                    document.body.appendChild(confetti);
+                    
+                    setTimeout(() => confetti.remove(), 3000);
+                }, i * 50);
+            }
+        }
+
+        function updateCombo() {
+            const now = Date.now();
+            if (now - gameData.lastAction < 5000) {
+                gameData.comboCount++;
+                gameData.comboMultiplier = 1 + (gameData.comboCount * 0.1);
+            } else {
+                gameData.comboCount = 1;
+                gameData.comboMultiplier = 1;
+            }
+            
+            gameData.lastAction = now;
+            
+            // Reset combo after 5 seconds
+            setTimeout(() => {
+                if (Date.now() - gameData.lastAction >= 5000) {
+                    gameData.comboCount = 0;
+                    gameData.comboMultiplier = 1;
+                    updateUI();
+                }
+            }, 5000);
+        }
+
+        function updateAchievement(achievementId) {
+            const achievement = achievements[achievementId];
+            if (!achievement || gameData.achievements[achievementId]?.completed) return;
+
+            if (!gameData.achievements[achievementId]) {
+                gameData.achievements[achievementId] = { progress: 0, completed: false, claimed: false };
+            }
+
+            const ach = gameData.achievements[achievementId];
+            
+            switch (achievementId) {
+                case 'firstHarvest':
+                    ach.progress = 1;
+                    break;
+                case 'harvester':
+                    ach.progress = Object.values(gameData.inventory.crops).reduce((sum, count) => sum + count, 0);
+                    break;
+                case 'animalLover':
+                    ach.progress = gameData.animals.filter(a => a).length;
+                    break;
+                case 'millionaire':
+                    ach.progress = gameData.player.coins;
+                    break;
+                case 'speedFarmer':
+                    ach.progress = gameData.harvestStreak;
+                    break;
+            }
+
+            if (!ach.completed && ach.progress >= (achievement.target || 1)) {
+                ach.completed = true;
+                showPopup('Achievement Unlocked!', `🏆 ${achievement.name}\n${achievement.desc}\n\nReward: ${achievement.reward} ${achievement.type === 'diamonds' ? '💎' : '💰'}`);
+            }
+        }
+
+        function claimQuestReward() {
+            if (gameData.dailyQuest.progress >= gameData.dailyQuest.target && !gameData.dailyQuest.claimed) {
+                gameData.dailyQuest.claimed = true;
+                gameData.player.diamonds += 3;
+                
+                updateUI();
+                saveGame();
+                
+                showPopup('Quest Complete!', '🎯 Daily quest completed!\n\n+3 💎 Diamonds');
+            }
+        }
+
+        function collectAllReady() {
+            let collected = 0;
+            
+            gameData.crops.forEach((crop, index) => {
+                if (crop) {
+                    const now = Date.now();
+                    if (now >= crop.plantTime + crop.growTime) {
+                        harvestCrop(index);
+                        collected++;
+                    }
+                }
+            });
+
+            if (collected === 0) {
+                showPopup('No Ready Crops', 'No crops are ready for harvest yet!');
+            } else {
+                showPopup('Harvest Complete!', `🌾 Collected ${collected} crops!`);
+            }
+        }
+
+        function showFloatingNumber(text, element) {
+            const floatingNumber = document.createElement('div');
+            floatingNumber.className = 'floating-number';
+            floatingNumber.textContent = text;
+            floatingNumber.style.color = text.includes('💰') ? '#FFD700' : text.includes('💎') ? '#E91E63' : '#4CAF50';
+            
+            const rect = element.getBoundingClientRect();
+            floatingNumber.style.left = rect.left + rect.width / 2 + 'px';
+            floatingNumber.style.top = rect.top + 'px';
+            
+            document.body.appendChild(floatingNumber);
+            
+            setTimeout(() => floatingNumber.remove(), 2000);
+        }
+
+        // UI Functions
+        function switchTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => content.style.display = 'none');
+            document.getElementById(`${tabName}-tab`).style.display = 'block';
+            
+            if (tabName === 'store') {
+                switchStoreTab('seeds');
+            }
+        }
+
+        function switchStoreTab(category) {
+            generateStoreContent(category);
+        }
+
+        function generateStoreContent(category) {
+            const container = document.getElementById('store-content');
+            container.innerHTML = '';
+
+            switch (category) {
+                case 'seeds':
+                    Object.keys(cropTypes).forEach(seedType => {
+                        const crop = cropTypes[seedType];
+                        const item = document.createElement('div');
+                        item.className = 'store-item';
+                        item.onclick = () => buySeed(seedType);
+                        item.innerHTML = `
+                            <div class="item-icon">${crop.icon}</div>
+                            <div class="item-name">${crop.name} Seeds</div>
+                            <div class="item-price">💰 ${crop.seedCost}</div>
+                            <div style="font-size: 12px;">Grow time: ${formatTime(crop.growTime)}</div>
+                        `;
+                        container.appendChild(item);
+                    });
+                    break;
+                    
+                case 'upgrades':
+                    const upgrades = [
+                        { name: 'Fast Growth', desc: 'Reduce crop grow time by 20%', cost: 100, type: 'coins', id: 'growthSpeed' },
+                        { name: 'Better Yield', desc: 'Increase crop value by 50%', cost: 200, type: 'coins', id: 'yieldMultiplier' },
+                        { name: 'Extra Land', desc: 'Add 2 more land plots', cost: 50, type: 'diamonds', id: 'landPlots' },
+                        { name: 'Animal Pen', desc: 'Add 2 more animal pens', cost: 30, type: 'diamonds', id: 'animalPens' }
+                    ];
+                    
+                    upgrades.forEach(upgrade => {
+                        const item = document.createElement('div');
+                        item.className = 'store-item';
+                        item.onclick = () => buyUpgrade(upgrade);
+                        item.innerHTML = `
+                            <div class="item-icon">⚡</div>
+                            <div class="item-name">${upgrade.name}</div>
+                            <div class="item-price">${upgrade.type === 'coins' ? '💰' : '💎'} ${upgrade.cost}</div>
+                            <div style="font-size: 12px;">${upgrade.desc}</div>
+                        `;
+                        container.appendChild(item);
+                    });
+                    break;
+                    
+                case 'supplies':
+                    const supplies = [
+                        { name: 'Animal Feed', icon: '🌾', cost: 5, type: 'coins', id: 'feed' },
+                        { name: 'Medicine', icon: '💊', cost: 15, type: 'coins', id: 'medicine' },
+                        { name: 'Double Coins Boost', icon: '💰', cost: 10, type: 'diamonds', id: 'doubleCoins', duration: 300000 },
+                        { name: 'Fast Growth Boost', icon: '⚡', cost: 8, type: 'diamonds', id: 'fastGrowth', duration: 180000 },
+                        { name: 'Lucky Chance Boost', icon: '🍀', cost: 12, type: 'diamonds', id: 'luckyChance', duration: 240000 }
+                    ];
+                    
+                    supplies.forEach(supply => {
+                        const item = document.createElement('div');
+                        item.className = 'store-item';
+                        item.onclick = () => buySupply(supply);
+                        item.innerHTML = `
+                            <div class="item-icon">${supply.icon}</div>
+                            <div class="item-name">${supply.name}</div>
+                            <div class="item-price">${supply.type === 'coins' ? '💰' : '💎'} ${supply.cost}</div>
+                            <div style="font-size: 12px;">${supply.duration ? `Duration: ${formatTime(supply.duration)}` : 'Consumable item'}</div>
+                        `;
+                        container.appendChild(item);
+                    });
+                    break;
+            }
+        }
+
+        function buySeed(seedType) {
+            const crop = cropTypes[seedType];
+            if (gameData.player.coins < crop.seedCost) {
+                showPopup('Not Enough Coins', `You need ${crop.seedCost} coins to buy ${crop.name} seeds!`);
+                return;
+            }
+
+            gameData.player.coins -= crop.seedCost;
+            if (!gameData.inventory.seeds[seedType]) {
+                gameData.inventory.seeds[seedType] = 0;
+            }
+            gameData.inventory.seeds[seedType] += 5;
+
+            updateUI();
+            saveGame();
+            
+            showPopup('Seeds Purchased!', `You bought 5 ${crop.name} seeds! 🌱`);
+        }
+
+        function buyUpgrade(upgrade) {
+            const cost = upgrade.cost;
+            const currency = upgrade.type;
+            
+            if ((currency === 'coins' && gameData.player.coins < cost) || 
+                (currency === 'diamonds' && gameData.player.diamonds < cost)) {
+                showPopup('Not Enough Currency', `You need ${cost} ${currency} for this upgrade!`);
+                return;
+            }
+
+            if (currency === 'coins') {
+                gameData.player.coins -= cost;
+            } else {
+                gameData.player.diamonds -= cost;
+            }
+
+            switch (upgrade.id) {
+                case 'growthSpeed':
+                    gameData.upgrades.growthSpeed *= 0.8;
+                    break;
+                case 'yieldMultiplier':
+                    gameData.upgrades.yieldMultiplier += 0.5;
+                    break;
+                case 'landPlots':
+                    gameData.landPlots += 2;
+                    break;
+                case 'animalPens':
+                    gameData.animalPens += 2;
+                    break;
+            }
+
+            updateUI();
+            saveGame();
+            
+            showPopup('Upgrade Purchased!', `${upgrade.name} upgrade acquired! ⚡`);
+        }
+
+        function buySupply(supply) {
+            const cost = supply.cost;
+            const currency = supply.type;
+            
+            if ((currency === 'coins' && gameData.player.coins < cost) || 
+                (currency === 'diamonds' && gameData.player.diamonds < cost)) {
+                showPopup('Not Enough Currency', `You need ${cost} ${currency} for this item!`);
+                return;
+            }
+
+            if (currency === 'coins') {
+                gameData.player.coins -= cost;
+            } else {
+                gameData.player.diamonds -= cost;
+            }
+
+            if (supply.duration) {
+                // It's a boost
+                gameData.boosts[supply.id] = supply.duration;
+                
+                // Set timer to remove boost
+                setTimeout(() => {
+                    gameData.boosts[supply.id] = 0;
+                    updateUI();
+                    showPopup('Boost Expired', `${supply.name} has expired!`);
+                }, supply.duration);
+            } else {
+                // It's a supply item
+                if (!gameData.inventory.supplies[supply.id]) {
+                    gameData.inventory.supplies[supply.id] = 0;
+                }
+                gameData.inventory.supplies[supply.id] += supply.id === 'feed' ? 10 : 1;
+            }
+
+            updateUI();
+            saveGame();
+            
+            showPopup('Item Purchased!', `${supply.name} acquired! ${supply.icon}`);
+        }
+
+        function showInventory() {
+            switchInventoryTab('crops');
+            document.getElementById('inventory-modal').style.display = 'block';
+        }
+
+        function switchInventoryTab(category) {
+            const container = document.getElementById('inventory-content');
+            container.innerHTML = '';
+
+            // Update tab buttons
+            document.querySelectorAll('#inventory-modal .tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+
+            switch (category) {
+                case 'crops':
+                    Object.keys(gameData.inventory.crops).forEach(cropType => {
+                        const count = gameData.inventory.crops[cropType];
+                        if (count > 0) {
+                            const crop = cropTypes[cropType];
+                            const item = document.createElement('div');
+                            item.className = 'inventory-item';
+                            item.innerHTML = `
+                                <div class="inventory-icon">${crop.icon}</div>
+                                <div class="item-name">${crop.name}</div>
+                                <div class="inventory-count">${count}</div>
+                                <button class="btn btn-primary" onclick="sellCrop('${cropType}')">Sell All</button>
+                            `;
+                            container.appendChild(item);
+                        }
+                    });
+                    break;
+                    
+                case 'animals':
+                    Object.keys(gameData.inventory.animalProducts).forEach(productType => {
+                        const count = gameData.inventory.animalProducts[productType];
+                        if (count > 0) {
+                            const icons = { egg: '🥚', milk: '🥛', wool: '🧶', meat: '🥩' };
+                            const item = document.createElement('div');
+                            item.className = 'inventory-item';
+                            item.innerHTML = `
+                                <div class="inventory-icon">${icons[productType] || '📦'}</div>
+                                <div class="item-name">${productType.charAt(0).toUpperCase() + productType.slice(1)}</div>
+                                <div class="inventory-count">${count}</div>
+                                <button class="btn btn-primary" onclick="sellAnimalProduct('${productType}')">Sell All</button>
+                            `;
+                            container.appendChild(item);
+                        }
+                    });
+                    break;
+                    
+                case 'seeds':
+                    Object.keys(gameData.inventory.seeds).forEach(seedType => {
+                        const count = gameData.inventory.seeds[seedType];
+                        if (count > 0) {
+                            const crop = cropTypes[seedType];
+                            const item = document.createElement('div');
+                            item.className = 'inventory-item';
+                            item.innerHTML = `
+                                <div class="inventory-icon">${crop.icon}</div>
+                                <div class="item-name">${crop.name} Seeds</div>
+                                <div class="inventory-count">${count}</div>
+                            `;
+                            container.appendChild(item);
+                        }
+                    });
+                    break;
+            }
+
+            if (container.children.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #999;">No items in this category</p>';
+            }
+        }
+
+        function sellCrop(cropType) {
+            const count = gameData.inventory.crops[cropType];
+            const value = cropTypes[cropType].baseValue;
+            const totalValue = count * value;
+            
+            gameData.player.coins += totalValue;
+            gameData.inventory.crops[cropType] = 0;
+
+            // Update quest progress
+            if (gameData.dailyQuest.type === 'earn') {
+                gameData.dailyQuest.progress += totalValue;
+            }
+
+            updateUI();
+            saveGame();
+            
+            showPopup('Crops Sold!', `Sold ${count} ${cropTypes[cropType].name} for ${totalValue} coins! 💰`);
+            switchInventoryTab('crops');
+        }
+
+        function sellAnimalProduct(productType) {
+            const count = gameData.inventory.animalProducts[productType];
+            const values = { egg: 8, milk: 12, wool: 20, meat: 30 };
+            const value = values[productType] || 10;
+            const totalValue = count * value;
+            
+            gameData.player.coins += totalValue;
+            gameData.inventory.animalProducts[productType] = 0;
+
+            // Update quest progress
+            if (gameData.dailyQuest.type === 'earn') {
+                gameData.dailyQuest.progress += totalValue;
+            }
+
+            updateUI();
+            saveGame();
+            
+            showPopup('Products Sold!', `Sold ${count} ${productType} for ${totalValue} coins! 💰`);
+            switchInventoryTab('animals');
+        }
+
+        function showAchievements() {
+            const container = document.getElementById('achievements-content');
+            container.innerHTML = '';
+
+            Object.keys(achievements).forEach(achievementId => {
+                const achievement = achievements[achievementId];
+                const progress = gameData.achievements[achievementId] || { progress: 0, completed: false, claimed: false };
+                
+                const item = document.createElement('div');
+                item.className = `achievement-item ${progress.completed ? 'completed' : ''}`;
+                
+                const progressText = achievement.target ? 
+                    `${Math.min(progress.progress, achievement.target)}/${achievement.target}` : 
+                    (progress.completed ? 'Completed' : 'Not completed');
+                
+                item.innerHTML = `
+                    <div class="achievement-icon">${achievement.icon}</div>
+                    <div class="achievement-info">
+                        <h4>${achievement.name}</h4>
+                        <p>${achievement.desc}</p>
+                        <p style="color: #666;">Progress: ${progressText}</p>
+                    </div>
+                    <div class="achievement-reward ${progress.completed && !progress.claimed ? '' : 'claimed'}" 
+                         onclick="${progress.completed && !progress.claimed ? `claimAchievement('${achievementId}')` : ''}">
+                        ${progress.claimed ? 'Claimed' : `${achievement.reward} ${achievement.type === 'diamonds' ? '💎' : '💰'}`}
+                    </div>
+                `;
+                
+                container.appendChild(item);
+            });
+
+            document.getElementById('achievements-modal').style.display = 'block';
+        }
+
+        function claimAchievement(achievementId) {
+            const achievement = achievements[achievementId];
+            const progress = gameData.achievements[achievementId];
+            
+            if (progress && progress.completed && !progress.claimed) {
+                progress.claimed = true;
+                
+                if (achievement.type === 'diamonds') {
+                    gameData.player.diamonds += achievement.reward;
+                } else {
+                    gameData.player.coins += achievement.reward;
+                }
+                
+                updateUI();
+                saveGame();
+                
+                showPopup('Reward Claimed!', `You received ${achievement.reward} ${achievement.type === 'diamonds' ? '💎' : '💰'}!`);
+                showAchievements(); // Refresh the achievements display
+            }
+        }
+
+        function showProfile() {
+            const container = document.getElementById('profile-content');
+            const playtime = Math.floor((Date.now() - gameData.player.sessionStartTime + gameData.player.totalPlayTime) / 1000 / 60);
+            
+            container.innerHTML = `
+                <div style="text-align: center;">
+                    <h3>👤 ${gameData.player.name}</h3>
+                    <p>Level ${gameData.player.level} ${getBadge(gameData.player.xp)} Farmer</p>
+                    <div style="margin: 20px 0;">
+                        <p><strong>Total XP:</strong> ${gameData.player.xp}</p>
+                        <p><strong>Total Coins Earned:</strong> ${gameData.player.coins}</p>
+                        <p><strong>Total Diamonds:</strong> ${gameData.player.diamonds}</p>
+                        <p><strong>Land Plots:</strong> ${gameData.landPlots}</p>
+                        <p><strong>Animal Pens:</strong> ${gameData.animalPens}</p>
+                        <p><strong>Play Time:</strong> ${playtime} minutes</p>
+                        <p><strong>Login Streak:</strong> ${gameData.player.loginStreak} days</p>
+                    </div>
+                    <button class="btn btn-secondary" onclick="changeName()">Change Name</button>
+                </div>
+            `;
+
+            document.getElementById('profile-modal').style.display = 'block';
+        }
+
+        function changeName() {
+            const newName = prompt('Enter your new farmer name:', gameData.player.name);
+            if (newName && newName.trim()) {
+                gameData.player.name = newName.trim();
+                updateUI();
+                saveGame();
+                showProfile();
+            }
+        }
+
+        function showQuickActions() {
+            let content = '<h3>⚡ Quick Actions</h3>';
+            content += '<div style="display: flex; flex-direction: column; gap: 10px;">';
+            content += '<button class="btn btn-primary" onclick="useInstantHarvest()">💎 Instant Harvest All (5 💎)</button>';
+            content += '<button class="btn btn-primary" onclick="useInstantGrowth()">💎 Instant Growth Boost (3 💎)</button>';
+            content += '<button class="btn btn-secondary" onclick="restoreEnergy()">💎 Restore Energy (2 💎)</button>';
+            content += '<button class="btn btn-secondary" onclick="dailyBonus()">🎁 Daily Login Bonus</button>';
+            content += '</div>';
+            
+            showCustomModal('quick-actions', content);
+        }
+
+        function useInstantHarvest() {
+            if (gameData.player.diamonds < 5) {
+                showPopup('Not Enough Diamonds', 'You need 5 diamonds for instant harvest!');
+                return;
+            }
+
+            const cropsToHarvest = gameData.crops.filter(crop => crop).length;
+            if (cropsToHarvest === 0) {
+                showPopup('No Crops', 'You have no crops to harvest!');
+                return;
+            }
+
+            gameData.player.diamonds -= 5;
+            
+            gameData.crops.forEach((crop, index) => {
+                if (crop) {
+                    harvestCrop(index);
+                }
+            });
+
+            closeModal('custom-modal');
+            updateUI();
+            saveGame();
+            
+            showPopup('Instant Harvest!', `⚡ Instantly harvested ${cropsToHarvest} crops!`);
+        }
+
+        function useInstantGrowth() {
+            if (gameData.player.diamonds < 3) {
+                showPopup('Not Enough Diamonds', 'You need 3 diamonds for instant growth!');
+                return;
+            }
+
+            const growingCrops = gameData.crops.filter(crop => crop && Date.now() < crop.plantTime + crop.growTime).length;
+            if (growingCrops === 0) {
+                showPopup('No Growing Crops', 'You have no crops that are still growing!');
+                return;
+            }
+
+            gameData.player.diamonds -= 3;
+            
+            gameData.crops.forEach(crop => {
+                if (crop && Date.now() < crop.plantTime + crop.growTime) {
+                    crop.plantTime = Date.now() - crop.growTime; // Make it ready
+                }
+            });
+
+            closeModal('custom-modal');
+            updateUI();
+            saveGame();
+            
+            showPopup('Instant Growth!', `⚡ All crops are now ready to harvest!`);
+        }
+
+        function restoreEnergy() {
+            if (gameData.player.diamonds < 2) {
+                showPopup('Not Enough Diamonds', 'You need 2 diamonds to restore energy!');
+                return;
+            }
+
+            gameData.player.diamonds -= 2;
+            gameData.player.energy = gameData.player.maxEnergy;
+
+            closeModal('custom-modal');
+            updateUI();
+            saveGame();
+            
+            showPopup('Energy Restored!', '⚡ Your energy has been fully restored!');
+        }
+
+        function dailyBonus() {
+            const now = Date.now();
+            const lastLogin = gameData.player.lastLogin;
+            const oneDayMs = 24 * 60 * 60 * 1000;
+
+            if (now - lastLogin < oneDayMs) {
+                showPopup('Already Claimed', 'You have already claimed your daily bonus today!');
+                return;
+            }
+
+            // Calculate streak
+            if (now - lastLogin <= oneDayMs * 2) {
+                gameData.player.loginStreak++;
+            } else {
+                gameData.player.loginStreak = 1;
+            }
+
+            gameData.player.lastLogin = now;
+            
+            // Give bonus based on streak
+            const bonusDiamonds = Math.min(gameData.player.loginStreak, 7);
+            gameData.player.diamonds += bonusDiamonds;
+
+            closeModal('custom-modal');
+            updateUI();
+            saveGame();
+            
+            showPopup('Daily Bonus!', `🎁 Day ${gameData.player.loginStreak} bonus!\n+${bonusDiamonds} 💎 Diamonds`);
+        }
+
+        function showPopup(title, message, confirmCallback = null) {
+            document.getElementById('popup-title').textContent = title;
+            document.getElementById('popup-message').textContent = message;
+            
+            const confirmBtn = document.getElementById('popup-confirm');
+            const cancelBtn = document.getElementById('popup-cancel');
+            
+            if (confirmCallback) {
+                confirmBtn.textContent = 'Yes';
+                confirmBtn.onclick = () => {
+                    confirmCallback();
+                    hidePopup();
+                };
+                cancelBtn.style.display = 'block';
+            } else {
+                confirmBtn.textContent = 'OK';
+                confirmBtn.onclick = hidePopup;
+                cancelBtn.style.display = 'none';
+            }
+            
+            document.getElementById('popup').classList.add('show');
+        }
+
+        function hidePopup() {
+            document.getElementById('popup').classList.remove('show');
+        }
+
+        function showCustomModal(id, content) {
+            // Remove existing custom modal
+            const existingModal = document.getElementById('custom-modal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+
+            // Create new modal
+            const modal = document.createElement('div');
+            modal.id = 'custom-modal';
+            modal.className = 'modal';
+            modal.style.display = 'block';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <span class="close" onclick="closeModal('custom-modal')">&times;</span>
+                    ${content}
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'none';
+                if (modalId === 'custom-modal') {
+                    modal.remove();
+                }
+            }
+        }
+
+        // Game Loop
+        function gameLoop() {
+            // Update energy
+            if (gameData.player.energy < gameData.player.maxEnergy) {
+                gameData.player.energy = Math.min(gameData.player.energy + 1, gameData.player.maxEnergy);
+            }
+
+            // Update boosts
+            Object.keys(gameData.boosts).forEach(boostType => {
+                if (gameData.boosts[boostType] > 0) {
+                    gameData.boosts[boostType] -= 1000;
+                    if (gameData.boosts[boostType] <= 0) {
+                        gameData.boosts[boostType] = 0;
+                    }
+                }
+            });
+
+            // Update animals
+            gameData.animals.forEach((animal, index) => {
+                if (animal) {
+                    const now = Date.now();
+                    const animalType = animalTypes[animal.type];
+                    
+                    // Check if needs food
+                    if (now - animal.lastFed > 300000) { // 5 minutes
+                        animal.needsFood = true;
+                        animal.happiness = Math.max(animal.happiness - 1, 0);
+                    }
+                    
+                    // Check if gets sick
+                    if (animal.happiness < 20 && Math.random() < 0.001) {
+                        animal.sick = true;
+                        animal.canProduce = false;
+                    }
+                    
+                    // Check production
+                    if (animalType.product && !animal.sick && !animal.needsFood) {
+                        if (now - animal.lastProduct >= animalType.productTime) {
+                            animal.canProduce = true;
+                        }
+                    }
+                }
+            });
+
+            // Reset harvest streak if no action for 30 seconds
+            if (Date.now() - gameData.lastAction > 30000) {
+                gameData.harvestStreak = 0;
+            }
+
+            updateUI();
+            saveGame();
+        }
+
+        // Initialize Game
+        function initGame() {
+            loadGame();
+            updateUI();
+            
+            // Start game loop
+            setInterval(gameLoop, 1000);
+            
+            // Auto-save every 10 seconds
+            setInterval(saveGame, 10000);
+        }
+
+        // Start the game when page loads
+        window.addEventListener('load', initGame);
+        
+        // Handle page unload
+        window.addEventListener('beforeunload', () => {
+            gameData.player.totalPlayTime += Date.now() - gameData.player.sessionStartTime;
+            saveGame();
+        });
+    </script>
 </body>
 </html>
