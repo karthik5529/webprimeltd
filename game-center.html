@@ -1,0 +1,1124 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Center Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-bg: #0a0a1a;
+            --secondary-bg: #1a1a2e;
+            --accent-purple: #6c5ce7;
+            --accent-blue: #00cec9;
+            --accent-pink: #fd79a8;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --card-bg: rgba(26, 26, 46, 0.8);
+            --glow-color: #6c5ce7;
+        }
+
+        [data-theme="light"] {
+            --primary-bg: #f8f9fa;
+            --secondary-bg: #ffffff;
+            --accent-purple: #5a4fcf;
+            --accent-blue: #00a8a3;
+            --accent-pink: #e84393;
+            --text-primary: #2d3436;
+            --text-secondary: #636e72;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --glow-color: #5a4fcf;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--primary-bg) 0%, var(--secondary-bg) 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--accent-purple);
+            border-radius: 50%;
+            animation: float 6s infinite linear;
+            opacity: 0.6;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.6;
+            }
+            90% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .header {
+            position: relative;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: rgba(26, 26, 46, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid var(--accent-purple);
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, var(--accent-purple), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 5px var(--glow-color)); }
+            to { filter: drop-shadow(0 0 20px var(--glow-color)); }
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-name {
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            background: linear-gradient(45deg, var(--accent-purple), var(--accent-pink));
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .user-name:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(108, 92, 231, 0.3);
+        }
+
+        .user-name::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .user-name:hover::before {
+            left: 100%;
+        }
+
+        .theme-toggle, .music-toggle {
+            background: var(--card-bg);
+            border: 2px solid var(--accent-purple);
+            color: var(--text-primary);
+            padding: 0.5rem;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .theme-toggle:hover, .music-toggle:hover {
+            background: var(--accent-purple);
+            transform: rotate(180deg);
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .welcome-title {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, var(--accent-purple), var(--accent-blue), var(--accent-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInUp 1s ease-out 0.2s both;
+        }
+
+        .user-stats {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 2rem 0;
+            animation: fadeInUp 1s ease-out 0.4s both;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            padding: 1rem 2rem;
+            border-radius: 15px;
+            border: 2px solid var(--accent-purple);
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(108, 92, 231, 0.3);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-purple), var(--accent-blue), var(--accent-pink));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .game-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 1s ease-out calc(0.6s + var(--delay, 0s)) both;
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: var(--accent-purple);
+            box-shadow: 0 20px 40px rgba(108, 92, 231, 0.4);
+        }
+
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, var(--accent-purple), var(--accent-blue));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+
+        .game-card:hover::before {
+            opacity: 0.1;
+        }
+
+        .game-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .game-card:hover .game-icon {
+            animation: spin 0.5s ease-in-out;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: var(--secondary-bg);
+            padding: 2rem;
+            border-radius: 20px;
+            border: 2px solid var(--accent-purple);
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            animation: slideIn 0.4s ease;
+            position: relative;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px) scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .input-group {
+            margin: 1rem 0;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid var(--accent-purple);
+            border-radius: 10px;
+            background: var(--card-bg);
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            box-shadow: 0 0 15px rgba(108, 92, 231, 0.3);
+            transform: scale(1.02);
+        }
+
+        .btn {
+            background: linear-gradient(45deg, var(--accent-purple), var(--accent-blue));
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(108, 92, 231, 0.3);
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .store-section {
+            margin: 3rem 0;
+            animation: fadeInUp 1s ease-out 1s both;
+        }
+
+        .badges-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .badge-card {
+            background: var(--card-bg);
+            border: 2px solid var(--accent-purple);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .badge-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(108, 92, 231, 0.3);
+        }
+
+        .badge-card.owned {
+            background: linear-gradient(45deg, var(--accent-purple), var(--accent-blue));
+            color: white;
+        }
+
+        .chat-box {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 350px;
+            height: 450px;
+            background: var(--card-bg);
+            border: 2px solid var(--accent-purple);
+            border-radius: 20px;
+            display: none;
+            flex-direction: column;
+            z-index: 1000;
+            animation: slideInUp 0.4s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        @keyframes slideInUp {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .chat-header {
+            background: linear-gradient(45deg, var(--accent-purple), var(--accent-blue));
+            padding: 1rem;
+            border-radius: 18px 18px 0 0;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .message {
+            padding: 0.5rem 1rem;
+            border-radius: 15px;
+            max-width: 80%;
+            animation: messageSlide 0.3s ease;
+        }
+
+        @keyframes messageSlide {
+            from {
+                transform: translateX(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .message.user {
+            background: var(--accent-purple);
+            color: white;
+            align-self: flex-end;
+        }
+
+        .message.bot {
+            background: var(--card-bg);
+            border: 1px solid var(--accent-blue);
+            align-self: flex-start;
+        }
+
+        .chat-input {
+            display: flex;
+            padding: 1rem;
+            gap: 0.5rem;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid var(--accent-purple);
+            border-radius: 20px;
+            background: var(--card-bg);
+            color: var(--text-primary);
+        }
+
+        .mascot-chat-toggle {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, var(--accent-pink), var(--accent-purple));
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px rgba(108, 92, 231, 0.4);
+            animation: float-mascot 3s ease-in-out infinite;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes float-mascot {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-15px);
+            }
+        }
+
+        .mascot-chat-toggle:hover {
+            transform: scale(1.15) rotate(10deg);
+            box-shadow: 0 15px 35px rgba(108, 92, 231, 0.6);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+
+        @media (max-width: 768px) {
+            .games-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .user-stats {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .welcome-title {
+                font-size: 2rem;
+            }
+            
+            .chat-box {
+                width: calc(100vw - 2rem);
+                right: 1rem;
+                left: 1rem;
+                bottom: 120px;
+            }
+            
+            .mascot-chat-toggle {
+                right: 1rem;
+            }
+        }
+    </style>
+</head>
+<body data-theme="dark">
+    <div class="particles" id="particles"></div>
+    
+    <header class="header">
+        <div class="logo">🎮 Game Center</div>
+        <div class="user-info">
+            <div class="user-name" id="userName" onclick="showUserProfile()">
+                Guest
+            </div>
+            <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme">
+                🌙
+            </button>
+            <button class="music-toggle" onclick="toggleMusic()" title="Toggle Music">
+                🎵
+            </button>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="welcome-section">
+            <h1 class="welcome-title">Welcome to Game Center!</h1>
+            <div class="user-stats">
+                <div class="stat-card">
+                    <div>💰 Coins</div>
+                    <div id="coinCount">0</div>
+                </div>
+                <div class="stat-card">
+                    <div>🏆 Badge</div>
+                    <div id="userBadge">None</div>
+                </div>
+                <div class="stat-card">
+                    <div>⏱️ Playtime</div>
+                    <div id="playTime">0m</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="games-section">
+            <div class="games-grid">
+                <div class="game-card" style="--delay: 0s" onclick="playGame('https://webprime.top/tictactoe.html')">
+                    <div class="game-icon">⭕</div>
+                    <h3>Tic Tac Toe</h3>
+                    <p>Classic strategy game</p>
+                </div>
+                <div class="game-card" style="--delay: 0.1s" onclick="playGame('https://webprime.top/farming.html')">
+                    <div class="game-icon">🌱</div>
+                    <h3>Farming Game</h3>
+                    <p>Grow your virtual farm</p>
+                </div>
+                <div class="game-card" style="--delay: 0.2s" onclick="playGame('https://webprime.top/quizee.html')">
+                    <div class="game-icon">🧠</div>
+                    <h3>Quizee Game</h3>
+                    <p>Test your knowledge</p>
+                </div>
+                <div class="game-card" style="--delay: 0.3s" onclick="playGame('https://webprime.top/shooting.html')">
+                    <div class="game-icon">🎯</div>
+                    <h3>Shooting Game</h3>
+                    <p>Aim and shoot targets</p>
+                </div>
+                <div class="game-card" style="--delay: 0.4s" onclick="playGame('https://webprime.top/fruitslah.html')">
+                    <div class="game-icon">🍎</div>
+                    <h3>FruitSlah Game</h3>
+                    <p>Slice fruits for points</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="store-section">
+            <h2 style="text-align: center; margin-bottom: 2rem;">🏪 Badge Store</h2>
+            <div class="badges-grid">
+                <div class="badge-card" onclick="buyBadge('Rookie', 50)">
+                    <div style="font-size: 2rem;">🔰</div>
+                    <h4>Rookie Badge</h4>
+                    <p>50 Coins</p>
+                </div>
+                <div class="badge-card" onclick="buyBadge('Bronze', 100)">
+                    <div style="font-size: 2rem;">🥉</div>
+                    <h4>Bronze Badge</h4>
+                    <p>100 Coins</p>
+                </div>
+                <div class="badge-card" onclick="buyBadge('Silver', 250)">
+                    <div style="font-size: 2rem;">🥈</div>
+                    <h4>Silver Badge</h4>
+                    <p>250 Coins</p>
+                </div>
+                <div class="badge-card" onclick="buyBadge('Gold', 500)">
+                    <div style="font-size: 2rem;">🥇</div>
+                    <h4>Gold Badge</h4>
+                    <p>500 Coins</p>
+                </div>
+                <div class="badge-card" onclick="buyBadge('Platinum', 750)">
+                    <div style="font-size: 2rem;">💎</div>
+                    <h4>Platinum Badge</h4>
+                    <p>750 Coins</p>
+                </div>
+                <div class="badge-card" onclick="buyBadge('Legend', 1000)">
+                    <div style="font-size: 2rem;">👑</div>
+                    <h4>Legend Badge</h4>
+                    <p>1000 Coins</p>
+                </div>
+                <div class="badge-card" onclick="buyBadge('Master', 1500)">
+                    <div style="font-size: 2rem;">🎖️</div>
+                    <h4>Master Badge</h4>
+                    <p>1500 Coins</p>
+                </div>
+                <div class="badge-card" onclick="buyBadge('Champion', 2000)">
+                    <div style="font-size: 2rem;">🏅</div>
+                    <h4>Champion Badge</h4>
+                    <p>2000 Coins</p>
+                </div>
+                <div class="badge-card" onclick="buyBadge('Supreme', 3000)">
+                    <div style="font-size: 2rem;">⭐</div>
+                    <h4>Supreme Badge</h4>
+                    <p>3000 Coins</p>
+                </div>
+                <div class="badge-card" onclick="buyBadge('Ultimate', 5000)">
+                    <div style="font-size: 2rem;">🌟</div>
+                    <h4>Ultimate Badge</h4>
+                    <p>5000 Coins</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Welcome Modal -->
+    <div id="welcomeModal" class="modal show">
+        <div class="modal-content">
+            <h2>🎮 Welcome to Game Center!</h2>
+            <p>Enter your details to start your gaming journey</p>
+            <div class="input-group">
+                <label for="playerName">Player Name:</label>
+                <input type="text" id="playerName" placeholder="Enter your name" required>
+            </div>
+            <div class="input-group">
+                <label for="playerAge">Age:</label>
+                <input type="number" id="playerAge" placeholder="Enter your age" min="1" max="120" required>
+            </div>
+            <button class="btn" onclick="savePlayerInfo()">Start Gaming! 🚀</button>
+        </div>
+    </div>
+
+    <!-- User Profile Modal -->
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h2>👤 Player Profile</h2>
+                <button class="close-btn" onclick="closeUserProfile()">&times;</button>
+            </div>
+            <div class="user-stats">
+                <div class="stat-card">
+                    <div>💰 Total Coins</div>
+                    <div id="modalCoins">0</div>
+                </div>
+                <div class="stat-card">
+                    <div>🏆 Current Badge</div>
+                    <div id="modalBadge">None</div>
+                </div>
+                <div class="stat-card">
+                    <div>⏱️ Total Playtime</div>
+                    <div id="modalPlaytime">0m</div>
+                </div>
+            </div>
+            <div style="margin-top: 2rem;">
+                <h3>🏆 Owned Badges:</h3>
+                <div id="ownedBadges" style="margin-top: 1rem;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Box -->
+    <div class="chat-box" id="chatBox">
+        <div class="chat-header">
+            <span>🤖 GameBot</span>
+            <button class="close-btn" onclick="toggleChat()">&times;</button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot">Hey! I'm GameBot. How can I help you today? 🎮</div>
+        </div>
+        <div class="chat-input">
+            <input type="text" id="chatInput" placeholder="Type a message..." onkeypress="handleChatInput(event)">
+            <button class="btn" onclick="sendMessage()" style="padding: 0.5rem;">Send</button>
+        </div>
+    </div>
+
+    <!-- Combined Mascot and Chat Toggle -->
+    <button class="mascot-chat-toggle" onclick="toggleChat()" title="Chat with GameBot">🐱</button>
+
+    <audio id="bgMusic" loop>
+        <source src="sax-pleasant-rhythms-9032.mp3" type="audio/wav">
+    </audio>
+
+    <script>
+        // Game state
+        let gameState = {
+            playerName: '',
+            playerAge: 0,
+            coins: 0,
+            badges: [],
+            currentBadge: 'None',
+            playtime: 0,
+            startTime: Date.now(),
+            musicPlaying: false,
+            chatOpen: false
+        };
+
+        // Enhanced bot responses
+        const botResponses = [
+            "That's awesome! Keep gaming! 🎮",
+            "Did you know you earn 10 coins per minute? ⏰💰",
+            "Try collecting all the badges! There are 10 different ones! 🏆",
+            "Which game is your favorite? 🤔",
+            "You're doing great! Keep it up! 💪",
+            "Don't forget to check the badge store! 🏪 New badges available!",
+            "Gaming tip: Take breaks to rest your eyes! 👀",
+            "I love your gaming spirit! 🌟",
+            "Have you tried all the games yet? 🎯",
+            "Your coin collection is impressive! 💰",
+            "Meow! 🐱 I'm here to help you with anything!",
+            "Purr... You're doing amazing! 😺",
+            "🐾 The Ultimate badge costs 5000 coins - quite the challenge!",
+            "Meow meow! The new Supreme badge is shiny! ⭐",
+            "🐱 I believe in you! You can get all badges!",
+            "Did you know the Champion badge is for true winners? 🏅",
+            "The Master badge shows real skill! 🎖️",
+            "Platinum badge is so shiny! 💎",
+            "Keep playing to unlock more achievements! 🚀",
+            "Your progress is pawsome! 🐾"
+        ];
+
+        // Initialize the game
+        function init() {
+            loadGameState();
+            createParticles();
+            updateDisplay();
+            startTimeTracking();
+            
+            if (gameState.playerName) {
+                document.getElementById('welcomeModal').classList.remove('show');
+            }
+        }
+
+        // Create floating particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Save player information
+        function savePlayerInfo() {
+            const name = document.getElementById('playerName').value.trim();
+            const age = parseInt(document.getElementById('playerAge').value);
+            
+            if (!name || !age) {
+                alert('Please fill in all fields!');
+                return;
+            }
+            
+            gameState.playerName = name;
+            gameState.playerAge = age;
+            gameState.startTime = Date.now();
+            
+            saveGameState();
+            updateDisplay();
+            document.getElementById('welcomeModal').classList.remove('show');
+            
+            // Welcome message
+            setTimeout(() => {
+                addChatMessage(`Welcome ${name}! 🎉 Start playing games to earn 10 coins per minute!`, 'bot');
+            }, 1000);
+        }
+
+        // Update display elements
+        function updateDisplay() {
+            document.getElementById('userName').textContent = gameState.playerName || 'Guest';
+            document.getElementById('coinCount').textContent = gameState.coins;
+            document.getElementById('userBadge').textContent = gameState.currentBadge;
+            document.getElementById('playTime').textContent = Math.floor(gameState.playtime) + 'm';
+            
+            // Update modal
+            document.getElementById('modalCoins').textContent = gameState.coins;
+            document.getElementById('modalBadge').textContent = gameState.currentBadge;
+            document.getElementById('modalPlaytime').textContent = Math.floor(gameState.playtime) + 'm';
+            
+            updateBadgeDisplay();
+        }
+
+        // Update badge display in modal
+        function updateBadgeDisplay() {
+            const ownedBadgesDiv = document.getElementById('ownedBadges');
+            if (gameState.badges.length === 0) {
+                ownedBadgesDiv.innerHTML = '<p>No badges yet. Visit the store to buy some!</p>';
+            } else {
+                const badgeIcons = {
+                    'Rookie': '🔰',
+                    'Bronze': '🥉',
+                    'Silver': '🥈',
+                    'Gold': '🥇',
+                    'Platinum': '💎',
+                    'Legend': '👑',
+                    'Master': '🎖️',
+                    'Champion': '🏅',
+                    'Supreme': '⭐',
+                    'Ultimate': '🌟'
+                };
+                ownedBadgesDiv.innerHTML = gameState.badges.map(badge => 
+                    `<span style="margin: 0.5rem; padding: 0.5rem; background: var(--accent-purple); border-radius: 10px; display: inline-block;">${badgeIcons[badge]} ${badge}</span>`
+                ).join('');
+            }
+            
+            // Update store display
+            const badgeCards = document.querySelectorAll('.badge-card');
+            badgeCards.forEach(card => {
+                const badgeName = card.querySelector('h4').textContent.replace(' Badge', '');
+                if (gameState.badges.includes(badgeName)) {
+                    card.classList.add('owned');
+                } else {
+                    card.classList.remove('owned');
+                }
+            });
+        }
+
+        // Start time tracking - Fixed to give 10 coins per minute
+        function startTimeTracking() {
+            setInterval(() => {
+                const currentTime = Date.now();
+                const sessionTime = (currentTime - gameState.startTime) / 60000; // minutes
+                gameState.playtime += 1/60; // Add 1 second in minutes
+                gameState.coins += 10/60; // Add 10 coins per minute (10/60 per second)
+                gameState.coins = Math.floor(gameState.coins);
+                
+                updateDisplay();
+                saveGameState();
+            }, 1000);
+        }
+
+        // Play game function - Fixed to give 10 bonus coins
+        function playGame(url) {
+            gameState.startTime = Date.now(); // Reset timer for external game
+            saveGameState();
+            window.open(url, '_blank');
+            
+            // Add bonus coins for playing
+            gameState.coins += 10;
+            updateDisplay();
+            saveGameState();
+            
+            addChatMessage(`Have fun playing! You earned 10 bonus coins! 🎮`, 'bot');
+        }
+
+        // Buy badge function
+        function buyBadge(badgeName, cost) {
+            if (gameState.badges.includes(badgeName)) {
+                alert('You already own this badge!');
+                return;
+            }
+            
+            if (gameState.coins >= cost) {
+                gameState.coins -= cost;
+                gameState.badges.push(badgeName);
+                gameState.currentBadge = badgeName;
+                
+                updateDisplay();
+                saveGameState();
+                
+                alert(`Congratulations! You bought the ${badgeName} badge! 🎉`);
+                addChatMessage(`Awesome! You got the ${badgeName} badge! 🏆`, 'bot');
+            } else {
+                alert(`Not enough coins! You need ${cost} coins but only have ${gameState.coins}.`);
+            }
+        }
+
+        // Theme toggle
+        function toggleTheme() {
+            const body = document.body;
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            body.setAttribute('data-theme', newTheme);
+            
+            const themeButton = document.querySelector('.theme-toggle');
+            themeButton.textContent = newTheme === 'dark' ? '🌙' : '☀️';
+        }
+
+        // Music toggle
+        function toggleMusic() {
+            const audio = document.getElementById('bgMusic');
+            const musicButton = document.querySelector('.music-toggle');
+            
+            if (gameState.musicPlaying) {
+                audio.pause();
+                musicButton.textContent = '🔇';
+                gameState.musicPlaying = false;
+            } else {
+                audio.play().catch(() => {
+                    // Handle autoplay restrictions
+                    console.log('Autoplay prevented');
+                });
+                musicButton.textContent = '🎵';
+                gameState.musicPlaying = true;
+            }
+        }
+
+        // Combined chat and mascot toggle function
+        function toggleChat() {
+            const chatBox = document.getElementById('chatBox');
+            gameState.chatOpen = !gameState.chatOpen;
+            chatBox.style.display = gameState.chatOpen ? 'flex' : 'none';
+            
+            // Add a welcome message when opening chat
+            if (gameState.chatOpen && gameState.playerName) {
+                setTimeout(() => {
+                    const welcomeMessages = [
+                        `Hey ${gameState.playerName}! 🐱 How's your gaming going?`,
+                        `Meow! ${gameState.playerName}, need any help? 😺`,
+                        `Purr... ${gameState.playerName}, I'm here if you need tips! 🎮`
+                    ];
+                    const randomWelcome = welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)];
+                    addChatMessage(randomWelcome, 'bot');
+                }, 500);
+            }
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (message) {
+                addChatMessage(message, 'user');
+                input.value = '';
+                
+                // Bot response
+                setTimeout(() => {
+                    const randomResponse = botResponses[Math.floor(Math.random() * botResponses.length)];
+                    addChatMessage(randomResponse, 'bot');
+                }, 1000);
+            }
+        }
+
+        function handleChatInput(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function addChatMessage(message, sender) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            messageDiv.textContent = message;
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Profile functions
+        function showUserProfile() {
+            document.getElementById('userModal').classList.add('show');
+        }
+
+        function closeUserProfile() {
+            document.getElementById('userModal').classList.remove('show');
+        }
+
+        // Local storage functions
+        function saveGameState() {
+            localStorage.setItem('gameCenter', JSON.stringify(gameState));
+        }
+
+        function loadGameState() {
+            const saved = localStorage.getItem('gameCenter');
+            if (saved) {
+                const savedState = JSON.parse(saved);
+                gameState = { ...gameState, ...savedState };
+                gameState.startTime = Date.now(); // Reset start time on page load
+            }
+        }
+
+        // Window events
+        window.addEventListener('beforeunload', () => {
+            saveGameState();
+        });
+
+        window.addEventListener('focus', () => {
+            // User returned to the page, reset start time
+            gameState.startTime = Date.now();
+        });
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

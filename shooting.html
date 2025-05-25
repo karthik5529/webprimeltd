@@ -1,0 +1,1389 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2D Shooting Game - Ultimate Battle</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        body.light-mode {
+            background: linear-gradient(135deg, #74b9ff, #0984e3);
+        }
+
+        #gameCanvas {
+            background: linear-gradient(180deg, #0f1419, #1a252f);
+            border: 2px solid #00ff88;
+            border-radius: 10px;
+            cursor: crosshair;
+        }
+
+        .game-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .hud {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #00ff88;
+        }
+
+        .hud-item {
+            margin: 5px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .health-bar {
+            width: 100px;
+            height: 10px;
+            background: #333;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .health-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff4757, #ff6b7d);
+            transition: width 0.3s ease;
+        }
+
+        .powerup-buttons {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+        }
+
+        .powerup-btn {
+            display: block;
+            margin: 10px 0;
+            padding: 10px 15px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .powerup-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .powerup-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            border: 2px solid #00ff88;
+            max-width: 400px;
+            width: 90%;
+                        max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-content h2 {
+            color: #00ff88;
+            margin-bottom: 20px;
+        }
+
+        .modal-content input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 2px solid #00ff88;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 16px;
+        }
+
+        .modal-content button {
+            background: linear-gradient(45deg, #00ff88, #00b894);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 10px 5px;
+            transition: all 0.3s ease;
+        }
+
+        .modal-content button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.3);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            background: linear-gradient(45deg, #f39c12, #f1c40f);
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .badge.silver { background: linear-gradient(45deg, #bdc3c7, #ecf0f1); }
+        .badge.gold { background: linear-gradient(45deg, #f39c12, #f1c40f); }
+        .badge.crystal { background: linear-gradient(45deg, #9b59b6, #e74c3c); }
+        .badge.master { background: linear-gradient(45deg, #e74c3c, #c0392b); }
+        .badge.champion { background: linear-gradient(45deg, #3498db, #2980b9); }
+        .badge.legend { background: linear-gradient(45deg, #2ecc71, #27ae60); }
+        .badge.ultra { background: linear-gradient(45deg, #8e44ad, #9b59b6); }
+        .badge.masterlegend { background: linear-gradient(45deg, #ff6b6b, #feca57); }
+
+        .settings-btn {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #00ff88;
+            color: white;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .profile-btn {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #00ff88;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .game-over-screen {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            border: 2px solid #ff4757;
+            z-index: 200;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .confetti {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        .confetti-piece {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #ff6b6b;
+            animation: confetti-fall 3s linear forwards;
+        }
+
+        @keyframes confetti-fall {
+            0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+
+        .daily-reward {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            border: 2px solid #00ff88;
+            z-index: 500;
+            animation: bounceIn 0.5s ease;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: translate(-50%, -50%) scale(0.3); }
+            50% { transform: translate(-50%, -50%) scale(1.05); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+
+        .mascot {
+            position: absolute;
+            bottom: 100px;
+            right: 50px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            border-radius: 50%;
+            animation: mascotBounce 2s ease-in-out infinite;
+            z-index: 50;
+        }
+
+        @keyframes mascotBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .combo-display {
+            position: absolute;
+            top: 150px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 24px;
+            font-weight: bold;
+            color: #00ff88;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            z-index: 100;
+        }
+
+        .wave-display {
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 18px;
+            font-weight: bold;
+            color: #ff6b6b;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            z-index: 100;
+        }
+
+        .boss-health-bar {
+            position: absolute;
+            top: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            height: 20px;
+            background: #333;
+            border: 2px solid #ff4757;
+            border-radius: 10px;
+            z-index: 100;
+            display: none;
+        }
+
+        .boss-health-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff4757, #ff6b7d);
+            border-radius: 8px;
+            transition: width 0.3s ease;
+        }
+
+        .start-screen {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.95);
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            border: 2px solid #00ff88;
+            z-index: 500;
+        }
+
+        .start-btn {
+            background: linear-gradient(45deg, #00ff88, #00b894);
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 18px;
+            margin: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .start-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(0, 255, 136, 0.3);
+        }
+
+        .badge-store-content {
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .badge-store-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .badge-store-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        .badge-store-content::-webkit-scrollbar-thumb {
+            background: #00ff88;
+            border-radius: 4px;
+        }
+
+        @media (max-width: 768px) {
+            #gameCanvas {
+                width: 95vw !important;
+                height: 60vh !important;
+            }
+            
+            .hud {
+                top: 10px;
+                left: 10px;
+                padding: 10px;
+                font-size: 12px;
+            }
+            
+            .powerup-buttons {
+                top: 10px;
+                right: 10px;
+            }
+            
+            .powerup-btn {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <canvas id="gameCanvas" width="1000" height="600"></canvas>
+        
+        <div class="hud">
+            <div class="hud-item">
+                <span>👤 <span id="playerName">Player</span></span>
+                <span class="badge" id="playerBadge">Bronze</span>
+            </div>
+            <div class="hud-item">
+                <span>❤️ Health:</span>
+                <div class="health-bar">
+                    <div class="health-fill" id="healthFill" style="width: 100%"></div>
+                </div>
+            </div>
+            <div class="hud-item">
+                <span>🪙 Coins: <span id="coinCount">0</span></span>
+            </div>
+            <div class="hud-item">
+                <span>🎯 Score: <span id="score">0</span></span>
+            </div>
+            <div class="hud-item">
+                <span>🔥 Combo: <span id="comboCount">0</span></span>
+            </div>
+        </div>
+
+        <div class="powerup-buttons">
+            <button class="powerup-btn" id="shieldBtn" onclick="activateShield()">🛡️ Shield (50🪙)</button>
+            <button class="powerup-btn" id="doubleBtn" onclick="activateDouble()">⚡ 2x Damage (30🪙)</button>
+            <button class="powerup-btn" id="slowBtn" onclick="activateSlow()">🐌 Slow Motion (40🪙)</button>
+        </div>
+
+        <div class="combo-display" id="comboDisplay" style="display: none;"></div>
+        <div class="wave-display" id="waveDisplay">Wave 1</div>
+
+        <div class="boss-health-bar" id="bossHealthBar">
+            <div class="boss-health-fill" id="bossHealthFill" style="width: 100%"></div>
+        </div>
+
+        <button class="settings-btn" onclick="toggleSettings()">⚙️</button>
+        <button class="profile-btn" onclick="showProfile()">👤 Profile</button>
+
+        <div class="mascot">🎮</div>
+    </div>
+
+    <!-- Start Screen -->
+    <div class="start-screen" id="startScreen">
+        <h1>🎮 Battle Arena</h1>
+        <h3>Ultimate 2D Shooting Game</h3>
+        <p>Defeat enemies, collect coins, and unlock badges!</p>
+        <button class="start-btn" onclick="initializeGame()">🚀 START GAME</button>
+        <button class="start-btn" onclick="showProfile()">👤 PROFILE</button>
+    </div>
+
+    <!-- Initial Setup Modal -->
+    <div class="modal" id="setupModal" style="display: none;">
+        <div class="modal-content">
+            <h2>🎮 Welcome to Battle Arena!</h2>
+            <input type="text" id="playerNameInput" placeholder="Enter your name" maxlength="20">
+            <input type="number" id="playerAgeInput" placeholder="Enter your age" min="1" max="120">
+            <button onclick="savePlayerInfo()">Save & Continue!</button>
+        </div>
+    </div>
+
+    <!-- Profile Modal -->
+    <div class="modal" id="profileModal" style="display: none;">
+        <div class="modal-content">
+            <h2>👤 Player Profile</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <strong>Total Kills:</strong><br>
+                    <span id="totalKills">0</span>
+                </div>
+                <div class="stat-item">
+                    <strong>Total Coins:</strong><br>
+                    <span id="totalCoins">0</span>
+                </div>
+                <div class="stat-item">
+                    <strong>Best Combo:</strong><br>
+                    <span id="bestCombo">0</span>
+                </div>
+                <div class="stat-item">
+                    <strong>Play Time:</strong><br>
+                    <span id="playTime">0m</span>
+                </div>
+            </div>
+            <h3>🏆 Badge Collection</h3>
+            <div id="badgeCollection"></div>
+            <button onclick="closeProfile()">Close</button>
+            <button onclick="showBadgeStore()">Badge Store</button>
+        </div>
+    </div>
+
+    <!-- Badge Store Modal -->
+    <div class="modal" id="badgeStoreModal" style="display: none;">
+        <div class="modal-content">
+            <h2>🏆 Badge Store</h2>
+            <div class="badge-store-content" id="badgeStoreContent"></div>
+            <button onclick="closeBadgeStore()">Close</button>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal" id="settingsModal" style="display: none;">
+        <div class="modal-content">
+            <h2>⚙️ Settings</h2>
+            <div style="margin: 20px 0;">
+                <label><input type="checkbox" id="killSoundToggle" checked> Kill Sounds</label><br><br>
+                <label><input type="checkbox" id="bgMusicToggle" checked> Background Music</label><br><br>
+                <label><input type="checkbox" id="darkModeToggle" checked> Dark Mode</label>
+            </div>
+            <button onclick="closeSettings()">Close</button>
+            <button onclick="resetGame()">Reset Game</button>
+        </div>
+    </div>
+
+    <!-- Game Over Modal -->
+    <div class="modal" id="gameOverModal" style="display: none;">
+        <div class="modal-content">
+            <h2>💀 Game Over!</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <strong>Kills:</strong><br>
+                    <span id="gameKills">0</span>
+                </div>
+                <div class="stat-item">
+                    <strong>Coins Earned:</strong><br>
+                    <span id="gameCoins">0</span>
+                </div>
+                <div class="stat-item">
+                    <strong>Best Combo:</strong><br>
+                    <span id="gameCombo">0</span>
+                </div>
+                <div class="stat-item">
+                    <strong>Time Played:</strong><br>
+                    <span id="gameTime">0s</span>
+                </div>
+            </div>
+            <button onclick="restartGame()">Play Again</button>
+            <button onclick="showProfile()">View Profile</button>
+        </div>
+    </div>
+
+    <!-- Daily Reward -->
+    <div class="daily-reward" id="dailyReward" style="display: none;">
+        <h3>🎁 Daily Login Reward!</h3>
+        <p>You received: +1 Shield Power!</p>
+        <button onclick="closeDailyReward()">Claim Reward</button>
+    </div>
+
+    <script>
+        // Game variables
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        let gameState = {
+            player: { x: 50, y: 300, width: 40, height: 40, health: 100 },
+            bullets: [],
+            enemies: [],
+            bosses: [],
+            powerUpItems: [],
+            particles: [],
+            score: 0,
+            coins: 0,
+            combo: 0,
+            bestCombo: 0,
+            wave: 1,
+            enemiesKilled: 0,
+            gameStartTime: Date.now(),
+            gameRunning: false,
+            bossSpawnTime: 100000, // 100 seconds
+            lastBossSpawn: 0,
+            powerUps: {
+                shield: { active: false, count: 0 },
+                double: { active: false, endTime: 0 },
+                slow: { active: false, endTime: 0 }
+            }
+        };
+
+        let gameLoop;
+        let enemySpawnRate = 1500;
+        let lastEnemySpawn = 0;
+        let lastPowerUpSpawn = 0;
+        let powerUpSpawnRate = 15000; // 15 seconds
+        let keys = {};
+
+        // Badge system
+        const badges = [
+            { name: 'Bronze', min: 0, max: 200, class: 'bronze' },
+            { name: 'Silver', min: 201, max: 400, class: 'silver' },
+            { name: 'Gold', min: 401, max: 700, class: 'gold' },
+            { name: 'Crystal', min: 701, max: 1200, class: 'crystal' },
+            { name: 'Master', min: 1201, max: 1800, class: 'master' },
+            { name: 'Champion', min: 1801, max: 2500, class: 'champion' },
+            { name: 'Legend', min: 2501, max: 3500, class: 'legend' },
+            { name: 'Ultra Beast', min: 3501, max: 5000, class: 'ultra' },
+            { name: 'MasterLegend', min: 5000, max: Infinity, class: 'masterlegend' }
+        ];
+
+        // Audio context for sound effects
+        let audioContext;
+        let killSound, hitSound, powerUpSound;
+
+        function initAudio() {
+            try {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                createKillSound();
+                createHitSound();
+                createPowerUpSound();
+            } catch (e) {
+                console.log('Audio not supported');
+            }
+        }
+
+        function createKillSound() {
+            if (!audioContext) return;
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(200, audioContext.currentTime + 0.1);
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+            killSound = { oscillator, gainNode };
+        }
+
+        function createHitSound() {
+            if (!audioContext) return;
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            oscillator.frequency.setValueAtTime(150, audioContext.currentTime);
+            gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+            hitSound = { oscillator, gainNode };
+        }
+
+        function createPowerUpSound() {
+            if (!audioContext) return;
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            oscillator.frequency.setValueAtTime(400, audioContext.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(800, audioContext.currentTime + 0.2);
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+            powerUpSound = { oscillator, gainNode };
+        }
+
+        function playKillSound() {
+            if (!audioContext || !document.getElementById('killSoundToggle').checked) return;
+            createKillSound();
+            killSound.oscillator.start();
+            killSound.oscillator.stop(audioContext.currentTime + 0.1);
+        }
+
+        function playHitSound() {
+            if (!audioContext || !document.getElementById('killSoundToggle').checked) return;
+            createHitSound();
+            hitSound.oscillator.start();
+            hitSound.oscillator.stop(audioContext.currentTime + 0.3);
+        }
+
+        function playPowerUpSound() {
+            if (!audioContext || !document.getElementById('killSoundToggle').checked) return;
+            createPowerUpSound();
+            powerUpSound.oscillator.start();
+            powerUpSound.oscillator.stop(audioContext.currentTime + 0.2);
+        }
+
+        // Initialize game
+        function initializeGame() {
+            const saved = localStorage.getItem('shootingGameData');
+            if (saved) {
+                const data = JSON.parse(saved);
+                document.getElementById('playerName').textContent = data.playerName || 'Player';
+                gameState.coins = data.totalCoins || 0;
+                gameState.bestCombo = data.bestCombo || 0;
+                updateBadge();
+                updatePowerUpButtons();
+                document.getElementById('startScreen').style.display = 'none';
+                initAudio();
+                startGameLoop();
+            } else {
+                document.getElementById('startScreen').style.display = 'none';
+                document.getElementById('setupModal').style.display = 'flex';
+            }
+
+            // Check daily reward
+            const lastLogin = localStorage.getItem('lastLogin');
+            const today = new Date().toDateString();
+            if (lastLogin !== today && saved) {
+                gameState.powerUps.shield.count++;
+                localStorage.setItem('lastLogin', today);
+                showDailyReward();
+            }
+        }
+
+        function savePlayerInfo() {
+            const name = document.getElementById('playerNameInput').value.trim();
+            const age = document.getElementById('playerAgeInput').value;
+            
+            if (!name || !age) {
+                alert('Please enter both name and age!');
+                return;
+            }
+
+            document.getElementById('playerName').textContent = name;
+            document.getElementById('setupModal').style.display = 'none';
+            
+            const data = {
+                playerName: name,
+                playerAge: age,
+                totalCoins: 0,
+                totalKills: 0,
+                bestCombo: 0,
+                playTime: 0,
+                unlockedBadges: ['Bronze']
+            };
+            localStorage.setItem('shootingGameData', JSON.stringify(data));
+            
+            initAudio();
+            startGameLoop();
+        }
+
+        // Load game data
+        function loadGameData() {
+            const saved = localStorage.getItem('shootingGameData');
+            if (saved) {
+                const data = JSON.parse(saved);
+                gameState.coins = data.totalCoins || 0;
+                gameState.bestCombo = data.bestCombo || 0;
+                document.getElementById('playerName').textContent = data.playerName || 'Player';
+                updateBadge();
+                updatePowerUpButtons();
+            }
+        }
+
+        // Save game data
+        function saveGameData() {
+            const data = {
+                playerName: document.getElementById('playerName').textContent,
+                totalCoins: gameState.coins,
+                totalKills: parseInt(localStorage.getItem('totalKills') || '0') + gameState.enemiesKilled,
+                bestCombo: Math.max(gameState.bestCombo, gameState.combo),
+                playTime: parseInt(localStorage.getItem('playTime') || '0') + Math.floor((Date.now() - gameState.gameStartTime) / 1000),
+                unlockedBadges: getUnlockedBadges()
+            };
+            localStorage.setItem('shootingGameData', JSON.stringify(data));
+            localStorage.setItem('totalKills', data.totalKills.toString());
+            localStorage.setItem('playTime', data.playTime.toString());
+        }
+
+        // Game loop
+        function startGameLoop() {
+            gameState.gameRunning = true;
+            gameState.gameStartTime = Date.now();
+            gameLoop = setInterval(() => {
+                update();
+                draw();
+            }, 1000 / 60); // 60 FPS
+        }
+
+        function update() {
+            if (!gameState.gameRunning) return;
+
+            // Update player position
+            if (keys['ArrowUp'] && gameState.player.y > 0) gameState.player.y -= 5;
+            if (keys['ArrowDown'] && gameState.player.y < canvas.height - gameState.player.height) gameState.player.y += 5;
+            if (keys['ArrowLeft'] && gameState.player.x > 0) gameState.player.x -= 5;
+            if (keys['ArrowRight'] && gameState.player.x < canvas.width - gameState.player.width) gameState.player.x += 5;
+
+            // Update bullets
+            gameState.bullets.forEach((bullet, index) => {
+                bullet.x += bullet.vx;
+                bullet.y += bullet.vy;
+                if (bullet.x > canvas.width || bullet.y < 0 || bullet.y > canvas.height) {
+                    gameState.bullets.splice(index, 1);
+                }
+            });
+
+            // Spawn enemies with increasing difficulty
+            const now = Date.now();
+            const waveMultiplier = Math.floor(gameState.wave / 5) + 1;
+            const adjustedSpawnRate = Math.max(300, enemySpawnRate - (gameState.wave * 50));
+            
+            if (now - lastEnemySpawn > adjustedSpawnRate) {
+                for (let i = 0; i < waveMultiplier; i++) {
+                    spawnEnemy();
+                }
+                lastEnemySpawn = now;
+            }
+
+            // Spawn boss every 100 seconds
+            const gameTime = now - gameState.gameStartTime;
+            if (gameTime > gameState.bossSpawnTime && gameTime - gameState.lastBossSpawn > gameState.bossSpawnTime) {
+                spawnBoss();
+                gameState.lastBossSpawn = gameTime;
+            }
+
+            // Spawn power-ups
+            if (now - lastPowerUpSpawn > powerUpSpawnRate) {
+                spawnPowerUpItem();
+                lastPowerUpSpawn = now;
+            }
+
+            // Update enemies
+            const slowFactor = gameState.powerUps.slow.active ? 0.3 : 1;
+            gameState.enemies.forEach((enemy, index) => {
+                enemy.x -= enemy.speed * slowFactor;
+                if (enemy.x < -enemy.width) {
+                    gameState.enemies.splice(index, 1);
+                    gameState.combo = 0;
+                }
+
+                // Check collision with player
+                if (checkCollision(gameState.player, enemy)) {
+                    if (gameState.powerUps.shield.active) {
+                        gameState.powerUps.shield.active = false;
+                        gameState.enemies.splice(index, 1);
+                        createExplosion(enemy.x, enemy.y);
+                    } else {
+                        gameState.player.health -= 25;
+                        gameState.enemies.splice(index, 1);
+                        playHitSound();
+                        if (gameState.player.health <= 0) {
+                            endGame();
+                        }
+                    }
+                }
+            });
+
+            // Update bosses
+            gameState.bosses.forEach((boss, index) => {
+                boss.x -= boss.speed * slowFactor;
+                if (boss.x < -boss.width) {
+                    gameState.bosses.splice(index, 1);
+                    hideBossHealthBar();
+                }
+
+                // Check collision with player
+                if (checkCollision(gameState.player, boss)) {
+                    if (gameState.powerUps.shield.active) {
+                        gameState.powerUps.shield.active = false;
+                        boss.health -= 50;
+                        createExplosion(boss.x, boss.y);
+                    } else {
+                        gameState.player.health -= 50;
+                        playHitSound();
+                        if (gameState.player.health <= 0) {
+                            endGame();
+                        }
+                    }
+                }
+            });
+
+            // Update power-up items
+            gameState.powerUpItems.forEach((powerUp, index) => {
+                powerUp.x -= 2;
+                if (powerUp.x < -powerUp.width) {
+                    gameState.powerUpItems.splice(index, 1);
+                }
+
+                // Check collision with player
+                if (checkCollision(gameState.player, powerUp)) {
+                    collectPowerUp(powerUp);
+                    gameState.powerUpItems.splice(index, 1);
+                }
+            });
+
+            // Check bullet-enemy collisions
+            gameState.bullets.forEach((bullet, bulletIndex) => {
+                gameState.enemies.forEach((enemy, enemyIndex) => {
+                    if (checkCollision(bullet, enemy)) {
+                        gameState.bullets.splice(bulletIndex, 1);
+                        gameState.enemies.splice(enemyIndex, 1);
+                        
+                        const multiplier = gameState.powerUps.double.active ? 2 : 1;
+                        let points = 10 * multiplier;
+                        
+                        gameState.combo++;
+                        if (gameState.combo >= 6) points *= 3;
+                        else if (gameState.combo >= 3) points *= 2;
+                        
+                        gameState.score += points;
+                        gameState.coins += points;
+                        gameState.enemiesKilled++;
+                        
+                        if (gameState.combo > gameState.bestCombo) {
+                            gameState.bestCombo = gameState.combo;
+                        }
+                        
+                        createExplosion(enemy.x, enemy.y);
+                        playKillSound();
+                        
+                        if (gameState.combo >= 3) {
+                            showCombo();
+                        }
+                        
+                        if (gameState.enemiesKilled % 10 === 0) {
+                            gameState.wave++;
+                            document.getElementById('waveDisplay').textContent = `Wave ${gameState.wave}`;
+                        }
+                    }
+                });
+
+                // Check bullet-boss collisions
+                gameState.bosses.forEach((boss, bossIndex) => {
+                    if (checkCollision(bullet, boss)) {
+                        gameState.bullets.splice(bulletIndex, 1);
+                        boss.health -= 25;
+                        
+                        createExplosion(bullet.x, bullet.y);
+                        updateBossHealthBar(boss);
+                        
+                        if (boss.health <= 0) {
+                            gameState.bosses.splice(bossIndex, 1);
+                            hideBossHealthBar();
+                            
+                            const multiplier = gameState.powerUps.double.active ? 2 : 1;
+                            const bossPoints = 100 * multiplier;
+                            gameState.score += bossPoints;
+                            gameState.coins += bossPoints;
+                            gameState.enemiesKilled += 5;
+                            
+                            createExplosion(boss.x, boss.y);
+                            playKillSound();
+                        }
+                    }
+                });
+            });
+
+            // Update particles
+            gameState.particles.forEach((particle, index) => {
+                particle.x += particle.vx;
+                particle.y += particle.vy;
+                particle.life--;
+                if (particle.life <= 0) {
+                    gameState.particles.splice(index, 1);
+                }
+            });
+
+            // Update power-ups
+            const currentTime = Date.now();
+            if (gameState.powerUps.double.active && currentTime > gameState.powerUps.double.endTime) {
+                gameState.powerUps.double.active = false;
+            }
+            if (gameState.powerUps.slow.active && currentTime > gameState.powerUps.slow.endTime) {
+                gameState.powerUps.slow.active = false;
+            }
+
+            updateUI();
+        }
+
+        function draw() {
+            // Clear canvas
+            ctx.fillStyle = '#0f1419';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw player
+            ctx.fillStyle = gameState.powerUps.shield.active ? '#00ff88' : '#ff6b6b';
+            ctx.fillRect(gameState.player.x, gameState.player.y, gameState.player.width, gameState.player.height);
+            
+            // Draw player gun
+            ctx.fillStyle = '#666';
+            ctx.fillRect(gameState.player.x + gameState.player.width, gameState.player.y + 15, 20, 10);
+
+            // Draw bullets
+            ctx.fillStyle = '#00ff88';
+            gameState.bullets.forEach(bullet => {
+                ctx.fillRect(bullet.x, bullet.y, bullet.width, bullet.height);
+            });
+
+            // Draw enemies
+            ctx.fillStyle = '#ff4757';
+            gameState.enemies.forEach(enemy => {
+                ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
+            });
+
+            // Draw bosses
+            ctx.fillStyle = '#8e44ad';
+            gameState.bosses.forEach(boss => {
+                ctx.fillRect(boss.x, boss.y, boss.width, boss.height);
+            });
+
+            // Draw power-up items
+            gameState.powerUpItems.forEach(powerUp => {
+                ctx.fillStyle = powerUp.color;
+                ctx.fillRect(powerUp.x, powerUp.y, powerUp.width, powerUp.height);
+            });
+
+            // Draw particles
+            gameState.particles.forEach(particle => {
+                ctx.fillStyle = particle.color;
+                ctx.globalAlpha = particle.life / particle.maxLife;
+                ctx.fillRect(particle.x, particle.y, particle.size, particle.size);
+            });
+            ctx.globalAlpha = 1;
+        }
+
+        function spawnEnemy() {
+            const speedMultiplier = 1 + (gameState.wave * 0.2);
+            const enemy = {
+                x: canvas.width,
+                y: Math.random() * (canvas.height - 40),
+                width: 40,
+                height: 40,
+                speed: (2 + Math.random() * 2) * speedMultiplier
+            };
+            gameState.enemies.push(enemy);
+        }
+
+        function spawnBoss() {
+            const boss = {
+                x: canvas.width,
+                y: Math.random() * (canvas.height - 80),
+                width: 80,
+                height: 80,
+                speed: 1,
+                health: 200,
+                maxHealth: 200
+            };
+            gameState.bosses.push(boss);
+            showBossHealthBar(boss);
+        }
+
+        function spawnPowerUpItem() {
+            const types = ['shield', 'double', 'slow'];
+            const type = types[Math.floor(Math.random() * types.length)];
+            const colors = { shield: '#00ff88', double: '#f39c12', slow: '#3498db' };
+            
+            const powerUp = {
+                x: canvas.width,
+                y: Math.random() * (canvas.height - 30),
+                width: 30,
+                height: 30,
+                type: type,
+                color: colors[type]
+            };
+            gameState.powerUpItems.push(powerUp);
+        }
+
+        function collectPowerUp(powerUp) {
+            playPowerUpSound();
+            
+            switch (powerUp.type) {
+                case 'shield':
+                    gameState.powerUps.shield.active = true;
+                    break;
+                case 'double':
+                    gameState.powerUps.double.active = true;
+                    gameState.powerUps.double.endTime = Date.now() + 10000;
+                    break;
+                case 'slow':
+                    gameState.powerUps.slow.active = true;
+                    gameState.powerUps.slow.endTime = Date.now() + 5000;
+                    break;
+            }
+        }
+
+        function showBossHealthBar(boss) {
+            const bossHealthBar = document.getElementById('bossHealthBar');
+            bossHealthBar.style.display = 'block';
+            updateBossHealthBar(boss);
+        }
+
+        function updateBossHealthBar(boss) {
+            const bossHealthFill = document.getElementById('bossHealthFill');
+            const healthPercentage = (boss.health / boss.maxHealth) * 100;
+            bossHealthFill.style.width = `${healthPercentage}%`;
+        }
+
+        function hideBossHealthBar() {
+            document.getElementById('bossHealthBar').style.display = 'none';
+        }
+
+        function shoot(mouseX, mouseY) {
+            const bullet = {
+                x: gameState.player.x + gameState.player.width,
+                y: gameState.player.y + gameState.player.height / 2,
+                width: 8,
+                height: 4,
+                vx: 10,
+                vy: 0
+            };
+            
+            if (mouseX && mouseY) {
+                const dx = mouseX - bullet.x;
+                const dy = mouseY - bullet.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                bullet.vx = (dx / distance) * 10;
+                bullet.vy = (dy / distance) * 10;
+            }
+            
+            gameState.bullets.push(bullet);
+        }
+
+        function createExplosion(x, y) {
+            for (let i = 0; i < 8; i++) {
+                const particle = {
+                    x: x + Math.random() * 20,
+                    y: y + Math.random() * 20,
+                    vx: (Math.random() - 0.5) * 10,
+                    vy: (Math.random() - 0.5) * 10,
+                    size: Math.random() * 4 + 2,
+                    life: 30,
+                    maxLife: 30,
+                    color: `hsl(${Math.random() * 60 + 15}, 100%, 50%)`
+                };
+                gameState.particles.push(particle);
+            }
+        }
+
+        function checkCollision(rect1, rect2) {
+            return rect1.x < rect2.x + rect2.width &&
+                   rect1.x + rect1.width > rect2.x &&
+                   rect1.y < rect2.y + rect2.height &&
+                   rect1.y + rect1.height > rect2.y;
+        }
+
+        function updateUI() {
+            document.getElementById('score').textContent = gameState.score;
+            document.getElementById('coinCount').textContent = gameState.coins;
+            document.getElementById('comboCount').textContent = gameState.combo;
+            document.getElementById('healthFill').style.width = `${gameState.player.health}%`;
+            updateBadge();
+            updatePowerUpButtons();
+        }
+
+        function updateBadge() {
+            const currentBadge = getCurrentBadge();
+            const badgeElement = document.getElementById('playerBadge');
+            badgeElement.textContent = currentBadge.name;
+            badgeElement.className = `badge ${currentBadge.class}`;
+        }
+
+        function getCurrentBadge() {
+            for (let i = badges.length - 1; i >= 0; i--) {
+                if (gameState.coins >= badges[i].min) {
+                    return badges[i];
+                }
+            }
+            return badges[0];
+        }
+
+        function updatePowerUpButtons() {
+            document.getElementById('shieldBtn').disabled = gameState.coins < 50;
+            document.getElementById('doubleBtn').disabled = gameState.coins < 30 || gameState.powerUps.double.active;
+            document.getElementById('slowBtn').disabled = gameState.coins < 40 || gameState.powerUps.slow.active;
+        }
+
+        function showCombo() {
+            const comboDisplay = document.getElementById('comboDisplay');
+            let multiplier = '';
+            if (gameState.combo >= 6) multiplier = 'x3';
+            else if (gameState.combo >= 3) multiplier = 'x2';
+            
+            comboDisplay.textContent = `${gameState.combo} COMBO! ${multiplier}`;
+            comboDisplay.style.display = 'block';
+            setTimeout(() => {
+                comboDisplay.style.display = 'none';
+            }, 2000);
+        }
+
+        // Power-up functions
+        function activateShield() {
+            if (gameState.coins >= 50) {
+                gameState.coins -= 50;
+                gameState.powerUps.shield.active = true;
+                playPowerUpSound();
+            }
+        }
+
+        function activateDouble() {
+            if (gameState.coins >= 30 && !gameState.powerUps.double.active) {
+                gameState.coins -= 30;
+                gameState.powerUps.double.active = true;
+                gameState.powerUps.double.endTime = Date.now() + 10000;
+                playPowerUpSound();
+            }
+        }
+
+        function activateSlow() {
+            if (gameState.coins >= 40 && !gameState.powerUps.slow.active) {
+                gameState.coins -= 40;
+                gameState.powerUps.slow.active = true;
+                gameState.powerUps.slow.endTime = Date.now() + 5000;
+                playPowerUpSound();
+            }
+        }
+
+        // Modal functions
+        function showProfile() {
+            const totalKills = parseInt(localStorage.getItem('totalKills') || '0') + gameState.enemiesKilled;
+            const playTime = parseInt(localStorage.getItem('playTime') || '0') + Math.floor((Date.now() - gameState.gameStartTime) / 60000);
+            
+            document.getElementById('totalKills').textContent = totalKills;
+            document.getElementById('totalCoins').textContent = gameState.coins;
+            document.getElementById('bestCombo').textContent = gameState.bestCombo;
+            document.getElementById('playTime').textContent = `${playTime}m`;
+            
+            updateBadgeCollection();
+            document.getElementById('profileModal').style.display = 'flex';
+        }
+
+        function closeProfile() {
+            document.getElementById('profileModal').style.display = 'none';
+        }
+
+        function updateBadgeCollection() {
+            const collection = document.getElementById('badgeCollection');
+            collection.innerHTML = '';
+            
+            badges.forEach(badge => {
+                if (gameState.coins >= badge.min) {
+                    const badgeDiv = document.createElement('div');
+                    badgeDiv.className = `badge ${badge.class}`;
+                    badgeDiv.textContent = badge.name;
+                    badgeDiv.style.margin = '5px';
+                    collection.appendChild(badgeDiv);
+                }
+            });
+        }
+
+        function showBadgeStore() {
+            const content = document.getElementById('badgeStoreContent');
+            content.innerHTML = '';
+            
+            badges.forEach(badge => {
+                const available = gameState.coins >= badge.min;
+                const badgeDiv = document.createElement('div');
+                badgeDiv.innerHTML = `
+                    <div class="stat-item" style="margin: 10px 0; opacity: ${available ? 1 : 0.5}">
+                        <span class="badge ${badge.class}">${badge.name}</span><br>
+                        <small>${badge.min}${badge.max === Infinity ? '+' : '-' + badge.max} coins</small>
+                        ${available ? '<br>✅ Unlocked!' : '<br>🔒 Locked'}
+                    </div>
+                `;
+                content.appendChild(badgeDiv);
+            });
+            
+            document.getElementById('badgeStoreModal').style.display = 'flex';
+        }
+
+        function closeBadgeStore() {
+            document.getElementById('badgeStoreModal').style.display = 'none';
+        }
+
+        function toggleSettings() {
+            document.getElementById('settingsModal').style.display = 'flex';
+        }
+
+        function closeSettings() {
+            document.getElementById('settingsModal').style.display = 'none';
+        }
+
+        function resetGame() {
+            if (confirm('Are you sure you want to reset all progress?')) {
+                localStorage.clear();
+                location.reload();
+            }
+        }
+
+        function showDailyReward() {
+            document.getElementById('dailyReward').style.display = 'block';
+        }
+
+        function closeDailyReward() {
+            document.getElementById('dailyReward').style.display = 'none';
+        }
+
+        function endGame() {
+            gameState.gameRunning = false;
+            clearInterval(gameLoop);
+            saveGameData();
+            hideBossHealthBar();
+            
+            const gameTime = Math.floor((Date.now() - gameState.gameStartTime) / 1000);
+            document.getElementById('gameKills').textContent = gameState.enemiesKilled;
+            document.getElementById('gameCoins').textContent = gameState.score;
+            document.getElementById('gameCombo').textContent = gameState.bestCombo;
+            document.getElementById('gameTime').textContent = `${gameTime}s`;
+            
+            document.getElementById('gameOverModal').style.display = 'flex';
+        }
+
+        function restartGame() {
+            document.getElementById('gameOverModal').style.display = 'none';
+            
+            // Reset game state
+            gameState = {
+                player: { x: 50, y: 300, width: 40, height: 40, health: 100 },
+                bullets: [],
+                enemies: [],
+                bosses: [],
+                powerUpItems: [],
+                particles: [],
+                score: 0,
+                coins: gameState.coins,
+                combo: 0,
+                bestCombo: gameState.bestCombo,
+                wave: 1,
+                enemiesKilled: 0,
+                gameStartTime: Date.now(),
+                gameRunning: false,
+                bossSpawnTime: 100000,
+                lastBossSpawn: 0,
+                powerUps: {
+                    shield: { active: false, count: gameState.powerUps.shield.count },
+                    double: { active: false, endTime: 0 },
+                    slow: { active: false, endTime: 0 }
+                }
+            };
+            
+            enemySpawnRate = 1500;
+            lastEnemySpawn = 0;
+            lastPowerUpSpawn = 0;
+            document.getElementById('waveDisplay').textContent = 'Wave 1';
+            startGameLoop();
+        }
+
+        function getUnlockedBadges() {
+            return badges.filter(badge => gameState.coins >= badge.min).map(badge => badge.name);
+        }
+
+        // Event listeners
+        document.addEventListener('keydown', (e) => {
+            keys[e.key] = true;
+            if (e.key === ' ') {
+                e.preventDefault();
+                shoot();
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            keys[e.key] = false;
+        });
+
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+            shoot(mouseX, mouseY);
+        });
+
+        // Dark mode toggle
+        document.getElementById('darkModeToggle').addEventListener('change', (e) => {
+            if (e.target.checked) {
+                document.body.classList.remove('light-mode');
+            } else {
+                document.body.classList.add('light-mode');
+            }
+        });
+
+        // Touch controls for mobile
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const rect = canvas.getBoundingClientRect();
+            const touch = e.touches[0];
+            const mouseX = touch.clientX - rect.left;
+            const mouseY = touch.clientY - rect.top;
+            shoot(mouseX, mouseY);
+        });
+
+        // Initialize on page load
+        window.addEventListener('load', () => {
+            loadGameData();
+        });
+    </script>
+</body>
+</html>

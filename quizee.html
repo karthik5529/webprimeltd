@@ -1,0 +1,2983 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quizee - Ultimate Quiz Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --secondary: #8b5cf6;
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #f59e0b;
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --text: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border: #334155;
+        }
+
+        [data-theme="light"] {
+            --bg: #ffffff;
+            --surface: #f8fafc;
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 2px solid var(--border);
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .coins-display {
+            background: var(--warning);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .username {
+            cursor: pointer;
+            padding: 8px 16px;
+            background: var(--primary);
+            color: white;
+            border-radius: 20px;
+            transition: transform 0.2s ease;
+        }
+
+        .username:hover {
+            transform: scale(1.05);
+        }
+
+        .theme-toggle {
+            background: var(--surface);
+            border: 2px solid var(--border);
+            color: var(--text);
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--surface);
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid var(--border);
+            max-width: 500px;
+            width: 90%;
+            animation: slideIn 0.3s ease;
+        }
+
+        .modal h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg);
+            color: var(--text);
+            font-size: 16px;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-success {
+            background: var(--success);
+        }
+
+        .btn-error {
+            background: var(--error);
+        }
+
+        .btn-warning {
+            background: var(--warning);
+        }
+
+        /* Categories Grid */
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .category-card {
+            background: var(--surface);
+            border: 2px solid var(--border);
+            border-radius: 15px;
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .category-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .category-card:hover::before {
+            left: 100%;
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+        }
+
+        .category-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .category-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .category-description {
+            color: var(--text-muted);
+            margin-bottom: 15px;
+        }
+
+        .category-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        /* Quiz Interface */
+        .quiz-container {
+            display: none;
+        }
+
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--surface);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border: 2px solid var(--border);
+        }
+
+        .quiz-progress {
+            flex: 1;
+            margin: 0 20px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.3s ease;
+        }
+
+        .timer {
+            background: var(--error);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .question-card {
+            background: var(--surface);
+            border: 2px solid var(--border);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            animation: slideInRight 0.5s ease;
+        }
+
+        .question-number {
+            color: var(--primary);
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .option {
+            background: var(--bg);
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .option:hover {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .option.selected {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.2);
+        }
+
+        .option.correct {
+            border-color: var(--success);
+            background: rgba(16, 185, 129, 0.2);
+        }
+
+        .option.wrong {
+            border-color: var(--error);
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        .option.eliminated {
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        /* Powers */
+        .powers-container {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .power-btn {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .power-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .power-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--error);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Score Display */
+        .score-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: var(--surface);
+            padding: 15px 25px;
+            border-radius: 10px;
+            border: 2px solid var(--border);
+        }
+
+        .coin-gain {
+            background: var(--warning);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-weight: bold;
+            animation: bounceIn 0.5s ease;
+        }
+
+        .combo-multiplier {
+            background: var(--success);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-weight: bold;
+            animation: pulse 1s infinite;
+        }
+
+        /* Results Screen */
+        .results-container {
+            display: none;
+            text-align: center;
+            padding: 40px;
+            background: var(--surface);
+            border-radius: 15px;
+            border: 2px solid var(--border);
+        }
+
+        .results-title {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .results-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .stat-card {
+            background: var(--bg);
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid var(--border);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+
+        /* Badges Store */
+
+        .badge-store-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .badge-store-content {
+            background: var(--bg-primary);
+            border-radius: 20px;
+            padding: 30px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .badge-store-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .badge-store-content::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+            border-radius: 4px;
+        }
+
+        .badge-store-content::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 4px;
+        }
+
+        .badge-store-content::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-hover);
+        }
+
+        .badges-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .badges-grid::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .badges-grid::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+            border-radius: 3px;
+        }
+
+        .badges-grid::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 3px;
+        }
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { transform: translate(-50%, -60%); opacity: 0; }
+            to { transform: translate(-50%, -50%); opacity: 1; }
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes bounceIn {
+            0%, 20%, 40%, 60%, 80% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes confetti {
+            0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: var(--primary);
+            animation: confetti 3s linear infinite;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .quiz-header {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .categories-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .powers-container {
+                flex-wrap: wrap;
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .show {
+            display: block !important;
+        }
+
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .leaderboard-table th,
+        .leaderboard-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .leaderboard-table th {
+            background: var(--primary);
+            color: white;
+        }
+
+        .achievement-toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--success);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            animation: slideInRight 0.5s ease;
+            z-index: 1001;
+        }
+    </style>
+</head>
+<body data-theme="dark">
+    <!-- Header -->
+    <div class="container">
+        <div class="header">
+            <div class="logo">🧠 Quizee</div>
+            <div class="user-info">
+                <div class="coins-display">💰 <span id="userCoins">0</span></div>
+                <div class="username" id="userNameDisplay" onclick="showProfile()">Login</div>
+                <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div id="mainContent">
+            <!-- Categories Page -->
+            <div id="categoriesPage">
+                <h1 style="text-align: center; margin-bottom: 30px; color: var(--primary);">Choose Your Quiz Category</h1>
+                <div class="categories-grid" id="categoriesGrid"></div>
+            </div>
+
+            <!-- Quiz Page -->
+            <div id="quizPage" class="quiz-container">
+                <div class="quiz-header">
+                    <div class="score-container">
+                        <div>Score: <span id="currentScore">0</span></div>
+                        <div id="coinGainDisplay" class="coin-gain hidden">+0 Coins</div>
+                        <div id="comboDisplay" class="combo-multiplier hidden">x2 Combo!</div>
+                    </div>
+                    <div class="quiz-progress">
+                        <div>Question <span id="currentQuestion">1</span> of 20</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                    </div>
+                    <div class="timer" id="timer">15</div>
+                </div>
+
+                <div class="powers-container">
+                    <button class="power-btn" id="fiftyFiftyBtn" onclick="useFiftyFifty()">
+                        50-50 <span class="power-count" id="fiftyFiftyCount">0</span>
+                    </button>
+                    <button class="power-btn" id="skipBtn" onclick="useSkip()">
+                        Skip <span class="power-count" id="skipCount">0</span>
+                    </button>
+                    <button class="power-btn" id="audienceBtn" onclick="useAudience()">
+                        Audience Poll <span class="power-count" id="audienceCount">0</span>
+                    </button>
+                </div>
+
+                <div class="question-card" id="questionCard">
+                    <div class="question-number" id="questionNumber">Question 1</div>
+                    <div class="question-text" id="questionText"></div>
+                    <div class="options-grid" id="optionsGrid"></div>
+                </div>
+
+                <div style="text-align: center;">
+                    <button class="btn" onclick="backToCategories()">← Back to Categories</button>
+                </div>
+            </div>
+
+            <!-- Results Page -->
+            <div id="resultsPage" class="results-container">
+                <div class="results-title">🎉 Quiz Complete!</div>
+                <div class="results-stats" id="resultsStats"></div>
+                <div style="margin-top: 30px;">
+                    <button class="btn" onclick="backToCategories()">Play Again</button>
+                    <button class="btn btn-success" onclick="showBadgeStore()">Badge Store</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <h2>Welcome to Quizee! 🧠</h2>
+            <div class="form-group">
+                <label for="userName">Name:</label>
+                <input type="text" id="userName" placeholder="Enter your name">
+            </div>
+            <div class="form-group">
+                <label for="userAge">Age:</label>
+                <input type="number" id="userAge" placeholder="Enter your age" min="1" max="100">
+            </div>
+            <div style="text-align: center;">
+                <button class="btn" onclick="login()">Start Quizzing!</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Welcome Bonus Modal -->
+    <div id="welcomeModal" class="modal">
+        <div class="modal-content" style="text-align: center;">
+            <h2>🎉 Congratulations!</h2>
+            <p style="margin: 20px 0; font-size: 1.2rem;">You've earned 1 '50-50' Power!</p>
+            <p style="color: var(--text-muted);">Use it wisely in your quizzes to eliminate 2 wrong answers!</p>
+            <button class="btn" onclick="closeWelcomeModal()">Awesome!</button>
+        </div>
+    </div>
+
+    <!-- Profile Modal -->
+    <div id="profileModal" class="modal">
+        <div class="modal-content">
+            <h2>👤 Player Profile</h2>
+            <div id="profileContent"></div>
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="btn" onclick="showBadgeStore()">Badge Store</button>
+                <button class="btn" onclick="showLeaderboard()">Leaderboard</button>
+                <button class="btn btn-error" onclick="closeModal('profileModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Badge Store Modal -->
+    <div id="badgeStoreModal" class="modal">
+        <div class="modal-content" style="max-width: 800px;">
+            <h2>🏆 Badge Store</h2>
+            <div class="badges-grid" id="badgesGrid"></div>
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="btn btn-error" onclick="closeModal('badgeStoreModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaderboard Modal -->
+    <div id="leaderboardModal" class="modal">
+        <div class="modal-content">
+            <h2>🏅 Leaderboard</h2>
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Player</th>
+                        <th>Coins</th>
+                        <th>Badge</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboardBody">
+                </tbody>
+            </table>
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="btn btn-error" onclick="closeModal('leaderboardModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Question Database
+        const questionDatabase = {
+            general: [
+                {
+                    question: "What is the capital of France?",
+                    options: ["London", "Berlin", "Paris", "Madrid"],
+                    correct: 2
+                },
+                {
+                    question: "Which planet is known as the Red Planet?",
+                    options: ["Venus", "Mars", "Jupiter", "Saturn"],
+                    correct: 1
+                },
+                {
+                    question: "What is the largest ocean on Earth?",
+                    options: ["Atlantic", "Indian", "Arctic", "Pacific"],
+                    correct: 3
+                },
+                {
+                    question: "Who painted the Mona Lisa?",
+                    options: ["Vincent van Gogh", "Leonardo da Vinci", "Pablo Picasso", "Michelangelo"],
+                    correct: 1
+                },
+                {
+                    question: "What is the smallest country in the world?",
+                    options: ["Monaco", "Vatican City", "San Marino", "Liechtenstein"],
+                    correct: 1
+                },
+                {
+                    question: "Which element has the chemical symbol 'O'?",
+                    options: ["Gold", "Silver", "Oxygen", "Iron"],
+                    correct: 2
+                },
+                {
+                    question: "In which year did World War II end?",
+                    options: ["1944", "1945", "1946", "1947"],
+                    correct: 1
+                },
+                {
+                    question: "What is the hardest natural substance on Earth?",
+                    options: ["Gold", "Iron", "Diamond", "Platinum"],
+                    correct: 2
+                },
+                {
+                    question: "Which country has the most natural lakes?",
+                    options: ["Canada", "Russia", "USA", "Finland"],
+                    correct: 0
+                },
+                {
+                    question: "What is the longest river in the world?",
+                    options: ["Amazon", "Nile", "Mississippi", "Yangtze"],
+                    correct: 1
+                },
+                {
+                    question: "Who wrote 'Romeo and Juliet'?",
+                    options: ["Charles Dickens", "William Shakespeare", "Jane Austen", "Mark Twain"],
+                    correct: 1
+                },
+                {
+                    question: "What is the largest mammal in the world?",
+                    options: ["African Elephant", "Blue Whale", "Giraffe", "Polar Bear"],
+                    correct: 1
+                },
+                {
+                    question: "Which gas makes up most of the Earth's atmosphere?",
+                    options: ["Oxygen", "Carbon Dioxide", "Nitrogen", "Hydrogen"],
+                    correct: 2
+                },
+                {
+                    question: "What is the currency of Japan?",
+                    options: ["Yuan", "Won", "Yen", "Ringgit"],
+                    correct: 2
+                },
+                {
+                    question: "Which continent is the Sahara Desert located in?",
+                    options: ["Asia", "Africa", "Australia", "South America"],
+                    correct: 1
+                },
+                {
+                    question: "What is the tallest mountain in the world?",
+                    options: ["K2", "Mount Everest", "Kangchenjunga", "Lhotse"],
+                    correct: 1
+                },
+                {
+                    question: "Who invented the telephone?",
+                    options: ["Thomas Edison", "Alexander Graham Bell", "Nikola Tesla", "Benjamin Franklin"],
+                    correct: 1
+                },
+                {
+                    question: "What is the largest organ in the human body?",
+                    options: ["Heart", "Brain", "Liver", "Skin"],
+                    correct: 3
+                },
+                {
+                    question: "Which country is famous for the Taj Mahal?",
+                    options: ["Pakistan", "India", "Bangladesh", "Nepal"],
+                    correct: 1
+                },
+                {
+                    question: "What is the speed of light?",
+                    options: ["300,000 km/s", "150,000 km/s", "450,000 km/s", "600,000 km/s"],
+                    correct: 0
+                },
+                {
+                    question: "Which Shakespeare play features the character Hamlet?",
+                    options: ["Macbeth", "Othello", "Hamlet", "King Lear"],
+                    correct: 2
+                },
+                {
+                    question: "What is the most abundant element in the universe?",
+                    options: ["Oxygen", "Carbon", "Hydrogen", "Helium"],
+                    correct: 2
+                },
+                {
+                    question: "Which ocean is the smallest?",
+                    options: ["Atlantic", "Indian", "Arctic", "Pacific"],
+                    correct: 2
+                },
+                {
+                    question: "Who was the first person to walk on the moon?",
+                    options: ["Buzz Aldrin", "Neil Armstrong", "John Glenn", "Alan Shepard"],
+                    correct: 1
+                },
+                {
+                    question: "What is the capital of Australia?",
+                    options: ["Sydney", "Melbourne", "Canberra", "Perth"],
+                    correct: 2
+                },
+                {
+                    question: "Which vitamin is produced when skin is exposed to sunlight?",
+                    options: ["Vitamin A", "Vitamin B", "Vitamin C", "Vitamin D"],
+                    correct: 3
+                },
+                {
+                    question: "What is the largest planet in our solar system?",
+                    options: ["Saturn", "Jupiter", "Neptune", "Uranus"],
+                    correct: 1
+                },
+                {
+                    question: "Who composed 'The Four Seasons'?",
+                    options: ["Mozart", "Beethoven", "Vivaldi", "Bach"],
+                    correct: 2
+                },
+                {
+                    question: "What is the most spoken language in the world?",
+                    options: ["English", "Mandarin Chinese", "Spanish", "Hindi"],
+                    correct: 1
+                },
+                {
+                    question: "Which country hosted the 2016 Summer Olympics?",
+                    options: ["China", "UK", "Brazil", "Russia"],
+                    correct: 2
+                },
+                {
+                    question: "What is the smallest bone in the human body?",
+                    options: ["Stapes", "Malleus", "Incus", "Fibula"],
+                    correct: 0
+                },
+                {
+                    question: "Which empire was ruled by Julius Caesar?",
+                    options: ["Greek Empire", "Roman Empire", "Ottoman Empire", "Byzantine Empire"],
+                    correct: 1
+                },
+                {
+                    question: "What is the main ingredient in guacamole?",
+                    options: ["Tomato", "Avocado", "Pepper", "Onion"],
+                    correct: 1
+                },
+                {
+                    question: "Which planet is closest to the Sun?",
+                    options: ["Venus", "Earth", "Mercury", "Mars"],
+                    correct: 2
+                },
+                {
+                    question: "What does 'WWW' stand for?",
+                    options: ["World Wide Web", "World Weather Watch", "World War Website", "World Wide Wrestling"],
+                    correct: 0
+                },
+                {
+                    question: "Which blood type is known as the universal donor?",
+                    options: ["A", "B", "AB", "O"],
+                    correct: 3
+                },
+                {
+                    question: "What is the largest desert in the world?",
+                    options: ["Sahara", "Gobi", "Antarctica", "Arabian"],
+                    correct: 2
+                },
+                {
+                    question: "Who painted 'The Starry Night'?",
+                    options: ["Claude Monet", "Vincent van Gogh", "Pablo Picasso", "Salvador Dalí"],
+                    correct: 1
+                },
+                {
+                    question: "What is the chemical formula for water?",
+                    options: ["CO2", "H2O", "NaCl", "CH4"],
+                    correct: 1
+                },
+                {
+                    question: "Which country invented pizza?",
+                    options: ["France", "Greece", "Italy", "Spain"],
+                    correct: 2
+                },
+                {
+                    question: "What is the largest bird in the world?",
+                    options: ["Eagle", "Ostrich", "Penguin", "Albatross"],
+                    correct: 1
+                },
+                {
+                    question: "Which organ produces insulin?",
+                    options: ["Liver", "Kidney", "Pancreas", "Stomach"],
+                    correct: 2
+                },
+                {
+                    question: "What is the most common gas in Earth's atmosphere?",
+                    options: ["Oxygen", "Carbon Dioxide", "Nitrogen", "Argon"],
+                    correct: 2
+                },
+                {
+                    question: "Who wrote '1984'?",
+                    options: ["Aldous Huxley", "George Orwell", "Ray Bradbury", "Isaac Asimov"],
+                    correct: 1
+                },
+                {
+                    question: "What is the deepest point on Earth?",
+                    options: ["Dead Sea", "Grand Canyon", "Mariana Trench", "Bermuda Triangle"],
+                    correct: 2
+                },
+                {
+                    question: "Which metal is liquid at room temperature?",
+                    options: ["Lead", "Mercury", "Silver", "Gold"],
+                    correct: 1
+                },
+                {
+                    question: "What is the most expensive spice in the world?",
+                    options: ["Cardamom", "Vanilla", "Saffron", "Cinnamon"],
+                    correct: 2
+                },
+                {
+                    question: "Which country has the most time zones?",
+                    options: ["Russia", "USA", "China", "Canada"],
+                    correct: 0
+                },
+                {
+                    question: "What is the study of earthquakes called?",
+                    options: ["Geology", "Seismology", "Meteorology", "Oceanography"],
+                    correct: 1
+                },
+                {
+                    question: "Which mammal is known to have the most powerful bite?",
+                    options: ["Lion", "Shark", "Hippopotamus", "Crocodile"],
+                    correct: 2
+                }
+            ],
+            cricket: [
+                {
+                    question: "Who has scored the most runs in Test cricket?",
+                    options: ["Brian Lara", "Sachin Tendulkar", "Ricky Ponting", "Jacques Kallis"],
+                    correct: 1
+                },
+                {
+                    question: "Which bowler has taken the most wickets in ODI cricket?",
+                    options: ["Wasim Akram", "Muttiah Muralitharan", "Shane Warne", "Anil Kumble"],
+                    correct: 1
+                },
+                {
+                    question: "In which year was the first Cricket World Cup held?",
+                    options: ["1973", "1975", "1977", "1979"],
+                    correct: 1
+                },
+                {
+                    question: "What is the maximum number of overs a bowler can bowl in a T20 match?",
+                    options: ["3", "4", "5", "6"],
+                    correct: 1
+                },
+                {
+                    question: "Which country won the first T20 World Cup?",
+                    options: ["Australia", "India", "Pakistan", "England"],
+                    correct: 1
+                },
+                {
+                    question: "Who holds the record for the highest individual score in ODI cricket?",
+                    options: ["Rohit Sharma", "Martin Guptill", "Virender Sehwag", "Chris Gayle"],
+                    correct: 0
+                },
+                {
+                    question: "What does LBW stand for in cricket?",
+                    options: ["Left Before Wicket", "Leg Before Wicket", "Last Ball Win", "Long Ball Wide"],
+                    correct: 1
+                },
+                {
+                    question: "Which stadium is known as the 'Home of Cricket'?",
+                    options: ["The Oval", "Old Trafford", "Lord's", "Edgbaston"],
+                    correct: 2
+                },
+                {
+                    question: "Who was the first cricketer to score 10,000 runs in ODI cricket?",
+                    options: ["Sachin Tendulkar", "Sunil Gavaskar", "Kapil Dev", "Javed Miandad"],
+                    correct: 0
+                },
+                {
+                    question: "What is the term for taking three wickets in three consecutive balls?",
+                    options: ["Triple", "Hat-trick", "Three-peat", "Trinity"],
+                    correct: 1
+                },
+                {
+                    question: "Which Indian captain led the team to their first World Cup victory?",
+                    options: ["Sunil Gavaskar", "Kapil Dev", "Mohammad Azharuddin", "Sourav Ganguly"],
+                    correct: 1
+                },
+                {
+                    question: "What is the maximum width of a cricket bat?",
+                    options: ["4.25 inches", "4.5 inches", "4.75 inches", "5 inches"],
+                    correct: 0
+                },
+                {
+                    question: "Who has hit the most sixes in international cricket?",
+                    options: ["MS Dhoni", "Chris Gayle", "Shahid Afridi", "Brendon McCullum"],
+                    correct: 2
+                },
+                {
+                    question: "Which bowler has the best bowling figures in a Test match?",
+                    options: ["Jim Laker", "Anil Kumble", "Muttiah Muralitharan", "Shane Warne"],
+                    correct: 0
+                },
+                {
+                    question: "What is the distance between the wickets?",
+                    options: ["20 yards", "22 yards", "24 yards", "26 yards"],
+                    correct: 1
+                },
+                {
+                    question: "Which team has won the most Cricket World Cups?",
+                    options: ["West Indies", "Australia", "India", "England"],
+                    correct: 1
+                },
+                {
+                    question: "Who was the first player to score a double century in ODI cricket?",
+                    options: ["Sachin Tendulkar", "Virender Sehwag", "Rohit Sharma", "Martin Guptill"],
+                    correct: 0
+                },
+                {
+                    question: "What is the term for a ball that doesn't bounce before reaching the batsman?",
+                    options: ["Full toss", "Yorker", "Bouncer", "Good length"],
+                    correct: 0
+                },
+                {
+                    question: "Which country hosted the 2019 Cricket World Cup?",
+                    options: ["India", "Australia", "England", "South Africa"],
+                    correct: 2
+                },
+                {
+                    question: "Who holds the record for most catches by a fielder in Test cricket?",
+                    options: ["Rahul Dravid", "Jacques Kallis", "Ricky Ponting", "Mark Waugh"],
+                    correct: 0
+                },
+                {
+                    question: "What is the term for scoring 100 runs in cricket?",
+                    options: ["Century", "Hundred", "Ton", "All of the above"],
+                    correct: 3
+                },
+                {
+                    question: "Which bowler has taken the most wickets in Test cricket?",
+                    options: ["Shane Warne", "Muttiah Muralitharan", "Anil Kumble", "James Anderson"],
+                    correct: 1
+                },
+                {
+                    question: "What does the term 'duck' mean in cricket?",
+                    options: ["Hit the ball high", "Score zero runs", "Bowl a wide", "Drop a catch"],
+                    correct: 1
+                },
+                {
+                    question: "Which format of cricket has powerplay overs?",
+                    options: ["Test", "ODI", "T20", "Both ODI and T20"],
+                    correct: 3
+                },
+                {
+                    question: "Who was the first bowler to take 500 wickets in Test cricket?",
+                    options: ["Kapil Dev", "Richard Hadlee", "Ian Botham", "Courtney Walsh"],
+                    correct: 0
+                },
+                {
+                    question: "What is the maximum number of fielders allowed outside the 30-yard circle in ODI cricket during non-powerplay overs?",
+                    options: ["4", "5", "6", "7"],
+                    correct: 1
+                },
+                {
+                    question: "Which Indian batsman is known as 'Captain Cool'?",
+                    options: ["Virat Kohli", "MS Dhoni", "Sourav Ganguly", "Rahul Dravid"],
+                    correct: 1
+                },
+                {
+                    question: "What is the term for a delivery that swings in the air?",
+                    options: ["Spin", "Swing", "Seam", "Drift"],
+                    correct: 1
+                },
+                {
+                    question: "Which tournament is considered the domestic T20 league of India?",
+                    options: ["IPL", "Ranji Trophy", "Duleep Trophy", "Vijay Hazare Trophy"],
+                    correct: 0
+                },
+                {
+                    question: "Who has scored the most runs in a single IPL season?",
+                    options: ["Virat Kohli", "David Warner", "KL Rahul", "Chris Gayle"],
+                    correct: 0
+                },
+                {
+                    question: "What is the term for a ball that pitches outside leg stump and hits the batsman?",
+                    options: ["Wide", "No ball", "LBW", "Not out"],
+                    correct: 3
+                },
+                {
+                    question: "Which team won the first IPL tournament?",
+                    options: ["Mumbai Indians", "Chennai Super Kings", "Rajasthan Royals", "Delhi Capitals"],
+                    correct: 2
+                },
+                {
+                    question: "Who is known as the 'Wall' of Indian cricket?",
+                    options: ["VVS Laxman", "Rahul Dravid", "Anil Kumble", "Sourav Ganguly"],
+                    correct: 1
+                },
+                {
+                    question: "What is the highest team score in Test cricket?",
+                    options: ["952/6", "903/7", "849", "887"],
+                    correct: 0
+                },
+                {
+                    question: "Which bowler has the best bowling figures in ODI cricket?",
+                    options: ["Chaminda Vaas", "Anil Kumble", "Stuart Binny", "All three have 6 wickets"],
+                    correct: 3
+                },
+                {
+                    question: "What is the term for a match that ends without a result?",
+                    options: ["Tie", "Draw", "No result", "Abandoned"],
+                    correct: 1
+                },
+                {
+                    question: "Who was the first cricketer to take 200 wickets and score 2000 runs in ODI cricket?",
+                    options: ["Kapil Dev", "Ian Botham", "Imran Khan", "Richard Hadlee"],
+                    correct: 0
+                },
+                {
+                    question: "Which ground is known for its batting-friendly pitch in India?",
+                    options: ["Eden Gardens", "Wankhede Stadium", "M. Chinnaswamy Stadium", "Feroz Shah Kotla"],
+                    correct: 2
+                },
+                {
+                    question: "What is the term for hitting the ball over the boundary without it bouncing?",
+                    options: ["Four", "Six", "Boundary", "Maximum"],
+                    correct: 1
+                },
+                {
+                    question: "Who holds the record for the fastest century in ODI cricket?",
+                    options: ["AB de Villiers", "Corey Anderson", "Shahid Afridi", "Sanath Jayasuriya"],
+                    correct: 0
+                },
+                {
+                    question: "Which country is known as the birthplace of cricket?",
+                    options: ["Australia", "India", "England", "West Indies"],
+                    correct: 2
+                },
+                {
+                    question: "What is the term for a bowler completing his quota of overs?",
+                    options: ["Spell complete", "Over quota", "Bowling complete", "Full quota"],
+                    correct: 2
+                },
+                {
+                    question: "Who was the first player to score 15,000 runs in Test cricket?",
+                    options: ["Brian Lara", "Sachin Tendulkar", "Allan Border", "Steve Waugh"],
+                    correct: 1
+                },
+                {
+                    question: "What is the maximum number of overs in an ODI match?",
+                    options: ["40", "45", "50", "55"],
+                    correct: 2
+                },
+                {
+                    question: "Which Indian bowler is known as the 'Turbanator'?",
+                    options: ["Bhajji", "Harbhajan Singh", "Bishan Singh Bedi", "Maninder Singh"],
+                    correct: 1
+                },
+                {
+                    question: "What does DRS stand for in cricket?",
+                    options: ["Decision Review System", "Data Review System", "Delivery Review System", "Dismissal Review System"],
+                    correct: 0
+                },
+                {
+                    question: "Who has taken the most wickets in T20 International cricket?",
+                    options: ["Lasith Malinga", "Shahid Afridi", "Shakib Al Hasan", "Tim Southee"],
+                    correct: 2
+                },
+                {
+                    question: "Which team has won the most T20 World Cups?",
+                    options: ["India", "West Indies", "England", "Australia"],
+                    correct: 1
+                },
+                {
+                    question: "What is the term for a delivery that moves off the pitch after bouncing?",
+                    options: ["Swing", "Seam", "Spin", "Cut"],
+                    correct: 1
+                },
+                {
+                    question: "Who was the first bowler to take a wicket with the first ball of a World Cup?",
+                    options: ["Wasim Akram", "Allan Donald", "Javagal Srinath", "Geoff Lawson"],
+                    correct: 3
+                }
+            ],
+            football: [
+                {
+                    question: "Which country won the 2018 FIFA World Cup?",
+                    options: ["Brazil", "Germany", "France", "Argentina"],
+                    correct: 2
+                },
+                {
+                    question: "Who has won the most Ballon d'Or awards?",
+                    options: ["Cristiano Ronaldo", "Lionel Messi", "Michel Platini", "Johan Cruyff"],
+                    correct: 1
+                },
+                {
+                    question: "Which club has won the most UEFA Champions League titles?",
+                    options: ["Barcelona", "AC Milan", "Real Madrid", "Liverpool"],
+                    correct: 2
+                },
+                {
+                    question: "In which year was the first FIFA World Cup held?",
+                    options: ["1928", "1930", "1932", "1934"],
+                    correct: 1
+                },
+                {
+                    question: "Who is the all-time top scorer in FIFA World Cup history?",
+                    options: ["Pelé", "Diego Maradona", "Miroslav Klose", "Ronaldo"],
+                    correct: 2
+                },
+                {
+                    question: "Which country hosted the 2014 FIFA World Cup?",
+                    options: ["Germany", "Brazil", "Russia", "South Africa"],
+                    correct: 1
+                },
+                {
+                    question: "What is the maximum number of players a team can have on the field?",
+                    options: ["10", "11", "12", "13"],
+                    correct: 1
+                },
+                {
+                    question: "Which player scored the 'Hand of God' goal?",
+                    options: ["Pelé", "Diego Maradona", "Ronaldinho", "Zinedine Zidane"],
+                    correct: 1
+                },
+                {
+                    question: "Which English club is known as 'The Red Devils'?",
+                    options: ["Liverpool", "Arsenal", "Manchester United", "Chelsea"],
+                    correct: 2
+                },
+                {
+                    question: "Who is the current captain of the Portuguese national team?",
+                    options: ["Bruno Fernandes", "Cristiano Ronaldo", "João Félix", "Rúben Dias"],
+                    correct: 1
+                },
+                {
+                    question: "Which stadium is known as 'The Theatre of Dreams'?",
+                    options: ["Wembley", "Old Trafford", "Anfield", "Stamford Bridge"],
+                    correct: 1
+                },
+                {
+                    question: "In which city is the famous Camp Nou stadium located?",
+                    options: ["Madrid", "Barcelona", "Valencia", "Seville"],
+                    correct: 1
+                },
+                {
+                    question: "Who won the Golden Boot at the 2018 FIFA World Cup?",
+                    options: ["Kylian Mbappé", "Harry Kane", "Antoine Griezmann", "Romelu Lukaku"],
+                    correct: 1
+                },
+                {
+                    question: "Which country has won the most FIFA World Cups?",
+                    options: ["Germany", "Argentina", "Brazil", "Italy"],
+                    correct: 2
+                },
+                {
+                    question: "What does VAR stand for in football?",
+                    options: ["Video Assistant Referee", "Virtual Assistant Referee", "Video Analysis Review", "Variable Assistant Review"],
+                    correct: 0
+                },
+                {
+                    question: "Which player holds the record for most goals scored in a single Premier League season?",
+                    options: ["Alan Shearer", "Mohamed Salah", "Thierry Henry", "Harry Kane"],
+                    correct: 1
+                },
+                {
+                    question: "Which club is known as 'The Gunners'?",
+                    options: ["Chelsea", "Arsenal", "Tottenham", "West Ham"],
+                    correct: 1
+                },
+                {
+                    question: "Who was the top scorer in the 2022 FIFA World Cup?",
+                    options: ["Lionel Messi", "Kylian Mbappé", "Olivier Giroud", "Julian Alvarez"],
+                    correct: 1
+                },
+                {
+                    question: "Which country won the first European Championship (Euro 1960)?",
+                    options: ["France", "Soviet Union", "Spain", "Italy"],
+                    correct: 1
+                },
+                {
+                    question: "What is the duration of a standard football match?",
+                    options: ["80 minutes", "90 minutes", "100 minutes", "120 minutes"],
+                    correct: 1
+                },
+                {
+                    question: "Which player has scored the most goals for Real Madrid?",
+                    options: ["Raúl", "Alfredo Di Stéfano", "Cristiano Ronaldo", "Karim Benzema"],
+                    correct: 2
+                },
+                {
+                    question: "In which year did Leicester City win the Premier League?",
+                    options: ["2015", "2016", "2017", "2018"],
+                    correct: 1
+                },
+                {
+                    question: "Which goalkeeper has the most clean sheets in Premier League history?",
+                    options: ["David Seaman", "Petr Čech", "Edwin van der Sar", "Joe Hart"],
+                    correct: 1
+                },
+                {
+                    question: "Who is known as 'The Special One'?",
+                    options: ["Pep Guardiola", "José Mourinho", "Carlo Ancelotti", "Jürgen Klopp"],
+                    correct: 1
+                },
+                {
+                    question: "Which country will host the 2026 FIFA World Cup?",
+                    options: ["Qatar", "Russia", "USA, Canada, Mexico", "Germany"],
+                    correct: 2
+                },
+                {
+                    question: "What is the maximum number of substitutions allowed in a football match?",
+                    options: ["3", "4", "5", "6"],
+                    correct: 2
+                },
+                {
+                    question: "Which player has won the most UEFA Champions League titles?",
+                    options: ["Lionel Messi", "Cristiano Ronaldo", "Sergio Ramos", "Karim Benzema"],
+                    correct: 1
+                },
+                {
+                    question: "Which club is known as 'The Blues'?",
+                    options: ["Manchester City", "Chelsea", "Everton", "All of the above"],
+                    correct: 3
+                },
+                {
+                    question: "Who scored the fastest goal in World Cup history?",
+                    options: ["Hakan Şükür", "Clint Dempsey", "Tim Cahill", "Robbie Keane"],
+                    correct: 0
+                },
+                {
+                    question: "Which Italian club is known as 'The Old Lady'?",
+                    options: ["AC Milan", "Inter Milan", "Juventus", "AS Roma"],
+                    correct: 2
+                },
+                {
+                    question: "What is the distance of a penalty kick?",
+                    options: ["10 yards", "11 yards", "12 yards", "13 yards"],
+                    correct: 2
+                },
+                {
+                    question: "Which country hosted Euro 2021 (played in 2021)?",
+                    options: ["France", "Germany", "Multiple countries", "England"],
+                    correct: 2
+                },
+                {
+                    question: "Who is the youngest player to score in a World Cup final?",
+                    options: ["Pelé", "Kylian Mbappé", "Michael Owen", "Ronaldo"],
+                    correct: 0
+                },
+                {
+                    question: "Which team won the Premier League in its inaugural season (1992-93)?",
+                    options: ["Arsenal", "Liverpool", "Manchester United", "Chelsea"],
+                    correct: 2
+                },
+                {
+                    question: "What does FIFA stand for?",
+                    options: ["Federation of International Football Associations", "Fédération Internationale de Football Association", "Federal International Football Association", "Football International Federation Association"],
+                    correct: 1
+                },
+                {
+                    question: "Which player has made the most appearances in Premier League history?",
+                    options: ["Ryan Giggs", "Frank Lampard", "Gareth Barry", "James Milner"],
+                    correct: 2
+                },
+                {
+                    question: "Which country won the 2021 Copa América?",
+                    options: ["Brazil", "Argentina", "Uruguay", "Chile"],
+                    correct: 1
+                },
+                {
+                    question: "What is the nickname of the Brazilian national team?",
+                    options: ["The Samba Kings", "Seleção", "The Yellow Brigade", "Canarinha"],
+                    correct: 1
+                },
+                {
+                    question: "Which goalkeeper won the Golden Glove at the 2018 World Cup?",
+                    options: ["Hugo Lloris", "Thibaut Courtois", "Jordan Pickford", "Danijel Subašić"],
+                    correct: 1
+                },
+                {
+                    question: "Which player scored the winning goal in the 2014 World Cup final?",
+                    options: ["Thomas Müller", "Mario Götze", "Bastian Schweinsteiger", "Mesut Özil"],
+                    correct: 1
+                },
+                {
+                    question: "Which club has won the most Premier League titles?",
+                    options: ["Arsenal", "Chelsea", "Liverpool", "Manchester United"],
+                    correct: 3
+                },
+                {
+                    question: "What is the maximum number of yellow cards a player can receive before being sent off?",
+                    options: ["1", "2", "3", "4"],
+                    correct: 1
+                },
+                {
+                    question: "Which country has never won a World Cup but reached the final three times?",
+                    options: ["Netherlands", "Croatia", "Belgium", "Portugal"],
+                    correct: 0
+                },
+                {
+                    question: "Who is the all-time leading scorer in the UEFA European Championship?",
+                    options: ["Thierry Henry", "Cristiano Ronaldo", "Michel Platini", "Antoine Griezmann"],
+                    correct: 1
+                },
+                {
+                    question: "Which year did the Premier League start?",
+                    options: ["1990", "1991", "1992", "1993"],
+                    correct: 2
+                },
+                {
+                    question: "Which player has scored the most hat-tricks in Premier League history?",
+                    options: ["Thierry Henry", "Alan Shearer", "Harry Kane", "Sergio Agüero"],
+                    correct: 1
+                },
+                {
+                    question: "What is the record for most goals scored by a team in a single Premier League season?",
+                    options: ["103", "106", "109", "112"],
+                    correct: 1
+                },
+                {
+                    question: "Which manager has won the most Premier League titles?",
+                    options: ["Arsène Wenger", "José Mourinho", "Sir Alex Ferguson", "Pep Guardiola"],
+                    correct: 2
+                },
+                {
+                    question: "Which country won the first Women's World Cup?",
+                    options: ["Norway", "USA", "Germany", "Sweden"],
+                    correct: 1
+                },
+                {
+                    question: "What is the official circumference range of a football?",
+                    options: ["68-70 cm", "68-71 cm", "69-71 cm", "70-72 cm"],
+                    correct: 0
+                }
+            ],
+            science: [
+                {
+                    question: "What is the chemical symbol for gold?",
+                    options: ["Go", "Gd", "Au", "Ag"],
+                    correct: 2
+                },
+                {
+                    question: "Which planet is known as the 'Red Planet'?",
+                    options: ["Venus", "Mars", "Jupiter", "Saturn"],
+                    correct: 1
+                },
+                {
+                    question: "What is the speed of light in vacuum?",
+                    options: ["299,792,458 m/s", "300,000,000 m/s", "299,000,000 m/s", "298,792,458 m/s"],
+                    correct: 0
+                },
+                {
+                    question: "Who developed the theory of relativity?",
+                    options: ["Isaac Newton", "Albert Einstein", "Stephen Hawking", "Galileo Galilei"],
+                    correct: 1
+                },
+                {
+                    question: "What is the most abundant gas in Earth's atmosphere?",
+                    options: ["Oxygen", "Carbon Dioxide", "Nitrogen", "Argon"],
+                    correct: 2
+                },
+                {
+                    question: "Which organ in the human body produces insulin?",
+                    options: ["Liver", "Kidney", "Pancreas", "Stomach"],
+                    correct: 2
+                },
+                {
+                    question: "What is the hardest natural substance on Earth?",
+                    options: ["Graphite", "Quartz", "Diamond", "Iron"],
+                    correct: 2
+                },
+                {
+                    question: "How many bones are there in an adult human body?",
+                    options: ["204", "206", "208", "210"],
+                    correct: 1
+                },
+                {
+                    question: "What is the chemical formula for water?",
+                    options: ["H2O", "CO2", "NaCl", "CH4"],
+                    correct: 0
+                },
+                {
+                    question: "Which blood type is known as the universal donor?",
+                    options: ["A", "B", "AB", "O"],
+                    correct: 3
+                },
+                {
+                    question: "What is the smallest unit of matter?",
+                    options: ["Molecule", "Atom", "Electron", "Proton"],
+                    correct: 1
+                },
+                {
+                    question: "Which scientist is famous for the laws of motion?",
+                    options: ["Albert Einstein", "Isaac Newton", "Galileo Galilei", "Johannes Kepler"],
+                    correct: 1
+                },
+                {
+                    question: "What is the pH of pure water?",
+                    options: ["6", "7", "8", "9"],
+                    correct: 1
+                },
+                {
+                    question: "Which vitamin is produced when skin is exposed to sunlight?",
+                    options: ["Vitamin A", "Vitamin B", "Vitamin C", "Vitamin D"],
+                    correct: 3
+                },
+                {
+                    question: "What is the largest organ in the human body?",
+                    options: ["Heart", "Brain", "Liver", "Skin"],
+                    correct: 3
+                },
+                {
+                    question: "Which gas makes up about 21% of Earth's atmosphere?",
+                    options: ["Nitrogen", "Oxygen", "Carbon Dioxide", "Argon"],
+                    correct: 1
+                },
+                {
+                    question: "What is the study of earthquakes called?",
+                    options: ["Geology", "Seismology", "Meteorology", "Oceanography"],
+                    correct: 1
+                },
+                {
+                    question: "How many chambers does a human heart have?",
+                    options: ["2", "3", "4", "5"],
+                    correct: 2
+                },
+                {
+                    question: "What is the chemical symbol for iron?",
+                    options: ["Ir", "Fe", "In", "I"],
+                    correct: 1
+                },
+                {
+                    question: "Which planet is the largest in our solar system?",
+                    options: ["Saturn", "Jupiter", "Neptune", "Uranus"],
+                    correct: 1
+                },
+                {
+                    question: "What is the process by which plants make their own food?",
+                    options: ["Respiration", "Photosynthesis", "Digestion", "Fermentation"],
+                    correct: 1
+                },
+                {
+                    question: "What is the boiling point of water at sea level?",
+                    options: ["90°C", "95°C", "100°C", "105°C"],
+                    correct: 2
+                },
+                {
+                    question: "Which element has the atomic number 1?",
+                    options: ["Helium", "Hydrogen", "Lithium", "Carbon"],
+                    correct: 1
+                },
+                {
+                    question: "What is the study of living organisms called?",
+                    options: ["Chemistry", "Physics", "Biology", "Geology"],
+                    correct: 2
+                },
+                {
+                    question: "How many pairs of chromosomes do humans have?",
+                    options: ["22", "23", "24", "25"],
+                    correct: 1
+                },
+                {
+                    question: "What is the chemical symbol for sodium?",
+                    options: ["So", "Sd", "Na", "S"],
+                    correct: 2
+                },
+                {
+                    question: "Which part of the brain controls balance and coordination?",
+                    options: ["Cerebrum", "Cerebellum", "Medulla", "Hypothalamus"],
+                    correct: 1
+                },
+                {
+                    question: "What is the freezing point of water?",
+                    options: ["-1°C", "0°C", "1°C", "2°C"],
+                    correct: 1
+                },
+                {
+                    question: "Which scientist developed the periodic table?",
+                    options: ["Marie Curie", "Dmitri Mendeleev", "Antoine Lavoisier", "John Dalton"],
+                    correct: 1
+                },
+                {
+                    question: "What is the main component of the sun?",
+                    options: ["Helium", "Hydrogen", "Oxygen", "Carbon"],
+                    correct: 1
+                },
+                {
+                    question: "How many teeth does an adult human typically have?",
+                    options: ["28", "30", "32", "34"],
+                    correct: 2
+                },
+                {
+                    question: "What is the chemical formula for carbon dioxide?",
+                    options: ["CO", "CO2", "C2O", "CO3"],
+                    correct: 1
+                },
+                {
+                    question: "Which planet is closest to the Sun?",
+                    options: ["Venus", "Earth", "Mercury", "Mars"],
+                    correct: 2
+                },
+                {
+                    question: "What is the study of heredity called?",
+                    options: ["Genetics", "Evolution", "Ecology", "Anatomy"],
+                    correct: 0
+                },
+                {
+                    question: "Which metal is liquid at room temperature?",
+                    options: ["Lead", "Mercury", "Silver", "Copper"],
+                    correct: 1
+                },
+                {
+                    question: "What is the powerhouse of the cell?",
+                    options: ["Nucleus", "Ribosome", "Mitochondria", "Chloroplast"],
+                    correct: 2
+                },
+                {
+                    question: "How many minutes does it take for light to travel from the Sun to Earth?",
+                    options: ["6 minutes", "8 minutes", "10 minutes", "12 minutes"],
+                    correct: 1
+                },
+                {
+                    question: "What is the chemical symbol for potassium?",
+                    options: ["P", "Po", "K", "Pt"],
+                    correct: 2
+                },
+                {
+                    question: "Which gas is essential for photosynthesis?",
+                    options: ["Oxygen", "Nitrogen", "Carbon Dioxide", "Hydrogen"],
+                    correct: 2
+                },
+                {
+                    question: "What is the normal human body temperature?",
+                    options: ["36°C", "37°C", "38°C", "39°C"],
+                    correct: 1
+                },
+                {
+                    question: "Which bone is the longest in the human body?",
+                    options: ["Tibia", "Fibula", "Femur", "Humerus"],
+                    correct: 2
+                },
+                {
+                    question: "What is the study of weather called?",
+                    options: ["Geology", "Meteorology", "Oceanography", "Astronomy"],
+                    correct: 1
+                },
+                {
+                    question: "How many valence electrons does carbon have?",
+                    options: ["2", "4", "6", "8"],
+                    correct: 1
+                },
+                {
+                    question: "What is the chemical formula for methane?",
+                    options: ["CH2", "CH3", "CH4", "C2H4"],
+                    correct: 2
+                },
+                {
+                    question: "Which part of the eye controls the amount of light entering?",
+                    options: ["Cornea", "Lens", "Pupil", "Retina"],
+                    correct: 2
+                },
+                {
+                    question: "What is the unit of electrical resistance?",
+                    options: ["Volt", "Ampere", "Ohm", "Watt"],
+                    correct: 2
+                },
+                {
+                    question: "Which planet has the most moons?",
+                    options: ["Jupiter", "Saturn", "Uranus", "Neptune"],
+                    correct: 1
+                },
+                {
+                    question: "What is the chemical symbol for calcium?",
+                    options: ["C", "Ca", "Cl", "Cr"],
+                    correct: 1
+                },
+                {
+                    question: "What type of wave is sound?",
+                    options: ["Electromagnetic", "Longitudinal", "Transverse", "Light"],
+                    correct: 1
+                },
+                {
+                    question: "Which organ filters blood in the human body?",
+                    options: ["Heart", "Liver", "Kidney", "Lungs"],
+                    correct: 2
+                }
+            ],
+            politics: [
+                {
+                    question: "Who is the current President of the United States?",
+                    options: ["Donald Trump", "Joe Biden", "Barack Obama", "Kamala Harris"],
+                    correct: 1
+                },
+                {
+                    question: "Which country has the most political parties in its parliament?",
+                    options: ["India", "Netherlands", "Belgium", "Israel"],
+                    correct: 0
+                },
+                {
+                    question: "What does UN stand for?",
+                    options: ["United Nations", "Universal Network", "United Network", "Universal Nations"],
+                    correct: 0
+                },
+                {
+                    question: "Who was the first woman Prime Minister of the United Kingdom?",
+                    options: ["Theresa May", "Margaret Thatcher", "Liz Truss", "Queen Elizabeth II"],
+                    correct: 1
+                },
+                {
+                    question: "Which city hosts the headquarters of the European Union?",
+                    options: ["Paris", "Berlin", "Brussels", "Amsterdam"],
+                    correct: 2
+                },
+                {
+                    question: "What is the minimum age to become President of the United States?",
+                    options: ["30", "35", "40", "45"],
+                    correct: 1
+                },
+                {
+                    question: "Which political system is characterized by rule by a single person?",
+                    options: ["Democracy", "Oligarchy", "Autocracy", "Republic"],
+                    correct: 2
+                },
+                {
+                    question: "Who was the longest-serving Prime Minister of India?",
+                    options: ["Nehru", "Indira Gandhi", "Manmohan Singh", "Atal Bihari Vajpayee"],
+                    correct: 0
+                },
+                {
+                    question: "What does NATO stand for?",
+                    options: ["North Atlantic Treaty Organization", "North American Trade Organization", "National Atlantic Treaty Organization", "North Atlantic Trade Organization"],
+                    correct: 0
+                },
+                {
+                    question: "Which country has a political system called 'One Country, Two Systems'?",
+                    options: ["Taiwan", "China", "Hong Kong", "Singapore"],
+                    correct: 1
+                },
+                {
+                    question: "Who wrote 'The Communist Manifesto'?",
+                    options: ["Vladimir Lenin", "Karl Marx", "Joseph Stalin", "Mao Zedong"],
+                    correct: 1
+                },
+                {
+                    question: "What is the upper house of the US Congress called?",
+                    options: ["House of Representatives", "Senate", "Supreme Court", "Cabinet"],
+                    correct: 1
+                },
+                {
+                    question: "Which African leader was known as the 'Father of African Nationalism'?",
+                    options: ["Nelson Mandela", "Kwame Nkrumah", "Julius Nyerere", "Jomo Kenyatta"],
+                    correct: 1
+                },
+                {
+                    question: "In which year did the Berlin Wall fall?",
+                    options: ["1987", "1988", "1989", "1990"],
+                    correct: 2
+                },
+                {
+                    question: "What is the term length for a US Senator?",
+                    options: ["4 years", "6 years", "8 years", "2 years"],
+                    correct: 1
+                },
+                {
+                    question: "Which international organization was the predecessor to the United Nations?",
+                    options: ["League of Nations", "World Trade Organization", "International Monetary Fund", "World Bank"],
+                    correct: 0
+                },
+                {
+                    question: "Who was the first black President of South Africa?",
+                    options: ["Thabo Mbeki", "Jacob Zuma", "Nelson Mandela", "F.W. de Klerk"],
+                    correct: 2
+                },
+                {
+                    question: "What type of government does the United Kingdom have?",
+                    options: ["Republic", "Constitutional Monarchy", "Absolute Monarchy", "Federal Republic"],
+                    correct: 1
+                },
+                {
+                    question: "Which amendment to the US Constitution gave women the right to vote?",
+                    options: ["18th", "19th", "20th", "21st"],
+                    correct: 1
+                },
+                {
+                    question: "Who was the first female Chancellor of Germany?",
+                    options: ["Angela Merkel", "Ursula von der Leyen", "Annegret Kramp-Karrenbauer", "Petra Kelly"],
+                    correct: 0
+                },
+                {
+                    question: "What is the lower house of the British Parliament called?",
+                    options: ["House of Lords", "House of Commons", "House of Representatives", "Parliament"],
+                    correct: 1
+                },
+                {
+                    question: "Which war was fought between North and South Korea?",
+                    options: ["Vietnam War", "Korean War", "Cold War", "World War III"],
+                    correct: 1
+                },
+                {
+                    question: "Who was the youngest elected President of the United States?",
+                    options: ["Bill Clinton", "Barack Obama", "John F. Kennedy", "Theodore Roosevelt"],
+                    correct: 2
+                },
+                {
+                    question: "What does GDP stand for?",
+                    options: ["Gross Domestic Product", "General Domestic Product", "Global Domestic Product", "Gross Development Product"],
+                    correct: 0
+                },
+                {
+                    question: "Which country has the oldest written constitution still in use?",
+                    options: ["United Kingdom", "United States", "France", "Canada"],
+                    correct: 1
+                },
+                {
+                    question: "Who was the Iron Lady of British politics?",
+                    options: ["Queen Elizabeth II", "Margaret Thatcher", "Theresa May", "Diana Spencer"],
+                    correct: 1
+                },
+                {
+                    question: "What is the capital of the European Union?",
+                    options: ["Brussels", "Strasbourg", "Luxembourg", "Geneva"],
+                    correct: 0
+                },
+                {
+                    question: "Which political philosopher wrote 'The Prince'?",
+                    options: ["Plato", "Aristotle", "Niccolò Machiavelli", "Thomas Hobbes"],
+                    correct: 2
+                },
+                {
+                    question: "What is the maximum number of terms a US President can serve?",
+                    options: ["1", "2", "3", "No limit"],
+                    correct: 1
+                },
+                {
+                    question: "Which country was the first to grant women the right to vote?",
+                    options: ["United States", "United Kingdom", "New Zealand", "Australia"],
+                    correct: 2
+                },
+                {
+                    question: "Who was the first Secretary-General of the United Nations?",
+                    options: ["Dag Hammarskjöld", "Trygve Lie", "U Thant", "Kurt Waldheim"],
+                    correct: 1
+                },
+                {
+                    question: "What is the term for a government ruled by the wealthy?",
+                    options: ["Democracy", "Plutocracy", "Aristocracy", "Meritocracy"],
+                    correct: 1
+                },
+                {
+                    question: "Which amendment abolished slavery in the United States?",
+                    options: ["12th", "13th", "14th", "15th"],
+                    correct: 1
+                },
+                {
+                    question: "Who was the first woman to serve as Prime Minister of any country?",
+                    options: ["Margaret Thatcher", "Indira Gandhi", "Golda Meir", "Sirimavo Bandaranaike"],
+                    correct: 3
+                },
+                {
+                    question: "What is the political system where citizens vote directly on issues?",
+                    options: ["Representative Democracy", "Direct Democracy", "Republic", "Constitutional Monarchy"],
+                    correct: 1
+                },
+                {
+                    question: "Which document begins with 'We the People'?",
+                    options: ["Declaration of Independence", "Bill of Rights", "US Constitution", "Articles of Confederation"],
+                    correct: 2
+                },
+                {
+                    question: "Who was the leader of the Soviet Union during World War II?",
+                    options: ["Vladimir Lenin", "Joseph Stalin", "Nikita Khrushchev", "Leonid Brezhnev"],
+                    correct: 1
+                },
+                {
+                    question: "What is the term for the right of a state to reject federal law?",
+                    options: ["Nullification", "Secession", "Federalism", "Sovereignty"],
+                    correct: 0
+                },
+                {
+                    question: "Which country's flag features a maple leaf?",
+                    options: ["Australia", "New Zealand", "Canada", "South Africa"],
+                    correct: 2
+                },
+                {
+                    question: "Who assassinated President John F. Kennedy?",
+                    options: ["Jack Ruby", "Lee Harvey Oswald", "James Earl Ray", "Sirhan Sirhan"],
+                    correct: 1
+                },
+                {
+                    question: "What is the headquarters of the United Nations located?",
+                    options: ["Geneva", "The Hague", "New York City", "Vienna"],
+                    correct: 2
+                },
+                {
+                    question: "Which political party does Angela Merkel belong to?",
+                    options: ["SPD", "CDU", "FDP", "The Left"],
+                    correct: 1
+                },
+                {
+                    question: "What does the acronym 'EU' stand for?",
+                    options: ["Eastern Union", "European Union", "Economic Union", "European Unity"],
+                    correct: 1
+                },
+                {
+                    question: "Who was the first Prime Minister of India?",
+                    options: ["Mahatma Gandhi", "Jawaharlal Nehru", "Sardar Patel", "Subhas Chandra Bose"],
+                    correct: 1
+                },
+                {
+                    question: "Which US President served for more than two terms?",
+                    options: ["George Washington", "Thomas Jefferson", "Franklin D. Roosevelt", "Theodore Roosevelt"],
+                    correct: 2
+                },
+                {
+                    question: "What is the minimum age to become a US Senator?",
+                    options: ["25", "30", "35", "40"],
+                    correct: 1
+                },
+                {
+                    question: "Which country left the European Union in 2020?",
+                    options: ["Norway", "Switzerland", "United Kingdom", "Iceland"],
+                    correct: 2
+                },
+                {
+                    question: "Who wrote 'Democracy in America'?",
+                    options: ["John Stuart Mill", "Alexis de Tocqueville", "Montesquieu", "Rousseau"],
+                    correct: 1
+                },
+                {
+                    question: "What is the term for a government where religious leaders hold power?",
+                    options: ["Democracy", "Theocracy", "Republic", "Monarchy"],
+                    correct: 1
+                },
+                {
+                    question: "Which amendment guarantees freedom of speech in the US?",
+                    options: ["First", "Second", "Fourth", "Fifth"],
+                    correct: 0
+                }
+            ],
+            history: [
+                {
+                    question: "In which year did World War II end?",
+                    options: ["1944", "1945", "1946", "1947"],
+                    correct: 1
+                },
+                {
+                    question: "Who was the first President of the United States?",
+                    options: ["Thomas Jefferson", "George Washington", "John Adams", "Benjamin Franklin"],
+                    correct: 1
+                },
+                {
+                    question: "Which ancient wonder of the world was located in Alexandria?",
+                    options: ["Hanging Gardens", "Lighthouse of Alexandria", "Colossus of Rhodes", "Statue of Zeus"],
+                    correct: 1
+                },
+                {
+                    question: "The French Revolution began in which year?",
+                    options: ["1789", "1799", "1804", "1815"],
+                    correct: 0
+                },
+                {
+                    question: "Who was known as the 'Iron Lady'?",
+                    options: ["Queen Victoria", "Margaret Thatcher", "Indira Gandhi", "Golda Meir"],
+                    correct: 1
+                },
+                {
+                    question: "Which empire was ruled by Julius Caesar?",
+                    options: ["Greek Empire", "Roman Empire", "Ottoman Empire", "Byzantine Empire"],
+                    correct: 1
+                },
+                {
+                    question: "The Titanic sank in which year?",
+                    options: ["1910", "1911", "1912", "1913"],
+                    correct: 2
+                },
+                {
+                    question: "Who wrote the 'I Have a Dream' speech?",
+                    options: ["Malcolm X", "Martin Luther King Jr.", "John F. Kennedy", "Nelson Mandela"],
+                    correct: 1
+                },
+                {
+                    question: "Which war was fought between the North and South in America?",
+                    options: ["Revolutionary War", "Civil War", "War of 1812", "Spanish-American War"],
+                    correct: 1
+                },
+                {
+                    question: "The Berlin Wall fell in which year?",
+                    options: ["1987", "1988", "1989", "1990"],
+                    correct: 2
+                },
+                {
+                    question: "Who was the first man to walk on the moon?",
+                    options: ["Buzz Aldrin", "Neil Armstrong", "John Glenn", "Alan Shepard"],
+                    correct: 1
+                },
+                {
+                    question: "Which ancient city was destroyed by Mount Vesuvius?",
+                    options: ["Rome", "Athens", "Pompeii", "Sparta"],
+                    correct: 2
+                },
+                {
+                    question: "The Great Wall of China was built to protect against which group?",
+                    options: ["Mongols", "Japanese", "Russians", "Indians"],
+                    correct: 0
+                },
+                {
+                    question: "Who was the leader of Nazi Germany?",
+                    options: ["Heinrich Himmler", "Adolf Hitler", "Joseph Goebbels", "Hermann Göring"],
+                    correct: 1
+                },
+                {
+                    question: "Which revolution brought communism to Russia?",
+                    options: ["February Revolution", "October Revolution", "Decembrist Revolt", "Russian Revolution of 1905"],
+                    correct: 1
+                },
+                {
+                    question: "The Renaissance began in which country?",
+                    options: ["France", "Germany", "Italy", "Spain"],
+                    correct: 2
+                },
+                {
+                    question: "Who discovered America in 1492?",
+                    options: ["Vasco da Gama", "Christopher Columbus", "Ferdinand Magellan", "Amerigo Vespucci"],
+                    correct: 1
+                },
+                {
+                    question: "Which Egyptian queen had relationships with Julius Caesar and Mark Antony?",
+                    options: ["Nefertiti", "Hatshepsut", "Cleopatra", "Ankhesenamun"],
+                    correct: 2
+                },
+                {
+                    question: "The Cold War was primarily between which two superpowers?",
+                    options: ["USA and China", "USA and USSR", "UK and USSR", "France and USSR"],
+                    correct: 1
+                },
+                {
+                    question: "Which document declared American independence?",
+                    options: ["Constitution", "Bill of Rights", "Declaration of Independence", "Articles of Confederation"],
+                    correct: 2
+                },
+                {
+                    question: "Who was the first woman to fly solo across the Atlantic?",
+                    options: ["Bessie Coleman", "Amelia Earhart", "Jacqueline Cochran", "Valentina Tereshkova"],
+                    correct: 1
+                },
+                {
+                    question: "The Hundred Years' War was fought between which two countries?",
+                    options: ["England and France", "England and Spain", "France and Germany", "Spain and Italy"],
+                    correct: 0
+                },
+                {
+                    question: "Which emperor built the Colosseum in Rome?",
+                    options: ["Julius Caesar", "Augustus", "Vespasian", "Nero"],
+                    correct: 2
+                },
+                {
+                    question: "The Black Death occurred in which century?",
+                    options: ["13th", "14th", "15th", "16th"],
+                    correct: 1
+                },
+                {
+                    question: "Who painted the ceiling of the Sistine Chapel?",
+                    options: ["Leonardo da Vinci", "Raphael", "Michelangelo", "Donatello"],
+                    correct: 2
+                },
+                {
+                    question: "Which ship brought the Pilgrims to America?",
+                    options: ["Mayflower", "Santa Maria", "Pinta", "Nina"],
+                    correct: 0
+                },
+                {
+                    question: "The Silk Road connected which two regions?",
+                    options: ["Europe and Africa", "Asia and Europe", "Asia and America", "Europe and America"],
+                    correct: 1
+                },
+                {
+                    question: "Who was the youngest elected US President?",
+                    options: ["Bill Clinton", "Barack Obama", "John F. Kennedy", "Theodore Roosevelt"],
+                    correct: 2
+                },
+                {
+                    question: "Which ancient civilization built Machu Picchu?",
+                    options: ["Maya", "Aztec", "Inca", "Olmec"],
+                    correct: 2
+                },
+                {
+                    question: "The assassination of Archduke Franz Ferdinand triggered which war?",
+                    options: ["World War I", "World War II", "Franco-Prussian War", "Crimean War"],
+                    correct: 0
+                },
+                {
+                    question: "Who wrote 'The Art of War'?",
+                    options: ["Confucius", "Lao Tzu", "Sun Tzu", "Mencius"],
+                    correct: 2
+                },
+                {
+                    question: "Which revolution overthrew the Tsar in Russia?",
+                    options: ["Bolshevik Revolution", "Russian Revolution", "Menshevik Revolution", "White Revolution"],
+                    correct: 1
+                },
+                {
+                    question: "The Treaty of Versailles ended which war?",
+                    options: ["World War I", "World War II", "Franco-Prussian War", "Napoleonic Wars"],
+                    correct: 0
+                },
+                {
+                    question: "Who was the first person to circumnavigate the globe?",
+                    options: ["Christopher Columbus", "Ferdinand Magellan", "Vasco da Gama", "James Cook"],
+                    correct: 1
+                },
+                {
+                    question: "Which ancient Greek philosopher taught Alexander the Great?",
+                    options: ["Socrates", "Plato", "Aristotle", "Pythagoras"],
+                    correct: 2
+                },
+                {
+                    question: "The Boston Tea Party protested against what?",
+                    options: ["Tea prices", "Tea quality", "Tea taxes", "Tea imports"],
+                    correct: 2
+                },
+                {
+                    question: "Who was the last Pharaoh of Egypt?",
+                    options: ["Cleopatra VII", "Ptolemy XV", "Nectanebo II", "Caesarion"],
+                    correct: 0
+                },
+                {
+                    question: "Which medieval plague killed one-third of Europe's population?",
+                    options: ["Yellow Fever", "Cholera", "Black Death", "Typhus"],
+                    correct: 2
+                },
+                {
+                    question: "The Magna Carta was signed in which year?",
+                    options: ["1214", "1215", "1216", "1217"],
+                    correct: 1
+                },
+                {
+                    question: "Who led the Mongol Empire at its peak?",
+                    options: ["Kublai Khan", "Genghis Khan", "Ögedei Khan", "Möngke Khan"],
+                    correct: 1
+                },
+                {
+                    question: "Which war was fought over the Falkland Islands?",
+                    options: ["Argentina vs. UK", "Chile vs. Argentina", "Brazil vs. UK", "Spain vs. UK"],
+                    correct: 0
+                },
+                {
+                    question: "The printing press was invented by whom?",
+                    options: ["Leonardo da Vinci", "Johannes Gutenberg", "Benjamin Franklin", "Thomas Edison"],
+                    correct: 1
+                },
+                {
+                    question: "Which empire was centered in Constantinople?",
+                    options: ["Roman Empire", "Ottoman Empire", "Byzantine Empire", "Persian Empire"],
+                    correct: 2
+                },
+                {
+                    question: "The Great Fire of London occurred in which year?",
+                    options: ["1665", "1666", "1667", "1668"],
+                    correct: 1
+                },
+                {
+                    question: "Who was the first female ruler of England?",
+                    options: ["Mary I", "Elizabeth I", "Lady Jane Grey", "Queen Victoria"],
+                    correct: 2
+                },
+                {
+                    question: "The Watergate scandal led to whose resignation?",
+                    options: ["Lyndon Johnson", "Richard Nixon", "Gerald Ford", "Jimmy Carter"],
+                    correct: 1
+                },
+                {
+                    question: "Which civilization created the first known writing system?",
+                    options: ["Egyptian", "Mesopotamian", "Chinese", "Indus Valley"],
+                    correct: 1
+                },
+                {
+                    question: "The D-Day landings occurred on which beach?",
+                    options: ["Normandy", "Calais", "Dunkirk", "Le Havre"],
+                    correct: 0
+                },
+                {
+                    question: "Who was the sun king of France?",
+                    options: ["Louis XIII", "Louis XIV", "Louis XV", "Louis XVI"],
+                    correct: 1
+                },
+                {
+                    question: "The Industrial Revolution began in which country?",
+                    options: ["France", "Germany", "England", "United States"],
+                    correct: 2
+                }
+            ]
+        };
+
+        // Game state
+        let gameState = {
+            user: null,
+            currentCategory: null,
+            currentQuestions: [],
+            currentQuestionIndex: 0,
+            score: 0,
+            correctAnswers: 0,
+            timeLeft: 15,
+            timer: null,
+            totalCoins: 0,
+            streak: 0,
+            powers: {
+                fiftyFifty: 0,
+                skip: 0,
+                audience: 0
+            },
+            badges: [],
+            stats: {
+                totalQuizzes: 0,
+                bestScore: 0,
+                bestStreak: 0,
+                totalPlayTime: 0
+            }
+        };
+
+        // Badge definitions
+        const badges = [
+            { name: "Bronze", icon: "🥉", cost: 200, description: "Your first badge!" },
+            { name: "Silver", icon: "🥈", cost: 400, description: "Getting better!" },
+            { name: "Gold", icon: "🥇", cost: 700, description: "You're golden!" },
+            { name: "Crystal", icon: "💎", cost: 1200, description: "Sparkling performance!" },
+            { name: "Master", icon: "🏆", cost: 1800, description: "Master of quizzes!" },
+            { name: "Champion", icon: "👑", cost: 2500, description: "True champion!" },
+            { name: "Legend", icon: "⭐", cost: 3500, description: "Legendary status!" },
+            { name: "Ultra Beast", icon: "🔥", cost: 5000, description: "Ultra performance!" },
+            { name: "MasterLegend", icon: "🌟", cost: 10000, description: "The ultimate badge!" }
+        ];
+
+        // Categories configuration
+        const categories = [
+            {
+                id: 'general',
+                title: 'General Knowledge',
+                icon: '🧠',
+                description: 'Test your general knowledge across various topics',
+                color: '#6366f1'
+            },
+            {
+                id: 'cricket',
+                title: 'Cricket',
+                icon: '🏏',
+                description: 'All about cricket - IPL, T20, players and more',
+                color: '#10b981'
+            },
+            {
+                id: 'football',
+                title: 'Football',
+                icon: '⚽',
+                description: 'World cup, leagues, players and football history',
+                color: '#f59e0b'
+            },
+            {
+                id: 'science',
+                title: 'Science',
+                icon: '🔬',
+                description: 'Physics, chemistry, biology and scientific discoveries',
+                color: '#8b5cf6'
+            },
+            {
+                id: 'politics',
+                title: 'Politics',
+                icon: '🏛️',
+                description: 'World politics, leaders and political systems',
+                color: '#ef4444'
+            },
+            {
+                id: 'history',
+                title: 'History',
+                icon: '📜',
+                description: 'Ancient civilizations, wars and historical events',
+                color: '#06b6d4'
+            }
+        ];
+
+        // Initialize app
+        function initApp() {
+            loadUserData();
+            if (gameState.user) {
+                showMainContent();
+                updateUI();
+            } else {
+                showLoginModal();
+            }
+            renderCategories();
+            renderBadgeStore();
+        }
+
+        // Local storage functions
+        function saveUserData() {
+            localStorage.setItem('quizeeUser', JSON.stringify(gameState));
+        }
+
+        function loadUserData() {
+            const saved = localStorage.getItem('quizeeUser');
+            if (saved) {
+                const userData = JSON.parse(saved);
+                gameState = { ...gameState, ...userData };
+            }
+        }
+
+        // Modal functions
+        function showModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function showLoginModal() {
+            showModal('loginModal');
+        }
+
+        function closeWelcomeModal() {
+            closeModal('welcomeModal');
+        }
+
+        // Login function
+        function login() {
+            const name = document.getElementById('userName').value.trim();
+            const age = parseInt(document.getElementById('userAge').value);
+
+            if (!name || !age || age < 1) {
+                alert('Please enter valid name and age!');
+                return;
+            }
+
+            const isNewUser = !gameState.user;
+            
+            gameState.user = { name, age };
+            
+            if (isNewUser) {
+                gameState.powers.fiftyFifty = 1;
+                showModal('welcomeModal');
+            }
+
+            closeModal('loginModal');
+            showMainContent();
+            updateUI();
+            saveUserData();
+        }
+
+        function showMainContent() {
+            document.getElementById('mainContent').style.display = 'block';
+        }
+
+        // Update UI elements
+        function updateUI() {
+            if (gameState.user) {
+                document.getElementById('userNameDisplay').textContent = gameState.user.name;
+                document.getElementById('userCoins').textContent = gameState.totalCoins;
+                
+                // Update power counts
+                document.getElementById('fiftyFiftyCount').textContent = gameState.powers.fiftyFifty;
+                document.getElementById('skipCount').textContent = gameState.powers.skip;
+                document.getElementById('audienceCount').textContent = gameState.powers.audience;
+            }
+        }
+
+        // Render categories
+        function renderCategories() {
+            const grid = document.getElementById('categoriesGrid');
+            grid.innerHTML = categories.map(category => `
+                <div class="category-card" onclick="startQuiz('${category.id}')" style="border-color: ${category.color}20;">
+                    <div class="category-icon">${category.icon}</div>
+                    <div class="category-title" style="color: ${category.color};">${category.title}</div>
+                    <div class="category-description">${category.description}</div>
+                    <div class="category-stats">
+                        <span>50 Questions</span>
+                        <span>+10 Coins per correct</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Start quiz
+        function startQuiz(categoryId) {
+            if (!gameState.user) {
+                showLoginModal();
+                return;
+            }
+
+            gameState.currentCategory = categoryId;
+            gameState.currentQuestionIndex = 0;
+            gameState.score = 0;
+            gameState.correctAnswers = 0;
+            gameState.streak = 0;
+
+            // Get random 20 questions
+            const allQuestions = questionDatabase[categoryId];
+            gameState.currentQuestions = shuffleArray([...allQuestions]).slice(0, 20);
+
+            showQuizPage();
+            displayQuestion();
+            startTimer();
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function showQuizPage() {
+            document.getElementById('categoriesPage').style.display = 'none';
+            document.getElementById('quizPage').style.display = 'block';
+            document.getElementById('resultsPage').style.display = 'none';
+        }
+
+        function displayQuestion() {
+            const question = gameState.currentQuestions[gameState.currentQuestionIndex];
+            
+            document.getElementById('currentQuestion').textContent = gameState.currentQuestionIndex + 1;
+            document.getElementById('questionNumber').textContent = `Question ${gameState.currentQuestionIndex + 1}`;
+            document.getElementById('questionText').textContent = question.question;
+            
+            const progressFill = document.getElementById('progressFill');
+            progressFill.style.width = `${((gameState.currentQuestionIndex + 1) / 20) * 100}%`;
+
+            const optionsGrid = document.getElementById('optionsGrid');
+            optionsGrid.innerHTML = question.options.map((option, index) => `
+                <div class="option" onclick="selectOption(${index})" data-index="${index}">
+                    ${option}
+                </div>
+            `).join('');
+
+            updatePowerButtons();
+            resetTimer();
+        }
+
+        function selectOption(selectedIndex) {
+            if (gameState.timer === null) return; // Question already answered
+
+            clearInterval(gameState.timer);
+            gameState.timer = null;
+
+            const question = gameState.currentQuestions[gameState.currentQuestionIndex];
+            const options = document.querySelectorAll('.option');
+            
+            options.forEach((option, index) => {
+                if (index === question.correct) {
+                    option.classList.add('correct');
+                } else if (index === selectedIndex) {
+                    option.classList.add('wrong');
+                }
+                option.style.pointerEvents = 'none';
+            });
+
+            let coinGain = 0;
+            if (selectedIndex === question.correct) {
+                gameState.correctAnswers++;
+                gameState.streak++;
+                
+                // Calculate coins with multiplier
+                coinGain = 10;
+                if (gameState.streak >= 5) {
+                    coinGain *= 3;
+                    showComboDisplay('x3 Combo!');
+                } else if (gameState.streak >= 3) {
+                    coinGain *= 2;
+                    showComboDisplay('x2 Combo!');
+                }
+                
+                gameState.score += coinGain;
+                gameState.totalCoins += coinGain;
+                
+                showCoinGain(coinGain);
+                playSound('correct');
+            } else {
+                gameState.streak = 0;
+                hideComboDisplay();
+                playSound('wrong');
+            }
+
+            updateUI();
+            
+            setTimeout(() => {
+                nextQuestion();
+            }, 2000);
+        }
+
+        function nextQuestion() {
+            gameState.currentQuestionIndex++;
+            
+            if (gameState.currentQuestionIndex >= gameState.currentQuestions.length) {
+                endQuiz();
+            } else {
+                displayQuestion();
+                startTimer();
+            }
+        }
+
+        function startTimer() {
+            gameState.timeLeft = 15;
+            document.getElementById('timer').textContent = gameState.timeLeft;
+            
+            gameState.timer = setInterval(() => {
+                gameState.timeLeft--;
+                document.getElementById('timer').textContent = gameState.timeLeft;
+                
+                if (gameState.timeLeft <= 0) {
+                    clearInterval(gameState.timer);
+                    gameState.timer = null;
+                    selectOption(-1); // Time's up
+                }
+            }, 1000);
+        }
+
+        function resetTimer() {
+            if (gameState.timer) {
+                clearInterval(gameState.timer);
+            }
+            gameState.timeLeft = 15;
+            document.getElementById('timer').textContent = gameState.timeLeft;
+        }
+
+        // Power functions
+        function useFiftyFifty() {
+            if (gameState.powers.fiftyFifty <= 0 || gameState.timer === null) return;
+
+            gameState.powers.fiftyFifty--;
+            
+            const question = gameState.currentQuestions[gameState.currentQuestionIndex];
+            const options = document.querySelectorAll('.option');
+            
+            let eliminated = 0;
+            options.forEach((option, index) => {
+                if (index !== question.correct && eliminated < 2) {
+                    option.classList.add('eliminated');
+                    eliminated++;
+                }
+            });
+
+            updatePowerButtons();
+            updateUI();
+            saveUserData();
+        }
+
+        function useSkip() {
+            if (gameState.powers.skip <= 0 || gameState.timer === null) return;
+
+            gameState.powers.skip--;
+            clearInterval(gameState.timer);
+            gameState.timer = null;
+            
+            setTimeout(() => {
+                nextQuestion();
+            }, 500);
+
+            updatePowerButtons();
+            updateUI();
+            saveUserData();
+        }
+
+        function useAudience() {
+            if (gameState.powers.audience <= 0 || gameState.timer === null) return;
+
+            gameState.powers.audience--;
+            
+            const question = gameState.currentQuestions[gameState.currentQuestionIndex];
+            const correctIndex = question.correct;
+            
+            // Generate mock audience poll with correct answer having highest percentage
+            const percentages = [15, 25, 30, 30];
+            percentages[correctIndex] = 60;
+            
+            // Distribute remaining 40% among other options
+            let remaining = 40;
+            percentages.forEach((_, index) => {
+                if (index !== correctIndex) {
+                    const random = Math.floor(Math.random() * (remaining / 3)) + 5;
+                    percentages[index] = random;
+                    remaining -= random;
+                }
+            });
+
+            alert(`Audience Poll Results:\nA: ${percentages[0]}%\nB: ${percentages[1]}%\nC: ${percentages[2]}%\nD: ${percentages[3]}%`);
+
+            updatePowerButtons();
+            updateUI();
+            saveUserData();
+        }
+
+        function updatePowerButtons() {
+            document.getElementById('fiftyFiftyBtn').disabled = gameState.powers.fiftyFifty <= 0;
+            document.getElementById('skipBtn').disabled = gameState.powers.skip <= 0;
+            document.getElementById('audienceBtn').disabled = gameState.powers.audience <= 0;
+        }
+
+        // Display functions
+        function showCoinGain(coins) {
+            const display = document.getElementById('coinGainDisplay');
+            display.textContent = `+${coins} Coins`;
+            display.classList.remove('hidden');
+            
+            setTimeout(() => {
+                display.classList.add('hidden');
+            }, 2000);
+        }
+
+        function showComboDisplay(text) {
+            const display = document.getElementById('comboDisplay');
+            display.textContent = text;
+            display.classList.remove('hidden');
+        }
+
+        function hideComboDisplay() {
+            document.getElementById('comboDisplay').classList.add('hidden');
+        }
+
+        // End quiz
+        function endQuiz() {
+            gameState.stats.totalQuizzes++;
+            gameState.stats.bestScore = Math.max(gameState.stats.bestScore, gameState.score);
+            gameState.stats.bestStreak = Math.max(gameState.stats.bestStreak, gameState.correctAnswers);
+            
+            showResultsPage();
+            saveUserData();
+            
+            // Check for achievements
+            checkAchievements();
+        }
+
+        function showResultsPage() {
+            document.getElementById('quizPage').style.display = 'none';
+            document.getElementById('resultsPage').style.display = 'block';
+            
+            const accuracy = Math.round((gameState.correctAnswers / 20) * 100);
+            
+            document.getElementById('resultsStats').innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-value">${gameState.correctAnswers}/20</div>
+                    <div class="stat-label">Correct Answers</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${accuracy}%</div>
+                    <div class="stat-label">Accuracy</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${gameState.score}</div>
+                    <div class="stat-label">Coins Earned</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${gameState.totalCoins}</div>
+                    <div class="stat-label">Total Coins</div>
+                </div>
+            `;
+        }
+
+        function backToCategories() {
+            document.getElementById('categoriesPage').style.display = 'block';
+            document.getElementById('quizPage').style.display = 'none';
+            document.getElementById('resultsPage').style.display = 'none';
+            
+            if (gameState.timer) {
+                clearInterval(gameState.timer);
+                gameState.timer = null;
+            }
+        }
+
+        // Profile functions
+        function showProfile() {
+            if (!gameState.user) {
+                showLoginModal();
+                return;
+            }
+
+            const badgesList = gameState.badges.length > 0 
+                ? gameState.badges.map(badge => badges.find(b => b.name === badge)?.icon || '🏆').join(' ')
+                : 'No badges yet';
+
+            document.getElementById('profileContent').innerHTML = `
+                <div style="text-align: center; margin: 20px 0;">
+                    <h3>${gameState.user.name} (Age: ${gameState.user.age})</h3>
+                    <div style="margin: 15px 0;">
+                        <strong>💰 Total Coins:</strong> ${gameState.totalCoins}
+                    </div>
+                    <div style="margin: 15px 0;">
+                        <strong>🏆 Badges:</strong> ${badgesList}
+                    </div>
+                    <div style="margin: 15px 0;">
+                        <strong>📊 Total Quizzes:</strong> ${gameState.stats.totalQuizzes}
+                    </div>
+                    <div style="margin: 15px 0;">
+                        <strong>🎯 Best Score:</strong> ${gameState.stats.bestScore}
+                    </div>
+                    <div style="margin: 15px 0;">
+                        <strong>🔥 Best Streak:</strong> ${gameState.stats.bestStreak}
+                    </div>
+                    <div style="margin: 15px 0;">
+                        <strong>⚡ Powers:</strong> 50-50: ${gameState.powers.fiftyFifty}, Skip: ${gameState.powers.skip}, Poll: ${gameState.powers.audience}
+                    </div>
+                </div>
+            `;
+            
+            showModal('profileModal');
+        }
+
+        // Badge store
+        function renderBadgeStore() {
+            const grid = document.getElementById('badgesGrid');
+            grid.innerHTML = badges.map(badge => {
+                const owned = gameState.badges.includes(badge.name);
+                const canAfford = gameState.totalCoins >= badge.cost;
+                
+                return `
+                    <div class="badge-card ${owned ? 'owned' : ''}">
+                        <div class="badge-icon">${badge.icon}</div>
+                        <div class="badge-name">${badge.name}</div>
+                        <div class="badge-cost">${badge.cost} Coins</div>
+                        <p style="color: var(--text-muted); margin: 10px 0;">${badge.description}</p>
+                        ${owned 
+                            ? '<div class="badge-owned">Owned ✓</div>'
+                            : `<button class="btn ${canAfford ? 'btn-success' : ''}" 
+                                 onclick="buyBadge('${badge.name}')" 
+                                 ${!canAfford ? 'disabled' : ''}>
+                                 ${canAfford ? 'Buy' : 'Not enough coins'}
+                               </button>`
+                        }
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function buyBadge(badgeName) {
+            const badge = badges.find(b => b.name === badgeName);
+            
+            if (!badge || gameState.badges.includes(badgeName) || gameState.totalCoins < badge.cost) {
+                return;
+            }
+
+            gameState.totalCoins -= badge.cost;
+            gameState.badges.push(badgeName);
+            
+            updateUI();
+            renderBadgeStore();
+            saveUserData();
+            
+            showToast(`🎉 Congratulations! You earned the ${badge.icon} ${badge.name} badge!`);
+            createConfetti();
+        }
+
+        function showBadgeStore() {
+            renderBadgeStore();
+            showModal('badgeStoreModal');
+        }
+
+        // Achievements
+        function checkAchievements() {
+            if (gameState.correctAnswers >= 10 && !gameState.achievements?.includes('10_in_a_row')) {
+                gameState.achievements = gameState.achievements || [];
+                gameState.achievements.push('10_in_a_row');
+                gameState.powers.fiftyFifty++;
+                showToast('🏆 Achievement Unlocked: 10 Correct Answers! +1 50-50 Power');
+            }
+            
+            if (gameState.stats.totalQuizzes === 1 && !gameState.achievements?.includes('first_quiz')) {
+                gameState.achievements = gameState.achievements || [];
+                gameState.achievements.push('first_quiz');
+                gameState.powers.skip++;
+                showToast('🎯 Achievement Unlocked: First Quiz Completed! +1 Skip Power');
+            }
+        }
+
+        // Leaderboard
+        function showLeaderboard() {
+            const players = [
+                { name: gameState.user?.name || 'You', coins: gameState.totalCoins, badge: gameState.badges[gameState.badges.length - 1] || 'None' },
+                { name: 'QuizMaster', coins: 15000, badge: 'MasterLegend' },
+                { name: 'BrainAce', coins: 8500, badge: 'Ultra Beast' },
+                { name: 'KnowledgeKing', coins: 6200, badge: 'Legend' },
+                { name: 'SmartCookie', coins: 4100, badge: 'Champion' }
+            ].sort((a, b) => b.coins - a.coins);
+
+            document.getElementById('leaderboardBody').innerHTML = players.map((player, index) => `
+                <tr ${player.name === gameState.user?.name ? 'style="background: rgba(99, 102, 241, 0.1);"' : ''}>
+                    <td>${index + 1}</td>
+                    <td>${player.name}</td>
+                    <td>${player.coins}</td>
+                    <td>${badges.find(b => b.name === player.badge)?.icon || '🏆'}</td>
+                </tr>
+            `).join('');
+            
+            showModal('leaderboardModal');
+        }
+
+        // Theme toggle
+        function toggleTheme() {
+            const body = document.body;
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            body.setAttribute('data-theme', newTheme);
+            document.querySelector('.theme-toggle').textContent = newTheme === 'dark' ? '🌙' : '☀️';
+            
+            localStorage.setItem('quizeeTheme', newTheme);
+        }
+
+        // Sound effects
+        function playSound(type) {
+            // Create audio context for sound effects
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            
+            if (type === 'correct') {
+                // High pitch for correct
+                const oscillator = audioContext.createOscillator();
+                oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+                oscillator.frequency.setValueAtTime(1000, audioContext.currentTime + 0.1);
+                oscillator.connect(audioContext.destination);
+                oscillator.start();
+                oscillator.stop(audioContext.currentTime + 0.2);
+            } else if (type === 'wrong') {
+                // Low pitch for wrong
+                const oscillator = audioContext.createOscillator();
+                oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
+                oscillator.frequency.setValueAtTime(150, audioContext.currentTime + 0.1);
+                oscillator.connect(audioContext.destination);
+                oscillator.start();
+                oscillator.stop(audioContext.currentTime + 0.3);
+            }
+        }
+
+        // Toast notifications
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'achievement-toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 4000);
+        }
+
+        // Confetti effect
+        function createConfetti() {
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.animationDelay = Math.random() * 3 + 's';
+                confetti.style.background = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57'][Math.floor(Math.random() * 5)];
+                document.body.appendChild(confetti);
+                
+                setTimeout(() => {
+                    confetti.remove();
+                }, 3000);
+            }
+        }
+
+        // Load theme on startup
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('quizeeTheme') || 'dark';
+            document.body.setAttribute('data-theme', savedTheme);
+            document.querySelector('.theme-toggle').textContent = savedTheme === 'dark' ? '🌙' : '☀️';
+        }
+
+        // Initialize app when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            initApp();
+        });
+
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
