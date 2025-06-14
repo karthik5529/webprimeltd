@@ -749,6 +749,108 @@
                     <h4>Ultimate Badge</h4>
                     <p>5000 Coins</p>
                 </div>
+                <div class="badge-card" onclick="buyBadge('Novice', 120)">
+  <div style="font-size: 2rem;">🟢</div>
+  <h4>Novice Badge</h4>
+  <p>12000 Coins</p>
+</div>
+
+<div class="badge-card" onclick="buyBadge('Apprentice', 150)">
+  <div style="font-size: 2rem;">🛡️</div>
+  <h4>Apprentice Badge</h4>
+  <p>15000 Coins</p>
+</div>
+
+<div class="badge-card" onclick="buyBadge('Expert', 250)">
+  <div style="font-size: 2rem;">🎯</div>
+  <h4>Expert Badge</h4>
+  <p>25000 Coins</p>
+</div>
+
+<div class="badge-card" onclick="buyBadge('Elite', 300)">
+  <div style="font-size: 2rem;">⚔️</div>
+  <h4>Elite Badge</h4>
+  <p>30000 Coins</p>
+</div>
+
+<div class="badge-card" onclick="buyBadge('Veteran', 350)">
+  <div style="font-size: 2rem;">🎖️</div>
+  <h4>Veteran Badge</h4>
+  <p>35000 Coins</p>
+</div>
+
+<div class="badge-card" onclick="buyBadge('Grandmaster', 400)">
+  <div style="font-size: 2rem;">🔥</div>
+  <h4>Grandmaster Badge</h4>
+  <p>40000 Coins</p>
+</div>
+
+<div class="badge-card" onclick="buyBadge('Infinity', 450)">
+  <div style="font-size: 2rem;">♾️</div>
+  <h4>Infinity Badge</h4>
+  <p>45000 Coins</p>
+</div>
+
+<div class="badge-card" onclick="buyBadge('Mythic', 500)">
+  <div style="font-size: 2rem;">🦄</div>
+  <h4>Mythic Badge</h4>
+  <p>50000 Coins</p>
+</div>
+
+<div class="badge-card" onclick="buyBadge('Phantom', 550)">
+  <div style="font-size: 2rem;">👻</div>
+  <h4>Phantom Badge</h4>
+  <p>55000 Coins</p>
+</div>
+
+<div class="badge-card" onclick="buyBadge('Guardian', 600)">
+  <div style="font-size: 2rem;">🛡️</div>
+  <h4>Guardian Badge</h4>
+  <p>60000 Coins</p>
+</div>
+
+<div class="badge-card" onclick="buyBadge('Titan', 650)">
+  <div style="font-size: 2rem;">🦾</div>
+  <h4>Titan Badge</h4>
+  <p>65000 Coins</p>
+</div>
+
+<div class="badge-card" onclick="buyBadge('Dragon', 700)">
+  <div style="font-size: 2rem;">🐉</div>
+  <h4>Dragon Badge</h4>
+  <p>70000 Coins</p>
+</div>
+
+<div class="badge-card" onclick="buyBadge('Phoenix', 750)">
+  <div style="font-size: 2rem;">🦅</div>
+  <h4>Phoenix Badge</h4>
+  <p>75000 Coins</p>
+</div>
+
+<div class="badge-card" onclick="buyBadge('Legendary', 800)">
+  <div style="font-size: 2rem;">🌠</div>
+  <h4>Legendary Badge</h4>
+  <p>80000 Coins</p>
+</div>
+
+<div class="badge-card" onclick="buyBadge('Hero', 850)">
+  <div style="font-size: 2rem;">🦸‍♂️</div>
+  <h4>Hero Badge</h4>
+  <p>85000 Coins</p>
+</div>
+
+<div class="badge-card" onclick="buyBadge('Conqueror', 900)">
+  <div style="font-size: 2rem;">⚔️</div>
+  <h4>Conqueror Badge</h4>
+  <p>90000 Coins</p>
+</div>
+
+<div class="badge-card" onclick="buyBadge('Invincible', 950)">
+  <div style="font-size: 2rem;">🛡️</div>
+  <h4>Invincible Badge</h4>
+  <p>95000 Coins</p>
+</div>
+
             </div>
         </section>
     </main>
@@ -855,7 +957,7 @@
             "The Master badge shows real skill! 🎖️",
             "Platinum badge is so shiny! 💎",
             "Keep playing to unlock more achievements! 🚀",
-            "Your progress is pawsome! 🐾"
+            "Your progress is awesome! 🐾"
         ];
 
         // Initialize the game
@@ -938,7 +1040,27 @@
                     'Master': '🎖️',
                     'Champion': '🏅',
                     'Supreme': '⭐',
-                    'Ultimate': '🌟'
+                    'Ultimate': '🌟',
+                    'Novice': '🟢',
+                    'Apprentice': '🛡️',
+                    'Expert': '🎯',
+                    'Elite': '⚔️',
+                    'Veteran': '🎖️',
+                    'Grandmaster': '🔥',
+                    'Infinity': '♾️',
+                    'Mythic': '🦄',
+                    'Phantom': '👻',
+                    'Guardian': '🛡️',
+                    'Titan': '🦾',
+                    'Dragon': '🐉',
+                    'Phoenix': '🦅',
+                    'Legendary': '🌠',
+                    'Hero': '🦸‍♂️',
+                    'Champion': '🏆',
+                    'Conqueror': '⚔️',
+                    'Invincible': '🛡️',
+                    'Supreme': '👑'
+
                 };
                 ownedBadgesDiv.innerHTML = gameState.badges.map(badge => 
                     `<span style="margin: 0.5rem; padding: 0.5rem; background: var(--accent-purple); border-radius: 10px; display: inline-block;">${badgeIcons[badge]} ${badge}</span>`
@@ -1057,21 +1179,200 @@
             }
         }
 
-        function sendMessage() {
-            const input = document.getElementById('chatInput');
-            const message = input.value.trim();
-            
-            if (message) {
-                addChatMessage(message, 'user');
-                input.value = '';
-                
-                // Bot response
-                setTimeout(() => {
-                    const randomResponse = botResponses[Math.floor(Math.random() * botResponses.length)];
-                    addChatMessage(randomResponse, 'bot');
-                }, 1000);
+function sendMessage() {
+    const input = document.getElementById('chatInput');
+    const message = input.value.trim().toLowerCase();
+
+    if (message) {
+        addChatMessage(input.value, 'user');
+        input.value = '';
+
+        setTimeout(() => {
+            const response = getBotReply(message);
+            addChatMessage(response, 'bot');
+        }, 500);
+    }
+}
+
+function getBotReply(message) {
+    message = message.toLowerCase();
+
+    const keywords = [
+        {
+            patterns: ["hi", "hello", "hey", "yo", "hola"],
+            reply: "Hey there! 👋 What can I do for you today?"
+        },
+        {
+            patterns: ["how are you", "how r u", "how’s it going", "how do you do"],
+            reply: "I'm running on caffeine and code 😄 How about you?"
+        },
+        {
+            patterns: ["who are you", "what are you", "your name"],
+            reply: "I'm your virtual assistant 🤖 here to help you navigate this world!"
+        },
+        {
+            patterns: ["thank you", "thanks", "thx", "tysm"],
+            reply: "You're most welcome! 😊"
+        },
+        {
+            patterns: ["badges", "achievement", "unlock", "trophy"],
+            reply: "You can collect badges by completing levels and challenges. 🏆"
+        },
+        {
+            patterns: ["coins", "money", "earn", "reward", "currency"],
+            reply: "You earn coins by playing games, completing tasks, or daily login. 💰"
+        },
+        {
+            patterns: ["store", "shop", "redeem", "buy"],
+            reply: "Head over to the store 🏪 to redeem your coins for exclusive items."
+        },
+        {
+            patterns: ["help", "assist", "support", "guide", "confused"],
+            reply: "I'm here to help you out! 😊 Ask me anything related to badges, coins, or your progress."
+        },
+        {
+            patterns: ["game", "play", "start", "fun", "bored"],
+            reply: "Ready to game? 🎮 Choose one from the game list and let’s go!"
+        },
+        {
+            patterns: ["sad", "depressed", "unhappy", "cry", "upset"],
+            reply: "Hey, I may be just code, but I care. Things get better—hang in there 💙"
+        },
+        {
+            patterns: ["happy", "great", "awesome", "excited"],
+            reply: "Yay! Love your energy 😄 Keep shining!"
+        },
+        {
+            patterns: ["you are dumb", "you’re stupid", "you suck", "bad bot"],
+            reply: "Ouch 😿 That hurts. But I’m still here for you if you need help."
+        },
+        {
+            patterns: ["name", "your name"],
+            reply: "You can call me WebBot! Your friendly assistant. 🤖"
+        },
+        {
+            patterns: ["bye", "goodbye", "see you", "cya", "ttyl"],
+            reply: "See you soon! 👋 Keep grinding those achievements!"
+        },
+        {
+            patterns: ["how to level up", "xp", "experience", "progress", "rank"],
+            reply: "Gain XP by playing regularly and completing tasks. 📈"
+        },
+        {
+            patterns: ["leaderboard", "ranking", "top player"],
+            reply: "You can view the leaderboard to see how you stack up! 🏅"
+        },
+        {
+            patterns: ["event", "offer", "limited", "exclusive"],
+            reply: "We’ve got events going on! 🎉 Don’t miss them!"
+        },
+        {
+            patterns: ["premium", "subscription", "pro"],
+            reply: "Premium gives you exclusive access to badges, content, and more. 👑"
+        },
+        {
+            patterns: ["dark mode", "light mode", "theme"],
+            reply: "You can toggle between light and dark mode in settings. 🌙☀️"
+        },
+        {
+            patterns: ["customize", "avatar", "profile"],
+            reply: "Go to your profile to change your avatar and settings. 🎨"
+        },
+        {
+            patterns: ["feedback", "bug", "error", "report"],
+            reply: "You can report bugs or send feedback from the settings panel. 🛠️"
+        },
+        {
+            patterns: ["internet", "lag", "slow", "disconnect"],
+            reply: "Check your connection or try refreshing the page 🔄"
+        },
+        {
+            patterns: ["referral", "invite", "friend"],
+            reply: "Invite friends and earn rewards for every referral! 👯‍♂️"
+        },
+        {
+            patterns: ["spin", "jackpot", "wheel"],
+            reply: "Try your luck with the Daily Spin 🎰 and maybe win big!"
+        },
+        {
+            patterns: ["how old are you", "age"],
+            reply: "I was born the moment this website loaded 😄"
+        },
+        {
+            patterns: ["love you", "i love you"],
+            reply: "Aww 🥰 I love you too… platonically of course!"
+        },
+        {
+            patterns: ["joke", "funny", "laugh"],
+            reply: "Why did the web developer go broke? Because he used up all his cache! 😆"
+        },
+        {
+            patterns: ["restart", "refresh", "reboot"],
+            reply: "Try refreshing the page if something seems off 🔁"
+        },
+        {
+            patterns: ["life", "health", "mental"],
+            reply: "Always take breaks, hydrate, and prioritize your well-being. 🧘‍♂️"
+        },
+        {
+            patterns: ["emoji", "emojis", "😄", "🔥"],
+            reply: "I love emojis too! 🤖✨ Which one’s your favorite?"
+        },
+        {
+            patterns: ["motivate", "motivation", "inspire", "inspiration"],
+            reply: "You’re stronger than you think. Keep moving forward 💪🔥"
+        },
+        {
+            patterns: ["what can you do", "functions", "abilities"],
+            reply: "I can guide you, motivate you, explain features, and be your digital friend. 🤖"
+        },
+        {
+            patterns: ["time", "date"],
+            reply: `It's currently ${new Date().toLocaleTimeString()} 🕒 — time to level up!`
+        },
+        {
+            patterns: ["weather", "hot", "cold"],
+            reply: "I’m not sure, but you can always check a weather app ☁️"
+        },
+        {
+            patterns: ["you real", "ai", "artificial", "robot"],
+            reply: "I’m real in this digital world 😄 AI-powered and always improving!"
+        },
+        {
+            patterns: ["where am i", "my location"],
+            reply: "Somewhere awesome 😎 But I don't track locations!"
+        },
+        {
+            patterns: ["bored", "nothing to do", "tired"],
+            reply: "Try a new game or challenge. Let's make it fun! 🎮"
+        },
+        {
+            patterns: ["privacy", "terms", "policy"],
+            reply: "Your data is secure. Read our full policy in the settings. 🔐"
+        }
+    ];
+
+    for (const entry of keywords) {
+        for (const pattern of entry.patterns) {
+            if (message.includes(pattern)) {
+                return entry.reply;
             }
         }
+    }
+
+    // Fallback responses (random)
+    const fallbackReplies = [
+        "Hmm... I didn’t quite catch that. Can you rephrase it? 🤔",
+        "I'm still learning. Try asking about coins, badges, or help! 😅",
+        "Interesting... Tell me more!",
+        "You can ask me about gameplay, rewards, and more!",
+        "I’m always here to help you progress. What’s next? 🚀"
+    ];
+
+    return fallbackReplies[Math.floor(Math.random() * fallbackReplies.length)];
+}
+
+
 
         function handleChatInput(event) {
             if (event.key === 'Enter') {
