@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Employee Salary Calculator</title>
+<style>
+body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 20px; }
+.container { max-width: 1200px; margin: auto; }
+h1, h2 { text-align: center; }
+table { width: 100%; border-collapse: collapse; margin-bottom: 20px; background: white; }
+table, th, td { border: 1px solid #ccc; }
+th, td { padding: 10px; text-align: center; }
+input[type="text"], input[type="number"] { width: 120px; margin-right: 10px; }
+button { padding: 10px 15px; margin: 5px; cursor: pointer; }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>Employee Salary Calculator</h1>
+
+<h2>1️⃣ Add Employees</h2>
+<input type="text" id="empName" placeholder="Employee Name">
+<input type="number" id="salaryPerDay" placeholder="Salary/Day">
+<input type="number" id="presentDays" placeholder="Present Days">
+<button onclick="addEmployee()">Add Employee</button>
+
+<table id="empTable">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Salary/Day</th>
+            <th>Present Days</th>
+            <th>Base Salary</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<h2>2️⃣ Food Expenditure Deduction</h2>
+<input type="number" id="foodCost" placeholder="Food Cost per Day">
+<input type="number" id="foodDays" placeholder="Number of Days">
+<input type="text" id="foodPresent" placeholder="Present Employees (comma separated)">
+<button onclick="addFood()">Add Food Deduction</button>
+<div id="foodDaysCount">Total food days entered so far: 0</div>
+<h2>3️⃣ Advance Deduction</h2>
+<input type="text" id="advEmp" placeholder="Employee Name">
+<input type="number" id="advAmount" placeholder="Advance Amount">
+<button onclick="addAdvance()">Add Advance</button>
+
+<h2>4️⃣ Final Salary</h2>
+<button onclick="calculateFinalSalary()">Check Final Salary</button>
+<table id="finalTable">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Base Salary</th>
+            <th>Food Deduction</th>
+            <th>Advance Deduction</th>
+            <th>Net Salary</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+</div>
+
+<script>
+let employees = [];
+let totalFoodDaysEntered = 0;
+function addEmployee(){
+    const name = document.getElementById('empName').value.trim();
+    const salaryPerDay = parseFloat(document.getElementById('salaryPerDay').value);
+    const presentDays = parseInt(document.getElementById('presentDays').value);
+    if(name && salaryPerDay > 0 && presentDays >=0){
+        employees.push({
+            name: name,
+            salaryPerDay: salaryPerDay,
+            presentDays: presentDays,
+            baseSalary: salaryPerDay * presentDays,
+            foodDeduction: 0,
+            advanceDeduction: 0
+        });
+        document.getElementById('empName').value = '';
+        document.getElementById('salaryPerDay').value = '';
+        document.getElementById('presentDays').value = '';
+        renderEmployeeTable();
+    }
+}
+
+function renderEmployeeTable(){
+    const tbody = document.getElementById('empTable').querySelector('tbody');
+    tbody.innerHTML = '';
+    employees.forEach(emp=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${emp.name}</td>
+                        <td>${emp.salaryPerDay}</td>
+                        <td>${emp.presentDays}</td>
+                        <td>${emp.baseSalary.toFixed(2)}</td>`;
+        tbody.appendChild(tr);
+    });
+}
+
+function addFood(){
+    const totalCost = parseFloat(document.getElementById('foodCost').value);
+    const days = parseInt(document.getElementById('foodDays').value);
+    const presentInput = document.getElementById('foodPresent').value.trim();
+    if(isNaN(totalCost) || isNaN(days) || !presentInput || totalCost<=0 || days<=0){
+        alert('Enter valid food details!');
+        return;
+    }
+    
+    // normalize input: split by comma, trim each, lowercase
+    const presentList = presentInput.split(',')
+        .map(e => e.trim().toLowerCase())
+        .filter(e => e); // remove empty names
+         totalFoodDaysEntered += days;
+    document.getElementById('foodDaysCount').innerText = 
+        `Total food days entered so far: ${totalFoodDaysEntered}`;
+
+    const numPresent = presentList.length;
+    if(numPresent === 0){
+        alert('No employees selected for food deduction!');
+        return;
+    }
+
+    const perPersonCost = totalCost / numPresent;
+
+    let affected = 0;
+    employees.forEach(emp => {
+        const empName = emp.name.trim().toLowerCase(); // normalize employee name
+        if(presentList.includes(empName)){
+            emp.foodDeduction += perPersonCost * days;
+            affected++;
+        }
+    });
+
+    alert(`Food deduction applied to ${affected} employee(s)!`);
+
+    document.getElementById('foodCost').value = '';
+    document.getElementById('foodDays').value = '';
+    document.getElementById('foodPresent').value = '';
+}
+
+function addAdvance(){
+    const name = document.getElementById('advEmp').value.trim();
+    const amount = parseFloat(document.getElementById('advAmount').value);
+    const emp = employees.find(e=>e.name===name);
+    if(emp && amount>0){
+        emp.advanceDeduction += amount;
+        document.getElementById('advEmp').value='';
+        document.getElementById('advAmount').value='';
+        alert('Advance deduction applied!');
+    }
+}
+
+function calculateFinalSalary(){
+    const tbody = document.getElementById('finalTable').querySelector('tbody');
+    tbody.innerHTML='';
+    employees.forEach(emp=>{
+        const net = emp.baseSalary - emp.foodDeduction - emp.advanceDeduction;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${emp.name}</td>
+                        <td>${emp.baseSalary.toFixed(2)}</td>
+                        <td>${emp.foodDeduction.toFixed(2)}</td>
+                        <td>${emp.advanceDeduction.toFixed(2)}</td>
+                        <td>${net.toFixed(2)}</td>`;
+        tbody.appendChild(tr);
+    });
+    alert('Final salary calculated!');
+}
+</script>
+</body>
+</html>
