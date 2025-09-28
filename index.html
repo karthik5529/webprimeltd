@@ -7,43 +7,27 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>WebPrime - The Smarter Web Experience</title>
-      
-        <!-- SEO Meta Tags -->
-        <meta name="description" content="WebPrime is a smart and modern web tool for all your online needs. Fast, responsive, and beautifully designed." />
-        <meta name="keywords" content="WebPrime, webprime.top, smart web, responsive design, modern web tool, online platform" />
-        <meta name="author" content="WebPrime" />
-      
-        <!-- Open Graph (Facebook, LinkedIn, etc.) -->
-        <meta property="og:title" content="WebPrime - The Smarter Web Experience" />
-        <meta property="og:description" content="Explore WebPrime, a powerful and elegant online experience." />
-        <meta property="og:image" content="https://www.webprime.top/logo.png" />
-        <meta property="og:url" content="https://www.webprime.top/" />
-        <meta property="og:type" content="website" />
-      
-        <!-- Twitter Card (Optional) -->
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="WebPrime - The Smarter Web Experience" />
-        <meta name="twitter:description" content="Explore WebPrime, a powerful and elegant online experience." />
-        <meta name="twitter:image" content="https://www.webprime.top/logo.png" />
-      
-        <!-- Canonical URL -->
-        <link rel="canonical" href="https://www.webprime.top/" />
-      
-        <!-- Favicon -->
-        <link rel="icon" href="logo.png" type="image/png" />
-      
-        <!-- Google Analytics -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-QVEN3KFEVL"></script>
-        <script>
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', 'G-QVEN3KFEVL');
-        </script>
-        <link rel="icon" href="logo-modified.png" type="image/png">
+    <meta name="description" content="WebPrime is a smart and modern web tool for all your online needs. Fast, responsive, and beautifully designed." />
+    <meta name="keywords" content="WebPrime, webprime.top, smart web, responsive design, modern web tool, online platform" />
+    <meta name="author" content="WebPrime" />
+    <meta property="og:title" content="WebPrime - The Smarter Web Experience" />
+    <meta property="og:description" content="Explore WebPrime, a powerful and elegant online experience." />
+    <meta property="og:image" content="https://www.webprime.top/logo.png" />
+    <meta property="og:url" content="https://www.webprime.top/" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="WebPrime - The Smarter Web Experience" />
+    <meta name="twitter:description" content="Explore WebPrime, a powerful and elegant online experience." />
+    <meta name="twitter:image" content="https://www.webprime.top/logo.png" />
+    <link rel="canonical" href="https://www.webprime.top/" />
+    <link rel="icon" href="logo-modified.png" type="image/png">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QVEN3KFEVL"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-QVEN3KFEVL');
+    </script>
     <style>
         :root {
             --primary-gradient: linear-gradient(90deg, #4776E6 0%, #8E54E9 100%);
@@ -288,33 +272,31 @@
         }
         
         .social-icon:hover {
-            color: var(--secondary-color);
             transform: translateY(-5px);
         }
-        .fb:hover{
-            background-color: rgb(0, 64, 255);
+        .fb:hover{ background-color: rgb(0, 64, 255); }
+        .twi:hover{ background-color: #008cff; }
+        .ins:hover{ background-color: magenta; }
+        .lk:hover{ background-color: #0080ff; }
+        
+        @media (max-width: 991px) {
+            .navbar-nav {
+                background-color: white;
+                border-radius: 10px;
+                padding: 15px;
+                margin-top: 10px;
+                box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            }
+            .navbar-auth-buttons {
+                margin-top: 15px;
+            }
+           
         }
-        .twi:hover{
-            background-color: #008cff;
-        }
-        .ins:hover{
-            background-color: magenta;
-        }
-        .lk:hover{
-            background-color: #0080ff;
-        }
+
         @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 2.5rem;
-            }
-            
-            .navbar-brand {
-                font-size: 1.5rem;
-            }
-            
-            .service-card,  .contact-form {
-                margin-bottom: 30px;
-            }
+            .hero h1 { font-size: 2.5rem; }
+            .navbar-brand { font-size: 1.5rem; }
+            .service-card, .contact-form, .why-card { margin-bottom: 30px; }
         }
         
         /* Animation classes */
@@ -329,132 +311,190 @@
             transform: translateY(0);
         }
         
-        .stagger-item {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        
         @keyframes float {
-            0% {
-                transform: translateY(0px);
-            }
-            50% {
-                transform: translateY(-20px);
-            }
-            100% {
-                transform: translateY(0px);
-            }
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
         }
         
         .float-animation {
             animation: float 6s ease-in-out infinite;
         }
-        * {
-  box-sizing: border-box;
-}
 
-*, *::before, *::after {
-  margin: 0;
-  padding: 0;
-}
-@media all {
-  html, body {
-    overflow-x: hidden;
-    max-width: 100vw;
-  }
-}
+        /* POP UP MODEL */
+        .popup-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 9999;
+        }
+        .popup-box {
+            background: #fff; padding: 20px; border-radius: 10px;
+            max-width: 700px; width: 90%;
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
+            border: 2px solid #dc3545;
+            animation: zoomIn 0.3s ease;
+        }
+        .popup-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; margin-bottom: 10px; }
+        .popup-header h5 { margin: 0; color: #dc3545; }
+        .popup-close { background: none; border: none; font-size: 24px; cursor: pointer; color: #dc3545; }
+        .popup-body { max-height: 400px; overflow-y: auto; color: #333; }
+        @keyframes zoomIn {
+            from { transform: scale(0.7); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
 
-/* POP UP MODEL */
- .popup-overlay {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-  }
-  .popup-box {
-    background: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    max-width: 700px;
-    width: 90%;
-    box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
-    border: 2px solid #dc3545;
-    animation: zoomIn 0.3s ease;
-  }
-  .popup-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #ddd;
-    margin-bottom: 10px;
-  }
-  .popup-header h5 {
-    margin: 0;
-    color: #dc3545;
-  }
-  .popup-close {
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    color: #dc3545;
-  }
-  .popup-body {
-    max-height: 400px;
-    overflow-y: auto;
-    color: #333;
-  }
-  @keyframes zoomIn {
-    from { transform: scale(0.7); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
-  }
+        .popup-container {
+            display: none; position: fixed; z-index: 9999;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+        }
+        .popup-content { background: #fff; max-width: 600px; margin: 5% auto; padding: 30px; border-radius: 10px; position: relative; }
+        .red-popup { border-top: 5px solid #e53935; box-shadow: 0 0 20px rgba(229, 57, 53, 0.3); }
+        .close-btn { position: absolute; right: 20px; top: 15px; font-size: 24px; cursor: pointer; color: #e53935; }
+        .learn-more { color: #e53935; cursor: pointer; font-weight: 500; }
 
-  .popup-container {
-  display: none;
-  position: fixed;
-  z-index: 9999;
-  left: 0; top: 0;
-  width: 100%; height: 100%;
-  background: rgba(0, 0, 0, 0.6);
-}
+        /* Why Choose Us Section */
+        .why-card {
+            background: #ffffff;
+            padding: 35px 30px;
+            border-radius: 15px;
+            text-align: center;
+            height: 100%;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid #eee;
+        }
+        .why-card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+        }
+        .why-icon {
+            font-size: 3rem;
+            margin-bottom: 25px;
+            display: inline-block;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .why-card h4 {
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #343a40;
+        }
+        .why-card p {
+            color: #6c757d;
+        }
 
-.popup-content {
-  background: #fff;
-  max-width: 600px;
-  margin: 5% auto;
-  padding: 30px;
-  border-radius: 10px;
-  position: relative;
-}
+        /* ==================================
+        NEW STYLES ADDED BELOW
+        ==================================
+        */
 
-.red-popup {
-  border-top: 5px solid #e53935;
-  box-shadow: 0 0 20px rgba(229, 57, 53, 0.3);
-}
+        /* NEW: Tech Stack Section */
+        .tech-card {
+            background: #ffffff;
+            padding: 25px 20px;
+            border-radius: 10px;
+            text-align: center;
+            height: 100%;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            border: 1px solid #eee;
+        }
+        .tech-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+        .tech-icon {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+        }
+        .tech-card h5 {
+            font-weight: 600;
+            color: #343a40;
+            margin: 0;
+        }
 
-.close-btn {
-  position: absolute;
-  right: 20px;
-  top: 15px;
-  font-size: 24px;
-  cursor: pointer;
-  color: #e53935;
-}
+        /* NEW: Domains & Payments Section */
+        .payment-card {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            height: 100%;
+            text-align: center;
+        }
+        .payment-logos {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 25px;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .payment-logo-img {
+            height: 45px; /* Adjusted size */
+            object-fit: contain;
+            filter: grayscale(100%);
+            opacity: 0.7;
+        }
+        .payment-logo-icon {
+            font-size: 45px; /* Adjusted size */
+            filter: grayscale(100%);
+            opacity: 0.7;
+        }
+        .payment-card-text {
+            margin-top: 1.5rem;
+            color: #6c757d;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+        .godaddy-logo {
+            font-size: 5rem;
+            color: #1bbea4;
+        }
 
-.learn-more {
-  color: #e53935;
-  cursor: pointer;
-  font-weight: 500;
-}
-
+        /* NEW: Payment Logo Animation */
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                filter: grayscale(100%);
+                opacity: 0.7;
+            }
+            50% {
+                transform: scale(1.1);
+                filter: grayscale(0%);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1);
+                filter: grayscale(100%);
+                opacity: 0.7;
+            }
+        }
+        .animated-logo {
+            animation: pulse 2.5s infinite ease-in-out;
+            animation-delay: var(--animation-delay, 0s); /* Custom delay */
+            transition: all 0.3s ease;
+        }
+        .animated-logo:hover {
+            animation-play-state: paused;
+            transform: scale(1.15) !important;
+            filter: grayscale(0%) !important;
+            opacity: 1 !important;
+        }
+        
+        @media all {
+     html, body {
+       overflow-x: hidden;
+       max-width: 100vw;
+     }
+    }
     </style>
 </head>
 <body>
-    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light fixed-top">
         <div class="container">
             <a class="navbar-brand" href="#"><span class="gradient-text">WebPrime</span></a>
@@ -462,35 +502,25 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#home">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#services">Services</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#achievements">Achievements</a>
-                    </li>
-                   
-                    <li class="nav-item">
-                        <a class="nav-link" href="#contact">Contact</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#products">Our-Products</a>
-                    </li>
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#services">Services</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#why-choose-us">Why Us</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#tech-stack">Tech Stack</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#achievements">Achievements</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#products">Products</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <!-- Hero Section -->
     <section id="home" class="hero">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-6" data-aos="fade-right">
                     <h1>Transforming Ideas Into Digital Reality</h1>
-                    <p>WebPrime delivers cutting-edge web solutions that help businesses grow. Founded in 2024 , we've quickly become a trusted partner for companies looking to establish a powerful online presence.</p>
+                    <p>WebPrime delivers cutting-edge web solutions that help businesses grow. Founded in 2024, we've quickly become a trusted partner for companies looking to establish a powerful online presence.</p>
                     <a href="#contact" class="btn btn-gradient">Get Started</a>
                 </div>
                 <div class="col-lg-6 d-none d-lg-block" data-aos="fade-left">
@@ -500,433 +530,259 @@
         </div>
     </section>
 
-   <!-- Services Section -->
-<section id="services" class="py-5 my-5">
-    <div class="container">
-        <div class="text-center mb-5" data-aos="fade-up">
-            <h2 class="gradient-text mb-2">Our Services</h2>
-            <p class="text-muted">Comprehensive web development solutions for your business</p>
-        </div>
-
-        <div class="row">
-            <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="100">
-                <div class="service-card" onclick="openServicePopup('web')">
-                    <i class="fas fa-laptop-code service-icon"></i>
-                    <h4>Web Development</h4>
-                    <p>We build high-performance, SEO-ready websites using cutting-edge tech. <span class="learn-more">Learn More</span></p>
-                </div>
-            </div>
-
-            <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="200">
-                <div class="service-card" onclick="openServicePopup('mobile')">
-                    <i class="fas fa-mobile-alt service-icon"></i>
-                    <h4>Mobile-First Design</h4>
-                    <p>Optimized for every screen using modern UI frameworks. <span class="learn-more">Learn More</span></p>
-                </div>
-            </div>
-
-            <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="300">
-                <div class="service-card" onclick="openServicePopup('ecom')">
-                    <i class="fas fa-shopping-cart service-icon"></i>
-                    <h4>E-Commerce Solutions</h4>
-                    <p>Build your online store with robust, scalable features. <span class="learn-more">Learn More</span></p>
-                </div>
-            </div>
-
-            <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="400">
-                <div class="service-card" onclick="openServicePopup('seo')">
-                    <i class="fas fa-search service-icon"></i>
-                    <h4>SEO Optimization</h4>
-                    <p>Boost your search rankings with smart, result-driven strategies. <span class="learn-more">Learn More</span></p>
-                </div>
-            </div>
-
-            <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="500">
-                <div class="service-card" onclick="openServicePopup('hosting')">
-                    <i class="fas fa-server service-icon"></i>
-                    <h4>Web Hosting</h4>
-                    <p>Fast, secure, and always online—your website’s perfect home. <span class="learn-more">Learn More</span></p>
-                </div>
-            </div>
-
-            <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="600">
-                <div class="service-card" onclick="openServicePopup('uiux')">
-                    <i class="fas fa-paint-brush service-icon"></i>
-                    <h4>UI/UX Design</h4>
-                    <p>Designs that delight users and drive engagement. <span class="learn-more">Learn More</span></p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Service Details Popup -->
-<div id="servicePopup" class="popup-container">
-  <div class="popup-content red-popup">
-    <span class="close-btn" onclick="closeServicePopup()">&times;</span>
-    <div id="servicePopupBody"></div>
-  </div>
-</div>
-
-<!-- Product Section -->
- <section id="products" class="py-5 my-5 bg-white">
-    <div class="container">
-        <div class="text-center mb-5" data-aos="fade-up">
-            <h2 class="gradient-text mb-2">Our Products</h2>
-            <p class="text-muted">Explore what we've built to entertain and reward</p>
-        </div>
-
-        <!-- App Promotion Section -->
-        <div class="row align-items-center mb-5">
-            <div class="col-lg-6" data-aos="fade-right">
-                <h3 class="mb-3">Game Center App</h3>
-                <p class="text-muted">Introducing our all-in-one <strong>Game Center</strong> — available both as a website and an Android app. It's a rewarding platform where users earn coins for every minute they stay active and play games.</p>
-                <p class="text-muted mb-4">From classics like <strong>Tic Tac Toe</strong>, <strong>Fruit Slash</strong>, <strong>Tanker</strong>, <strong>Chess</strong>, to engaging experiences like <strong>Farming Games</strong>, Game Center brings endless fun and rewards.</p>
-                <a href="https://webprime.top/game-center.html" class="btn btn-gradient me-2">Open in Browser</a>
-                <a href="#" class="btn btn-outline-dark">Download APK</a>
-            </div>
-            <div class="col-lg-6 text-center" data-aos="fade-left">
-                <img src="game-center-preview.png" alt="Game Center App" class="img-fluid rounded" style="max-height:300px;">
-            </div>
-        </div>
-
-        <!-- Web Projects Section -->
-        <div class="text-center mt-5" data-aos="fade-up">
-            <h4 class="gradient-text mb-3">Web Projects</h4>
-            <p class="text-muted mb-4">We’ve worked on several interactive and innovative web platforms. Visit and experience our creations live.</p>
-            <a href="https://webprime.top/game-center.html" class="btn btn-gradient">Visit Game Center Website</a>
-        </div>
-        <div class="text-center mt-5" data-aos="fade-up">
-    <h4 class="gradient-text mb-3">My Portfolio</h4>
-    <p class="text-muted mb-4">Explore my personal portfolio showcasing skills, projects, and creative web solutions. Built with passion and precision.</p>
-    <a href="https://webprime.top/portofolio.html" class="btn btn-gradient">Visit Portfolio Website</a>
-</div>
-
-    </div>
-</section>
-        <!-- MAIL TO SECTION -->
-         <section id="mail-touch" class="py-5 my-5 bg-light">
-  <div class="container">
-    <div class="text-center mb-4" data-aos="fade-up">
-      <h2 class="gradient-text mb-2">Reach Us Instantly</h2>
-      <p class="text-muted">Have questions, feedback, or a custom request? We'd love to hear from you!</p>
-    </div>
-
-    <div class="row justify-content-center">
-      <div class="col-lg-8 text-center" data-aos="zoom-in">
-        <p class="text-muted mb-4">
-          Whether it's about partnerships, technical support, or business inquiries, drop us a message and our team will get back to you as soon as possible.
-        </p>
-        <a href="mailto:support@webprime.top" class="btn btn-danger btn-lg px-4 py-2">
-          📧 Message Us
-        </a>
-        <p class="mt-3 text-muted"><small>Or email us directly at <strong>support@webprime.top</strong></small></p>
-      </div>
-    </div>
-  </div>
-</section>
-
-    <!-- Achievements Section -->
-    <section id="achievements" class="py-5 my-5 bg-light">
+   <section id="services" class="py-5 my-5">
         <div class="container">
+            <div class="text-center mb-5" data-aos="fade-up">
+                <h2 class="gradient-text mb-2">Our Services</h2>
+                <p class="text-muted">Comprehensive web development solutions for your business</p>
+            </div>
+            <div class="row">
+                <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="100"><div class="service-card" onclick="openServicePopup('web')"><i class="fas fa-laptop-code service-icon"></i><h4>Web Development</h4><p>We build high-performance, SEO-ready websites using cutting-edge tech. <span class="learn-more">Learn More</span></p></div></div>
+                <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="200"><div class="service-card" onclick="openServicePopup('mobile')"><i class="fas fa-mobile-alt service-icon"></i><h4>Mobile-First Design</h4><p>Optimized for every screen using modern UI frameworks. <span class="learn-more">Learn More</span></p></div></div>
+                <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="300"><div class="service-card" onclick="openServicePopup('ecom')"><i class="fas fa-shopping-cart service-icon"></i><h4>E-Commerce Solutions</h4><p>Build your online store with robust, scalable features. <span class="learn-more">Learn More</span></p></div></div>
+                <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="400"><div class="service-card" onclick="openServicePopup('seo')"><i class="fas fa-search service-icon"></i><h4>SEO Optimization</h4><p>Boost your search rankings with smart, result-driven strategies. <span class="learn-more">Learn More</span></p></div></div>
+                <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="500"><div class="service-card" onclick="openServicePopup('hosting')"><i class="fas fa-server service-icon"></i><h4>Web Hosting</h4><p>Fast, secure, and always online—your website’s perfect home. <span class="learn-more">Learn More</span></p></div></div>
+                <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="600"><div class="service-card" onclick="openServicePopup('uiux')"><i class="fas fa-paint-brush service-icon"></i><h4>UI/UX Design</h4><p>Designs that delight users and drive engagement. <span class="learn-more">Learn More</span></p></div></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="why-choose-us" class="py-5 my-5 bg-light">
+        <div class="container">
+            <div class="text-center mb-5" data-aos="fade-up">
+                <h2 class="gradient-text mb-2">Why Partner With WebPrime?</h2>
+                <p class="text-muted">We don't just build websites; we build digital experiences that drive results.</p>
+            </div>
+            <div class="row">
+                <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="why-card">
+                        <i class="fas fa-rocket why-icon"></i>
+                        <h4>Blazing Fast Performance</h4>
+                        <p>Our websites are optimized for speed, ensuring a seamless user experience and better search engine rankings.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="why-card">
+                        <i class="fas fa-cogs why-icon"></i>
+                        <h4>Cutting-Edge Technology</h4>
+                        <p>We leverage the latest frameworks and technologies to build scalable, secure, and future-proof solutions.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="why-card">
+                        <i class="fas fa-headset why-icon"></i>
+                        <h4>Dedicated Support</h4>
+                        <p>Your success is our priority. We provide ongoing support and maintenance to keep your site running smoothly.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="tech-stack" class="py-5 my-5">
+        <div class="container">
+            <div class="text-center mb-5" data-aos="fade-up">
+                <h2 class="gradient-text mb-2">Our Technology Stack</h2>
+                <p class="text-muted">We use a modern, flexible stack tailored to your project's needs.</p>
+            </div>
+            <div class="row">
+                <div class="col-lg-2 col-md-4 col-6 mb-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="tech-card"><i class="fab fa-react tech-icon" style="color: #61DAFB;"></i><h5>React.js</h5></div>
+                </div>
+                <div class="col-lg-2 col-md-4 col-6 mb-4" data-aos="fade-up" data-aos-delay="150">
+                    <div class="tech-card"><i class="fab fa-js-square tech-icon" style="color: #F7DF1E;"></i><h5>JavaScript</h5></div>
+                </div>
+                <div class="col-lg-2 col-md-4 col-6 mb-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="tech-card"><i class="fab fa-html5 tech-icon" style="color: #E34F26;"></i><h5>HTML5</h5></div>
+                </div>
+                <div class="col-lg-2 col-md-4 col-6 mb-4" data-aos="fade-up" data-aos-delay="250">
+                    <div class="tech-card"><i class="fab fa-css3-alt tech-icon" style="color: #1572B6;"></i><h5>CSS3</h5></div>
+                </div>
+                <div class="col-lg-2 col-md-4 col-6 mb-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="tech-card"><i class="fab fa-bootstrap tech-icon" style="color: #7952B3;"></i><h5>Bootstrap</h5></div>
+                </div>
+                <div class="col-lg-2 col-md-4 col-6 mb-4" data-aos="fade-up" data-aos-delay="350">
+                    <div class="tech-card"><i class="fab fa-node-js tech-icon" style="color: #339933;"></i><h5>Node.js</h5></div>
+                </div>
+                 <div class="col-lg-2 col-md-4 col-6 mb-4" data-aos="fade-up" data-aos-delay="400">
+                    <div class="tech-card"><i class="fab fa-python tech-icon" style="color: #3776AB;"></i><h5>FastAPI</h5></div>
+                </div>
+                <div class="col-lg-2 col-md-4 col-6 mb-4" data-aos="fade-up" data-aos-delay="450">
+                    <div class="tech-card"><i class="fas fa-database tech-icon" style="color: #4479A1;"></i><h5>MySQL</h5></div>
+                </div>
+                <div class="col-lg-2 col-md-4 col-6 mb-4" data-aos="fade-up" data-aos-delay="500">
+                    <div class="tech-card"><i class="fas fa-leaf tech-icon" style="color: #47A248;"></i><h5>MongoDB</h5></div>
+                </div>
+                <div class="col-lg-2 col-md-4 col-6 mb-4" data-aos="fade-up" data-aos-delay="550">
+                    <div class="tech-card"><i class="fas fa-bolt tech-icon" style="color: #3ECF8E;"></i><h5>Supabase</h5></div>
+                </div>
+                <div class="col-lg-2 col-md-4 col-6 mb-4" data-aos="fade-up" data-aos-delay="600">
+                    <div class="tech-card"><i class="fab fa-git-alt tech-icon" style="color: #F05032;"></i><h5>Git</h5></div>
+                </div>
+                <div class="col-lg-2 col-md-4 col-6 mb-4" data-aos="fade-up" data-aos-delay="650">
+                    <div class="tech-card"><i class="fab fa-docker tech-icon" style="color: #2496ED;"></i><h5>Docker</h5></div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <div id="servicePopup" class="popup-container"><div class="popup-content red-popup"><span class="close-btn" onclick="closeServicePopup()">&times;</span><div id="servicePopupBody"></div></div></div>
+
+    <section id="products" class="py-5 my-5 bg-white">
+        <div class="container">
+            <div class="text-center mb-5" data-aos="fade-up"><h2 class="gradient-text mb-2">Our Products</h2><p class="text-muted">Explore what we've built to entertain and reward</p></div>
+            <div class="row align-items-center mb-5"><div class="col-lg-6" data-aos="fade-right"><h3 class="mb-3">Game Center App</h3><p class="text-muted">Introducing our all-in-one <strong>Game Center</strong> — available both as a website and an Android app. It's a rewarding platform where users earn coins for every minute they stay active and play games.</p><p class="text-muted mb-4">From classics like <strong>Tic Tac Toe</strong>, <strong>Fruit Slash</strong>, <strong>Tanker</strong>, <strong>Chess</strong>, to engaging experiences like <strong>Farming Games</strong>, Game Center brings endless fun and rewards.</p><a href="https://webprime.top/game-center.html" class="btn btn-gradient me-2">Open in Browser</a><a href="#" class="btn btn-outline-dark">Download APK</a></div><div class="col-lg-6 text-center" data-aos="fade-left"><img src="game-center-preview.png" alt="Game Center App" class="img-fluid rounded" style="max-height:300px;"></div></div>
+            <div class="text-center mt-5" data-aos="fade-up"><h4 class="gradient-text mb-3">Web Projects</h4><p class="text-muted mb-4">We’ve worked on several interactive and innovative web platforms. Visit and experience our creations live.</p><a href="https://webprime.top/game-center.html" class="btn btn-gradient">Visit Game Center Website</a></div>
+            <div class="text-center mt-5" data-aos="fade-up"><h4 class="gradient-text mb-3">My Portfolio</h4><p class="text-muted mb-4">Explore my personal portfolio showcasing skills, projects, and creative web solutions. Built with passion and precision.</p><a href="https://webprime.top/portofolio.html" class="btn btn-gradient">Visit Portfolio Website</a></div>
+        </div>
+    </section>
+
+    <section id="payments-domains" class="py-5 my-5 bg-light">
+        <div class="container">
+            <div class="text-center mb-5" data-aos="fade-up">
+                <h2 class="gradient-text mb-2">Domains & Secure Payments</h2>
+                <p class="text-muted">We provide end-to-end solutions for your online presence.</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-lg-6" data-aos="fade-right">
+                    <div class="payment-card">
+                        <i class="fab fa-godaddy godaddy-logo"></i>
+                        <h4 class="my-3">Domain Registration</h4>
+                        <p class="text-muted">We secure your online identity by registering and managing your domain through trusted providers like GoDaddy, ensuring a simple and reliable setup.</p>
+                    </div>
+                </div>
+                <div class="col-lg-6" data-aos="fade-left">
+                     <div class="payment-card">
+                        <h4 class="mb-3">Secure Payment Gateways</h4>
+                        <p class="text-muted">We integrate India's leading payment gateways for a seamless and secure checkout experience for your customers.</p>
+                        <div class="payment-logos">
+    <i class="fab fa-paypal payment-logo-icon animated-logo" style="color: #00457C; --animation-delay: 0s;" title="PayPal"></i>
+    
+    <img src="paytm.png" alt="Paytm Logo" title="Paytm" class="payment-logo-img animated-logo" style="--animation-delay: 0.2s;">
+    
+    <img src="phonpe.png" alt="PhonePe Logo" title="PhonePe" class="payment-logo-img animated-logo" style="--animation-delay: 0.4s;">
+    
+    <i class="fab fa-cc-visa payment-logo-icon animated-logo" style="color: #1A1F71; --animation-delay: 0.6s;" title="Visa"></i>
+    <i class="fab fa-cc-mastercard payment-logo-icon animated-logo" style="color: #EB001B; --animation-delay: 0.8s;" title="Mastercard"></i>
+</div>
+                        <p class="payment-card-text">We Accept All Major Credit/Debit Cards & UPI</p>
+                    </div>
+                </div>
+             </div>
+        </div>
+    </section>
+    
+    <section id="mail-touch" class="py-5 my-5 bg-white"> <div class="container">
+            <div class="text-center mb-4" data-aos="fade-up"><h2 class="gradient-text mb-2">Reach Us Instantly</h2><p class="text-muted">Have questions, feedback, or a custom request? We'd love to hear from you!</p></div>
+            <div class="row justify-content-center"><div class="col-lg-8 text-center" data-aos="zoom-in"><p class="text-muted mb-4">Whether it's about partnerships, technical support, or business inquiries, drop us a message and our team will get back to you as soon as possible.</p><a href="mailto:support@webprime.top" class="btn btn-danger btn-lg px-4 py-2">📧 Message Us</a><p class="mt-3 text-muted"><small>Or email us directly at <strong>support@webprime.top</strong></small></p></div></div>
+        </div>
+    </section>
+
+    <section id="achievements" class="py-5 my-5"> <div class="container">
             <div class="text-center mb-5" data-aos="fade-up">
                 <h2 class="gradient-text mb-2">Our Achievements</h2>
                 <p class="text-muted">Numbers that speak volumes about our success</p>
             </div>
-            
             <div class="row">
-                <div class="col-md-3 col-6 mb-4" data-aos="fade-up" data-aos-delay="100">
-                    <div class="counter-box">
-                        <div class="counter-number" data-count="150">0</div>
-                        <p class="text-muted mb-0">Projects Completed</p>
-                    </div>
-                </div>
-                
-                <div class="col-md-3 col-6 mb-4" data-aos="fade-up" data-aos-delay="200">
-                    <div class="counter-box">
-                        <div class="counter-number" data-count="80">0</div>
-                        <p class="text-muted mb-0">Happy Clients</p>
-                    </div>
-                </div>
-                
-                <div class="col-md-3 col-6 mb-4" data-aos="fade-up" data-aos-delay="300">
-                    <div class="counter-box">
-                        <div class="counter-number" data-count="5">0</div>
-                        <p class="text-muted mb-0">Team Members</p>
-                    </div>
-                </div>
-                
-                <div class="col-md-3 col-6 mb-4" data-aos="fade-up" data-aos-delay="400">
-                    <div class="counter-box">
-                        <div class="counter-number" data-count="2"></div>
-                        <p class="text-muted mb-0">Experience(Years)</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="row mt-5">
-                <div class="col-lg-6 mb-4" data-aos="fade-right">
-                    <h3 class="mb-4">Our Success Story</h3>
-                    <p>Founded in 2024 by Kaarthik Pranesh, WebPrime has quickly established itself as a leading web development company. What started as a small startup by a B.Tech IT student has now grown into a full-service web development agency with clients across multiple industries.</p>
-                    <p>Our commitment to delivering high-quality, innovative solutions has been the cornerstone of our success. We take pride in helping businesses establish a strong online presence and achieve their digital goals.</p>
-                    <a href="#contact" class="btn btn-gradient mt-3">Work With Us</a>
-                </div>
-                
-                <div class="col-lg-6" data-aos="fade-left">
-                    <div style="width:220px;height:220px;border-radius:50%;background:linear-gradient(135deg,purple,violet);padding:10px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;overflow:hidden;"><img src="banner-img-removebg-preview.png" alt="img" style="width:100%;height:100%;border-radius:50%;object-fit:cover;display:block;"></div>                </div>
+                <div class="col-md-3 col-6 mb-4" data-aos="fade-up" data-aos-delay="100"><div class="counter-box"><div class="counter-number" data-count="150">0</div><p class="text-muted mb-0">Projects Completed</p></div></div>
+                <div class="col-md-3 col-6 mb-4" data-aos="fade-up" data-aos-delay="200"><div class="counter-box"><div class="counter-number" data-count="80">0</div><p class="text-muted mb-0">Happy Clients</p></div></div>
+                <div class="col-md-3 col-6 mb-4" data-aos="fade-up" data-aos-delay="300"><div class="counter-box"><div class="counter-number" data-count="5">0</div><p class="text-muted mb-0">Team Members</p></div></div>
+                <div class="col-md-3 col-6 mb-4" data-aos="fade-up" data-aos-delay="400"><div class="counter-box"><div class="counter-number" data-count="2">0</div><p class="text-muted mb-0">Experience(Years)</p></div></div>
             </div>
         </div>
     </section>
 
-   
-
-    <!-- Contact Section -->
     <section id="contact" class="py-5 my-5 bg-light">
         <div class="container">
-            <div class="text-center mb-5" data-aos="fade-up">
-                <h2 class="gradient-text mb-2">Get In Touch</h2>
-                <p class="text-muted">We'd love to hear from you</p>
-            </div>
-            
+            <div class="text-center mb-5" data-aos="fade-up"><h2 class="gradient-text mb-2">Get In Touch</h2><p class="text-muted">We'd love to hear from you</p></div>
             <div class="row">
-                <div class="col-lg-6 mb-4" data-aos="fade-right">
-                    <div class="contact-form">
-                        <h4 class="mb-4">Send Us A Message</h4>
-                        <form id="contactForm">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <input type="text" class="form-control" placeholder="First Name" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <input type="text" class="form-control" placeholder="Last Name" required>
-                                </div>
-                            </div>
-                            <input type="email" class="form-control" placeholder="Email Address" required>
-                            <input type="tel" class="form-control" placeholder="Phone Number" required>
-                            <select class="form-control" required>
-                                <option value="" disabled selected>Select Subject</option>
-                                <option value="web-development">Web Development</option>
-                                <option value="mobile-design">Mobile-First Design</option>
-                                <option value="ecommerce">E-Commerce Solutions</option>
-                                <option value="seo">SEO Optimization</option>
-                                <option value="hosting">Web Hosting</option>
-                                <option value="ui-ux">UI/UX Design</option>
-                                <option value="other">Other</option>
-                            </select>
-                            <textarea class="form-control" rows="5" placeholder="Your Message" required></textarea>
-                            <button type="submit" class="btn btn-gradient w-100 mt-3">Send Message</button>
-                        </form>
-                    </div>
-                </div>
-                
-                <div class="col-lg-6" data-aos="fade-left">
-                    <div class="row h-100">
-                        <div class="col-12 mb-4">
-                            <div class="contact-form h-100">
-                                <h4 class="mb-4">Contact Information</h4>
-                                <div class="d-flex align-items-center mb-3">
-                                    <i class="fas fa-map-marker-alt me-3 gradient-text"></i>
-                                    <p class="mb-0">Coimbatore , Tamil Nadu , IN</p>
-                                </div>
-                                <div class="d-flex align-items-center mb-3">
-                                    <i class="fas fa-phone-alt me-3 gradient-text"></i>
-                                    <p class="mb-0">+91 63802 30778</p>
-                                </div>
-                                <div class="d-flex align-items-center mb-3">
-                                    <i class="fas fa-envelope me-3 gradient-text"></i>
-                                    <p class="mb-0">support@webprime.top</p>
-                                </div>
-                                <div class="d-flex align-items-center">
-                                    <i class="fas fa-clock me-3 gradient-text"></i>
-                                    <p class="mb-0">Mon-Fri: 9am-6pm, Sat: 10am-4pm</p>
-                                </div>
-                                
-                                <div class="mt-4">
-                                    <h5 class="mb-3">Follow Us</h5>
-                                    <div class="d-flex">
-                                        <a href="#" class="social-icon"><i class="fab fa-facebook-f" style="color: #4776E6;"></i></a>
-                                        <a href="#" class="social-icon"><i class="fab fa-twitter"  style="color: #4776E6;"></i></a>
-                                        <a href="#" class="social-icon"><i class="fab fa-instagram" style="color: magenta;"></i></a>
-                                        <a href="#" class="social-icon"><i class="fab fa-linkedin-in" style="color: rgb(135, 155, 235);"></i></a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <div class="col-lg-6 mb-4" data-aos="fade-right"><div class="contact-form"><h4 class="mb-4">Send Us A Message</h4><form id="contactForm"><div class="row"><div class="col-md-6"><input type="text" class="form-control" placeholder="First Name" required></div><div class="col-md-6"><input type="text" class="form-control" placeholder="Last Name" required></div></div><input type="email" class="form-control" placeholder="Email Address" required><input type="tel" class="form-control" placeholder="Phone Number" required><select class="form-control" required><option value="" disabled selected>Select Subject</option><option value="web-development">Web Development</option><option value="mobile-design">Mobile-First Design</option><option value="ecommerce">E-Commerce Solutions</option><option value="seo">SEO Optimization</option><option value="hosting">Web Hosting</option><option value="ui-ux">UI/UX Design</option><option value="other">Other</option></select><textarea class="form-control" rows="5" placeholder="Your Message" required></textarea><button type="submit" class="btn btn-gradient w-100 mt-3">Send Message</button></form></div></div>
+                <div class="col-lg-6" data-aos="fade-left"><div class="row h-100"><div class="col-12 mb-4"><div class="contact-form h-100"><h4 class="mb-4">Contact Information</h4><div class="d-flex align-items-center mb-3"><i class="fas fa-map-marker-alt me-3 gradient-text"></i><p class="mb-0">Coimbatore , Tamil Nadu , IN</p></div><div class="d-flex align-items-center mb-3"><i class="fas fa-phone-alt me-3 gradient-text"></i><p class="mb-0">+91 63802 30778</p></div><div class="d-flex align-items-center mb-3"><i class="fas fa-envelope me-3 gradient-text"></i><p class="mb-0">support@webprime.top</p></div><div class="d-flex align-items-center"><i class="fas fa-clock me-3 gradient-text"></i><p class="mb-0">Mon-Fri: 9am-6pm, Sat: 10am-4pm</p></div><div class="mt-4"><h5 class="mb-3">Follow Us</h5><div class="d-flex"><a href="#" class="social-icon"><i class="fab fa-facebook-f" style="color: #4776E6;"></i></a><a href="#" class="social-icon"><i class="fab fa-twitter"  style="color: #4776E6;"></i></a><a href="#" class="social-icon"><i class="fab fa-instagram" style="color: magenta;"></i></a><a href="#" class="social-icon"><i class="fab fa-linkedin-in" style="color: rgb(135, 155, 235);"></i></a></div></div></div></div></div></div>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
     <footer>
         <div class="container">
             <div class="row">
-                <div class="col-lg-4 mb-4" data-aos="fade-up" data-aos-delay="100">
-                    <h3 class="gradient-text mb-4">WebPrime</h3>
-                    <p>Transforming ideas into digital reality since 2024. We create beautiful, functional websites that help businesses grow.</p>
-                    <p>Please Kindly check our privacy policy terms </p>
-                    <a href="#" class="footer-link me-3" onclick="openPopup('terms')">Terms & Conditions</a>
-                    <a href="#" class="footer-link" onclick="openPopup('privacy')">Privacy Policy</a>
-                    <div class="mt-4">
-                        <a href="#" class="social-icon fb"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="social-icon twi"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="social-icon ins"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="social-icon lk"><i class="fab fa-linkedin-in"></i></a>
-                    </div>
-                </div>
-                
-                <div class="col-lg-2 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="200">
-                    <h5 class="footer-heading">Quick Links</h5>
-                    <a href="#home" class="footer-link">Home</a>
-                    <a href="#services" class="footer-link">Services</a>
-                    <a href="#achievements" class="footer-link">Achievements</a>
-                    <a href="#contact" class="footer-link">Contact</a>
-                    <a href="#products" class="footer-link" >Our Products</a>
-                </div>
-                
-                <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="300">
-                    <h5 class="footer-heading">Services</h5>
-                    <a href="#" class="footer-link"  onclick="openServicePopup('web')">Web Development</a>
-                    <a href="#" class="footer-link"  onclick="openServicePopup('mobile')">Mobile-First Design</a>
-                    <a href="#" class="footer-link"  onclick="openServicePopup('ecom')">E-Commerce Solutions</a>
-                    <a href="#" class="footer-link"  onclick="openServicePopup('seo')">SEO Optimization</a>
-                    <a href="#" class="footer-link"  onclick="openServicePopup('hosting')">Web Hosting</a>
-                    <a href="#" class="footer-link" onclick="openServicePopup('uiux')">UI/UX Design</a>
-                </div>
-                
-                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="400">
-                    <h5 class="footer-heading">Newsletter</h5>
-                    <p>Subscribe to our newsletter to receive updates and news.</p>
-                    <div class="input-group mb-3">
-                        <input type="email" class="form-control" placeholder="Email Address" aria-label="Email Address" style="width: 300%;">
-                        <button class="btn btn-outline-light" type="button" style="height: 10%; ">Subscribe</button>
-                    </div>
-                </div>
+                <div class="col-lg-4 mb-4" data-aos="fade-up" data-aos-delay="100"><h3 class="gradient-text mb-4">WebPrime</h3><p>Transforming ideas into digital reality since 2024. We create beautiful, functional websites that help businesses grow.</p><p>Please Kindly check our privacy policy terms </p><a href="#" class="footer-link me-3" onclick="openPopup('terms')">Terms & Conditions</a><a href="#" class="footer-link" onclick="openPopup('privacy')">Privacy Policy</a><div class="mt-4"><a href="#" class="social-icon fb"><i class="fab fa-facebook-f"></i></a><a href="#" class="social-icon twi"><i class="fab fa-twitter"></i></a><a href="#" class="social-icon ins"><i class="fab fa-instagram"></i></a><a href="#" class="social-icon lk"><i class="fab fa-linkedin-in"></i></a></div></div>
+                <div class="col-lg-2 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="200"><h5 class="footer-heading">Quick Links</h5><a href="#home" class="footer-link">Home</a><a href="#services" class="footer-link">Services</a><a href="#achievements" class="footer-link">Achievements</a><a href="#contact" class="footer-link">Contact</a><a href="#products" class="footer-link" >Our Products</a></div>
+                <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="300"><h5 class="footer-heading">Services</h5><a href="#" class="footer-link"  onclick="openServicePopup('web')">Web Development</a><a href="#" class="footer-link"  onclick="openServicePopup('mobile')">Mobile-First Design</a><a href="#" class="footer-link"  onclick="openServicePopup('ecom')">E-Commerce Solutions</a><a href="#" class="footer-link"  onclick="openServicePopup('seo')">SEO Optimization</a><a href="#" class="footer-link"  onclick="openServicePopup('hosting')">Web Hosting</a><a href="#" class="footer-link" onclick="openServicePopup('uiux')">UI/UX Design</a></div>
+                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="400"><h5 class="footer-heading">Newsletter</h5><p>Subscribe to our newsletter to receive updates and news.</p><div class="input-group mb-3"><input type="email" class="form-control" placeholder="Email Address"><button class="btn btn-outline-light" type="button">Subscribe</button></div></div>
             </div>
-            
             <hr class="mt-5 mb-4 bg-light opacity-25">
-            
             <div class="row align-items-center">
-                <div class="col-md-6 text-center text-md-start">
-                    <p class="mb-0">© 2025 WebPrime. All rights reserved.</p>
-                </div>
-                <div class="col-md-6 text-center text-md-end mt-3 mt-md-0">
-                    <p class="mb-0">Designed with <i class="fas fa-heart text-danger"></i> by Kaarthik Pranesh</p>
-                </div>
-                
+                <div class="col-md-6 text-center text-md-start"><p class="mb-0">© 2025 WebPrime. All rights reserved.</p></div>
+                <div class="col-md-6 text-center text-md-end mt-3 mt-md-0"><p class="mb-0">Designed with <i class="fas fa-heart text-danger"></i> by Kaarthik Pranesh</p></div>
             </div>
+        </div>
     </footer>
-   <!-- POP UP -->
-    <div id="popup-overlay" class="popup-overlay d-none">
-  <div class="popup-box">
-    <div class="popup-header">
-      <h5 id="popup-title">Title</h5>
-      <button onclick="closePopup()" class="popup-close">&times;</button>
-    </div>
-    <div class="popup-body" id="popup-content">
-      <!-- Content loads here -->
-    </div>
-  </div>
-</div>
-    <!-- Scripts -->
+   
+    <div id="popup-overlay" class="popup-overlay d-none"><div class="popup-box"><div class="popup-header"><h5 id="popup-title">Title</h5><button onclick="closePopup()" class="popup-close">&times;</button></div><div class="popup-body" id="popup-content"></div></div></div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
     <script>
-        // Initialize AOS
-        AOS.init({
-            duration: 800,
-            easing: 'ease-in-out',
-            once: true,
-            mirror: false
-        });
-        // Counter animation
+        AOS.init({ duration: 800, easing: 'ease-in-out', once: true, mirror: false });
+
         function animateCounter() {
             const counters = document.querySelectorAll('.counter-number');
             const speed = 200;
-            
             counters.forEach(counter => {
                 const targetValue = parseInt(counter.getAttribute('data-count'));
+                if (isNaN(targetValue)) {
+                    counter.textContent = counter.getAttribute('data-count');
+                    return;
+                };
                 const increment = targetValue / speed;
                 let currentValue = 0;
-                
                 const updateCount = () => {
                     if(currentValue < targetValue) {
                         currentValue += increment;
                         counter.textContent = Math.ceil(currentValue);
                         setTimeout(updateCount, 1);
-                    } else {
-                        counter.textContent = targetValue;
-                    }
+                    } else { counter.textContent = targetValue; }
                 };
-                
                 updateCount();
             });
         }
         
-        // Scroll animations
         document.addEventListener('DOMContentLoaded', function() {
-            // Navbar color change on scroll
             const navbar = document.querySelector('.navbar');
-            
-            window.addEventListener('scroll', function() {
-                if (window.scrollY > 50) {
-                    navbar.classList.add('shadow-lg');
-                    navbar.style.padding = '10px 0';
-                } else {
-                    navbar.classList.remove('shadow-lg');
-                    navbar.style.padding = '15px 0';
-                }
+            window.addEventListener('scroll', () => {
+                navbar.classList.toggle('shadow-lg', window.scrollY > 50);
+                navbar.style.padding = window.scrollY > 50 ? '10px 0' : '15px 0';
             });
             
-            // Smooth scrolling for anchor links
             document.querySelectorAll('a[href^="#"]').forEach(anchor => {
                 anchor.addEventListener('click', function(e) {
                     e.preventDefault();
-                    
                     const targetId = this.getAttribute('href');
                     if (targetId === '#') return;
-                    
                     const targetElement = document.querySelector(targetId);
                     if (targetElement) {
                         const navbarHeight = document.querySelector('.navbar').offsetHeight;
                         const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - navbarHeight;
-                        
-                        window.scrollTo({
-                            top: targetPosition,
-                            behavior: 'smooth'
-                        });
-                        
-                        // Close mobile menu if open
+                        window.scrollTo({ top: targetPosition, behavior: 'smooth' });
                         const navbarCollapse = document.querySelector('.navbar-collapse');
                         if (navbarCollapse.classList.contains('show')) {
-                            navbarCollapse.classList.remove('show');
+                            new bootstrap.Collapse(navbarCollapse).hide();
                         }
                     }
                 });
             });
             
-            // Start counter animation when achievements section is in view
             const achievementsSection = document.querySelector('#achievements');
-            let animationTriggered = false;
-            
-            const checkIfInView = () => {
-                if (animationTriggered) return;
-                
-                const position = achievementsSection.getBoundingClientRect();
-                
-                // If achievement section is in viewport
-                if(position.top < window.innerHeight && position.bottom >= 0) {
+            const observer = new IntersectionObserver((entries) => {
+                if(entries[0].isIntersecting){
                     animateCounter();
-                    animationTriggered = true;
+                    observer.disconnect();
                 }
-            };
+            }, { threshold: 0.1 });
+            if (achievementsSection) {
+                observer.observe(achievementsSection);
+            }
             
-            window.addEventListener('scroll', checkIfInView);
-            // Check on load too
-            checkIfInView();
-            
-            // Form submission
             const contactForm = document.getElementById('contactForm');
             if (contactForm) {
                 contactForm.addEventListener('submit', function(e) {
@@ -936,216 +792,25 @@
                 });
             }
         });
-        document.addEventListener("DOMContentLoaded", function () {
-    if ("Notification" in window && Notification.permission !== "granted") {
-      Notification.requestPermission().then(permission => {
-        if (permission === "granted") {
-          console.log("User allowed notifications");
-          // You can show a test notification if needed:
-          new Notification("Thanks for allowing notifications from WebPrime!");
-        } else {
-          console.log("User denied or dismissed notification permission");
-        }
-      });
-    }
-  }); 
-//        POP UP
- const popupData = {
-  terms: `
-    <h4>Terms & Conditions</h4>
-    <p>By accessing or using the WebPrime website and services, you agree to be legally bound by these Terms and Conditions. If you do not agree, you may not access or use our services.</p>
 
-    <h5>1. Use of the Website</h5>
-    <ul>
-      <li>You agree to use this site only for lawful purposes and in a manner that does not infringe the rights of or restrict the use of this site by any third party.</li>
-      <li>WebPrime reserves the right to refuse service, terminate accounts, or cancel orders at our discretion.</li>
-      <li>You may not use this site to distribute harmful content, spam, or software viruses.</li>
-    </ul>
+        // POP UP Logic
+        const popupData = {
+            terms: `<h4>Terms & Conditions</h4><p>By accessing or using the WebPrime website and services, you agree to be legally bound by these Terms and Conditions. If you do not agree, you may not access or use our services.</p><h5>1. Use of the Website</h5><ul><li>You agree to use this site only for lawful purposes and in a manner that does not infringe the rights of or restrict the use of this site by any third party.</li><li>WebPrime reserves the right to refuse service, terminate accounts, or cancel orders at our discretion.</li><li>You may not use this site to distribute harmful content, spam, or software viruses.</li></ul><h5>2. Intellectual Property</h5><ul><li>All content on this website, including text, graphics, logos, and code, is the property of WebPrime unless otherwise stated.<li>Reproduction, distribution, or creation of derivative works is prohibited without written consent.</li></ul>`,
+            privacy: `<h4>Privacy Policy</h4><p>At WebPrime, your privacy is a priority. This policy outlines how we handle your personal data and protect your privacy when you interact with us.</p><h5>1. Information We Collect</h5><ul><li>Personal information you provide through forms (name, email, contact number).</li><li>Browser information such as IP address, device type, and referral sources.</li><li>Cookies to enhance your browsing experience and remember your preferences.</li></ul><h5>2. How We Use Your Information</h5><ul><li>To respond to inquiries and provide customer support.</li><li>To personalize your experience and improve our website.</li><li>To send newsletters or service updates, only if you opt in.</li></ul>`
+        };
+        function openPopup(type) { document.getElementById('popup-title').innerText = type === 'terms' ? 'Terms & Conditions' : 'Privacy Policy'; document.getElementById('popup-content').innerHTML = popupData[type]; document.getElementById('popup-overlay').classList.remove('d-none'); }
+        function closePopup() { document.getElementById('popup-overlay').classList.add('d-none'); }
 
-    <h5>2. Intellectual Property</h5>
-    <ul>
-      <li>All content on this website, including text, graphics, logos, and code, is the property of WebPrime unless otherwise stated.</li>
-      <li>Reproduction, distribution, or creation of derivative works is prohibited without written consent.</li>
-    </ul>
-
-    <h5>3. Service Limitations</h5>
-    <ul>
-      <li>While we aim to deliver high uptime, WebPrime does not guarantee uninterrupted or error-free operation.</li>
-      <li>We are not liable for any direct or indirect losses resulting from service outages, delays, or data loss.</li>
-    </ul>
-
-    <h5>4. Modifications</h5>
-    <ul>
-      <li>WebPrime may revise these Terms at any time. Continued usage of the website constitutes acceptance of those changes.</li>
-    </ul>
-
-    <h5>5. Governing Law</h5>
-    <p>These Terms are governed by and interpreted in accordance with the laws of India. Any disputes shall be subject to the exclusive jurisdiction of the courts in Coimbatore, Tamil Nadu.</p>
-  `,
-
-  privacy: `
-    <h4>Privacy Policy</h4>
-    <p>At WebPrime, your privacy is a priority. This policy outlines how we handle your personal data and protect your privacy when you interact with us.</p>
-
-    <h5>1. Information We Collect</h5>
-    <ul>
-      <li>Personal information you provide through forms (name, email, contact number).</li>
-      <li>Browser information such as IP address, device type, and referral sources.</li>
-      <li>Cookies to enhance your browsing experience and remember your preferences.</li>
-    </ul>
-
-    <h5>2. How We Use Your Information</h5>
-    <ul>
-      <li>To respond to inquiries and provide customer support.</li>
-      <li>To personalize your experience and improve our website.</li>
-      <li>To send newsletters or service updates, only if you opt in.</li>
-    </ul>
-
-    <h5>3. Data Sharing & Security</h5>
-    <ul>
-      <li>We do not sell, trade, or rent your personal information to third parties.</li>
-      <li>We may use third-party services for hosting or analytics, which are bound to comply with privacy regulations.</li>
-      <li>All collected data is stored securely with modern encryption and security practices.</li>
-    </ul>
-
-    <h5>4. Your Rights</h5>
-    <ul>
-      <li>You can request access, correction, or deletion of your personal data at any time.</li>
-      <li>You can opt out of marketing communications via unsubscribe links or by contacting us.</li>
-    </ul>
-
-    <h5>5. External Links</h5>
-    <p>Our website may contain links to other websites. We are not responsible for the content or privacy practices of those external sites.</p>
-
-    <h5>6. Updates to This Policy</h5>
-    <p>We may update this policy periodically. Updates will be posted here with a revised effective date.</p>
-
-    <h5>7. Contact Us</h5>
-    <p>If you have questions or concerns about this policy, contact us at <a href="mailto:support@webprime.top">support@webprime.top</a>.</p>
-  `
-};
-
-
-  function openPopup(type) {
-    document.getElementById('popup-title').innerText =
-      type === 'terms' ? 'Terms & Conditions' : 'Privacy Policy';
-    document.getElementById('popup-content').innerHTML = popupData[type];
-    document.getElementById('popup-overlay').classList.remove('d-none');
-  }
-
-  function closePopup() {
-    document.getElementById('popup-overlay').classList.add('d-none');
-  }
-
-  const serviceContent = {
-    web: `
-      <h3>Web Development</h3>
-      <p>We specialize in building blazing-fast, scalable websites using modern frameworks:</p>
-      <ul>
-        <li>🔧 Built using React.js, Next.js & Express</li>
-        <li>🚀 Optimized for speed, SEO, and mobile responsiveness</li>
-        <li>🔍 Clean, semantic code for better search visibility</li>
-        <li>🧩 Integration with APIs and third-party tools</li>
-      </ul>
-      <p><strong>Why Choose Us?</strong></p>
-      <ul>
-        <li>✅ 100% custom-coded to suit your goals</li>
-        <li>🛠️ Maintenance & support included</li>
-        <li>📈 Focus on performance and conversion</li>
-      </ul>
-      <p>📩 <a href="mailto:support@webprime.top" class="text-danger">Mail us</a> to discuss your project!</p>
-    `,
-    mobile: `
-      <h3>Mobile-First Design</h3>
-      <p>Crafted for seamless performance on all screens:</p>
-      <ul>
-        <li>📱 Built with Tailwind CSS & Bootstrap 5</li>
-        <li>💡 Responsive grids using Flexbox & CSS Grid</li>
-        <li>⚡ Touch-friendly, minimal UI</li>
-        <li>🌍 Ensures consistency across phones, tablets, and desktops</li>
-      </ul>
-      <p><strong>Why Us?</strong></p>
-      <ul>
-        <li>🎯 User-first design thinking</li>
-        <li>🎨 Pixel-perfect layout testing</li>
-      </ul>
-      <p>📩 <a href="mailto:support@webprime.top" class="text-danger">Mail us</a> for a design consultation!</p>
-    `,
-    ecom: `
-      <h3>E-Commerce Solutions</h3>
-      <p>Launch your online store with powerful features:</p>
-      <ul>
-        <li>🛒 Built using Shopify, WooCommerce, or MERN</li>
-        <li>💳 Secure gateways: Razorpay, Stripe, PayPal</li>
-        <li>📦 Inventory, order, and customer management</li>
-        <li>📈 Analytics, cart recovery, and offers</li>
-      </ul>
-      <p><strong>Why Us?</strong></p>
-      <ul>
-        <li>📊 Sales-driven UI</li>
-        <li>🧰 Full support from setup to scale</li>
-      </ul>
-      <p>📩 <a href="mailto:support@webprime.top" class="text-danger">Mail us</a> to get your store online!</p>
-    `,
-    seo: `
-      <h3>SEO Optimization</h3>
-      <p>Rank better, get found faster:</p>
-      <ul>
-        <li>📋 Site audits, structure improvements</li>
-        <li>🔑 Keyword research, content tuning</li>
-        <li>🔗 Backlinks, local SEO, and more</li>
-        <li>⚙️ Technical fixes and speed improvements</li>
-      </ul>
-      <p><strong>Why Us?</strong></p>
-      <ul>
-        <li>🧠 Result-oriented strategies</li>
-        <li>📊 Monthly performance reports</li>
-      </ul>
-      <p>📩 <a href="mailto:support@webprime.top" class="text-danger">Mail us</a> for an SEO checkup!</p>
-    `,
-    hosting: `
-      <h3>Web Hosting</h3>
-      <p>Stay online, stay fast:</p>
-      <ul>
-        <li>🔐 SSL, firewall, and DDoS protection</li>
-        <li>⚙️ Hosting on AWS, DigitalOcean, or shared</li>
-        <li>🧰 Managed backups, auto-scaling</li>
-        <li>📞 24/7 tech support</li>
-      </ul>
-      <p><strong>Why Us?</strong></p>
-      <ul>
-        <li>🌐 99.9% uptime guarantee</li>
-        <li>💼 Enterprise-grade solutions available</li>
-      </ul>
-      <p>📩 <a href="mailto:support@webprime.top" class="text-danger">Mail us</a> for your hosting plan!</p>
-    `,
-    uiux: `
-      <h3>UI/UX Design</h3>
-      <p>Designs that convert visitors into users:</p>
-      <ul>
-        <li>🎨 Figma + Adobe XD workflows</li>
-        <li>🧠 UX research, journey mapping</li>
-        <li>📲 Prototypes and A/B testing</li>
-        <li>✨ Smooth animations & modern visuals</li>
-      </ul>
-      <p><strong>Why Us?</strong></p>
-      <ul>
-        <li>👀 Attention to visual and functional detail</li>
-        <li>📈 Focused on increasing user engagement</li>
-      </ul>
-      <p>📩 <a href="mailto:support@webprime.top" class="text-danger">Mail us</a> to start your UI/UX journey!</p>
-    `
-  };
-
-  function openServicePopup(service) {
-    document.getElementById('servicePopupBody').innerHTML = serviceContent[service] || "<p>Details coming soon!</p>";
-    document.getElementById('servicePopup').style.display = 'block';
-  }
-
-  function closeServicePopup() {
-    document.getElementById('servicePopup').style.display = 'none';
-  }
+        const serviceContent = {
+            web: `<h3>Web Development</h3><p>We specialize in building blazing-fast, scalable websites using modern frameworks:</p><ul><li>🔧 Built using React.js, Next.js & Express</li><li>🚀 Optimized for speed, SEO, and mobile responsiveness</li></ul><p><strong>Why Choose Us?</strong></p><ul><li>✅ 100% custom-coded to suit your goals</li><li>🛠️ Maintenance & support included</li></ul>`,
+            mobile: `<h3>Mobile-First Design</h3><p>Crafted for seamless performance on all screens:</p><ul><li>📱 Built with Tailwind CSS & Bootstrap 5</li><li>💡 Responsive grids using Flexbox & CSS Grid</li></ul><p><strong>Why Us?</strong></p><ul><li>🎯 User-first design thinking</li><li>🎨 Pixel-perfect layout testing</li></ul>`,
+            ecom: `<h3>E-Commerce Solutions</h3><p>Launch your online store with powerful features:</p><ul><li>🛒 Built using Shopify, WooCommerce, or MERN</li><li>💳 Secure gateways: Razorpay, Stripe, PayPal</li></ul>`,
+            seo: `<h3>SEO Optimization</h3><p>Rank better, get found faster:</p><ul><li>📋 Site audits, structure improvements</li><li>🔑 Keyword research, content tuning</li></ul>`,
+            hosting: `<h3>Web Hosting</h3><p>Stay online, stay fast:</p><ul><li>🔐 SSL, firewall, and DDoS protection</li><li>⚙️ Hosting on AWS, DigitalOcean, or shared</li></ul>`,
+            uiux: `<h3>UI/UX Design</h3><p>Designs that convert visitors into users:</p><ul><li>🎨 Figma + Adobe XD workflows</li><li>🧠 UX research, journey mapping</li></ul>`
+        };
+        function openServicePopup(service) { document.getElementById('servicePopupBody').innerHTML = serviceContent[service] || "<p>Details coming soon!</p>"; document.getElementById('servicePopup').style.display = 'block'; }
+        function closeServicePopup() { document.getElementById('servicePopup').style.display = 'none'; }
     </script>
 </body>
 </html>
-
